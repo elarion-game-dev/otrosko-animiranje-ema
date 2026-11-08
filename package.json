@@ -1,0 +1,19 @@
+{
+  "name": "otrosko-animiranje-ema",
+  "private": true,
+  "type": "module",
+  "description": "Spletna stran Otroško animiranje Ema: statične strani v treh jezikih in urejevalnik (admin), ki shranjuje v git.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
+    "test": "node scripts/check.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "site": {
+    "owner": "elarion-game-dev",
+    "repo": "otrosko-animiranje-ema",
+    "branch": "main"
+  }
+}

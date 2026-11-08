@@ -1,0 +1,976 @@
+{
+  "schemaVersion": 1,
+  "site": {
+    "name": "Otroško animiranje Ema",
+    "url": "https://elarion-game-dev.github.io/otrosko-animiranje-ema"
+  },
+  "languages": {
+    "en": {
+      "enabled": true,
+      "label": "English",
+      "short": "EN"
+    },
+    "sh": {
+      "enabled": true,
+      "label": "Srpskohrvatski",
+      "short": "SH"
+    }
+  },
+  "announcement": {
+    "enabled": false,
+    "text": {
+      "sl": "Termini za praznične zabave se hitro polnijo!",
+      "en": "Holiday party dates are filling up fast!",
+      "sh": "Termini za praznične zabave brzo se popunjavaju!"
+    },
+    "linkLabel": {
+      "sl": "Rezervirajte",
+      "en": "Book now",
+      "sh": "Rezervirajte"
+    },
+    "target": "contact",
+    "url": "",
+    "style": "accent2"
+  },
+  "header": {
+    "logo": "",
+    "logoHeight": 44,
+    "showName": true,
+    "sticky": true,
+    "cta": {
+      "enabled": true,
+      "label": {
+        "sl": "Rezerviraj termin",
+        "en": "Book a date",
+        "sh": "Rezerviraj termin"
+      },
+      "target": "contact",
+      "url": ""
+    }
+  },
+  "hero": {
+    "layout": "split",
+    "badge": {
+      "sl": "Animacija za otroke",
+      "en": "Children's entertainment",
+      "sh": "Animacija za djecu"
+    },
+    "title": {
+      "sl": "Zabava, ki si jo bodo otroci zapomnili",
+      "en": "Parties the kids will remember",
+      "sh": "Zabava koju će djeca pamtiti"
+    },
+    "text": {
+      "sl": "Rojstnodnevne zabave, športne urice in animacija na dogodkih. Vi uživate s povabljenimi, za otroke poskrbimo mi.",
+      "en": "Birthday parties, sports classes and entertainment at events. You enjoy time with your guests while we look after the kids.",
+      "sh": "Rođendanske proslave, sportske aktivnosti i animacija na događajima. Vi uživajte s gostima, a mi se brinemo o djeci."
+    },
+    "primary": {
+      "label": {
+        "sl": "Pošlji povpraševanje",
+        "en": "Send an inquiry",
+        "sh": "Pošalji upit"
+      },
+      "target": "contact",
+      "url": ""
+    },
+    "secondary": {
+      "label": {
+        "sl": "Poglej ponudbo",
+        "en": "See what we offer",
+        "sh": "Pogledaj ponudu"
+      },
+      "target": "services",
+      "url": ""
+    },
+    "image": "",
+    "imageAlt": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "imageShape": "blob",
+    "overlay": 45
+  },
+  "sections": [
+    {
+      "id": "services",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "Kaj ponujamo",
+        "en": "What we offer",
+        "sh": "Što nudimo"
+      },
+      "menuLabel": {
+        "sl": "Ponudba",
+        "en": "Services",
+        "sh": "Ponuda"
+      },
+      "intro": {
+        "sl": "Vsak program prilagodimo starosti otrok, prostoru in vašim željam.",
+        "en": "We tailor every programme to the children's ages, the venue and your wishes.",
+        "sh": "Svaki program prilagođavamo dobi djece, prostoru i vašim željama."
+      }
+    },
+    {
+      "id": "steps",
+      "enabled": true,
+      "inMenu": false,
+      "heading": {
+        "sl": "Kako poteka",
+        "en": "How it works",
+        "sh": "Kako to izgleda"
+      },
+      "menuLabel": {
+        "sl": "Kako poteka",
+        "en": "How it works",
+        "sh": "Kako to izgleda"
+      },
+      "intro": {
+        "sl": "",
+        "en": "",
+        "sh": ""
+      }
+    },
+    {
+      "id": "packages",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "Paketi in cene",
+        "en": "Packages and prices",
+        "sh": "Paketi i cijene"
+      },
+      "menuLabel": {
+        "sl": "Cene",
+        "en": "Prices",
+        "sh": "Cijene"
+      },
+      "intro": {
+        "sl": "Izberite paket ali nam povejte, kaj si želite, in pripravimo ponudbo po meri.",
+        "en": "Pick a package, or tell us what you have in mind and we will put together an offer.",
+        "sh": "Odaberite paket ili nam recite što želite pa ćemo pripremiti ponudu po mjeri."
+      }
+    },
+    {
+      "id": "schedule",
+      "enabled": false,
+      "inMenu": true,
+      "heading": {
+        "sl": "Športne urice",
+        "en": "Sports classes",
+        "sh": "Sportska igraonica"
+      },
+      "menuLabel": {
+        "sl": "Urnik",
+        "en": "Schedule",
+        "sh": "Raspored"
+      },
+      "intro": {
+        "sl": "Redne vadbe, na katerih se otroci skozi igro naučijo novih gibanj in sodelovanja.",
+        "en": "Regular classes where children learn new moves and teamwork through play.",
+        "sh": "Redovni treninzi na kojima djeca kroz igru uče nove pokrete i timski rad."
+      }
+    },
+    {
+      "id": "about",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "O nas",
+        "en": "About us",
+        "sh": "O nama"
+      },
+      "menuLabel": {
+        "sl": "O nas",
+        "en": "About",
+        "sh": "O nama"
+      },
+      "intro": {
+        "sl": "",
+        "en": "",
+        "sh": ""
+      }
+    },
+    {
+      "id": "gallery",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "Utrinki z zabav",
+        "en": "Moments from our parties",
+        "sh": "Trenuci s proslava"
+      },
+      "menuLabel": {
+        "sl": "Galerija",
+        "en": "Gallery",
+        "sh": "Galerija"
+      },
+      "intro": {
+        "sl": "",
+        "en": "",
+        "sh": ""
+      }
+    },
+    {
+      "id": "testimonials",
+      "enabled": true,
+      "inMenu": false,
+      "heading": {
+        "sl": "Kaj pravijo starši",
+        "en": "What parents say",
+        "sh": "Što kažu roditelji"
+      },
+      "menuLabel": {
+        "sl": "Mnenja",
+        "en": "Reviews",
+        "sh": "Utisci"
+      },
+      "intro": {
+        "sl": "",
+        "en": "",
+        "sh": ""
+      }
+    },
+    {
+      "id": "faq",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "Pogosta vprašanja",
+        "en": "Frequently asked questions",
+        "sh": "Česta pitanja"
+      },
+      "menuLabel": {
+        "sl": "Vprašanja",
+        "en": "FAQ",
+        "sh": "Pitanja"
+      },
+      "intro": {
+        "sl": "",
+        "en": "",
+        "sh": ""
+      }
+    },
+    {
+      "id": "contact",
+      "enabled": true,
+      "inMenu": true,
+      "heading": {
+        "sl": "Rezervirajte svoj termin",
+        "en": "Book your date",
+        "sh": "Rezervirajte svoj termin"
+      },
+      "menuLabel": {
+        "sl": "Kontakt",
+        "en": "Contact",
+        "sh": "Kontakt"
+      },
+      "intro": {
+        "sl": "Pošljite povpraševanje in odgovorimo vam s prostimi termini in ponudbo.",
+        "en": "Send us an inquiry and we'll reply with available dates and an offer.",
+        "sh": "Pošaljite upit i javit ćemo vam slobodne termine i ponudu."
+      }
+    }
+  ],
+  "services": {
+    "showInquiry": true,
+    "items": [
+      {
+        "icon": "cake",
+        "image": "",
+        "title": {
+          "sl": "Rojstnodnevne zabave",
+          "en": "Birthday parties",
+          "sh": "Rođendanske proslave"
+        },
+        "text": {
+          "sl": "Igre, glasba, smeh in veliko presenečenj za slavljenca in prijatelje – doma, v igralnici ali na prostem.",
+          "en": "Games, music, laughter and plenty of surprises for the birthday child and friends – at home, in a play centre or outdoors.",
+          "sh": "Igre, pjesme, ples i puno iznenađenja za slavljenika i prijatelje – kod kuće, u igraonici ili na otvorenom."
+        }
+      },
+      {
+        "icon": "ball",
+        "image": "",
+        "title": {
+          "sl": "Športne urice",
+          "en": "Sports classes",
+          "sh": "Sportske aktivnosti"
+        },
+        "text": {
+          "sl": "Gibalne igre, poligoni in štafete, ki otroke spodbujajo k gibanju in sodelovanju.",
+          "en": "Movement games, obstacle courses and relay races that get children moving and playing together.",
+          "sh": "Igre kretanja, poligoni i štafete koje djecu potiču na kretanje i zajedničku igru."
+        }
+      },
+      {
+        "icon": "party",
+        "image": "",
+        "title": {
+          "sl": "Animacija na dogodkih",
+          "en": "Entertainment at events",
+          "sh": "Animacija na događajima"
+        },
+        "text": {
+          "sl": "Poroke, krsti, obhajila in druženja podjetij: otroci se zabavajo, odrasli se sprostijo.",
+          "en": "Weddings, christenings, communions and company get-togethers: the children have fun and the adults can relax.",
+          "sh": "Vjenčanja, krštenja, pričesti i druženja firmi: djeca se zabavljaju, a odrasli se opuštaju."
+        }
+      },
+      {
+        "icon": "palette",
+        "image": "",
+        "title": {
+          "sl": "Poslikava obraza",
+          "en": "Face painting",
+          "sh": "Oslikavanje lica"
+        },
+        "text": {
+          "sl": "Metulji, superjunaki in živalice: vsak otrok dobi svojo poslikavo.",
+          "en": "Butterflies, superheroes and little animals: every child gets their own design.",
+          "sh": "Leptiri, superjunaci i životinjice: svako dijete dobije svoj crtež."
+        }
+      },
+      {
+        "icon": "balloon",
+        "image": "",
+        "title": {
+          "sl": "Modeliranje balonov",
+          "en": "Balloon modelling",
+          "sh": "Modeliranje balona"
+        },
+        "text": {
+          "sl": "Kužki, meči in krone iz balonov, ki jih otroci odnesejo domov.",
+          "en": "Balloon dogs, swords and crowns for the children to take home.",
+          "sh": "Psići, mačevi i krune od balona koje djeca nose kući."
+        }
+      },
+      {
+        "icon": "scissors",
+        "image": "",
+        "title": {
+          "sl": "Ustvarjalne delavnice",
+          "en": "Craft workshops",
+          "sh": "Kreativne radionice"
+        },
+        "text": {
+          "sl": "Izdelki iz papirja, barv in naravnih materialov, prilagojeni starosti otrok.",
+          "en": "Crafts with paper, paint and natural materials, suited to the children's age.",
+          "sh": "Radovi od papira, boja i prirodnih materijala prilagođeni dobi djece."
+        }
+      }
+    ]
+  },
+  "steps": {
+    "items": [
+      {
+        "icon": "chat",
+        "title": {
+          "sl": "Pošljite povpraševanje",
+          "en": "Send an inquiry",
+          "sh": "Pošaljite upit"
+        },
+        "text": {
+          "sl": "Povejte nam datum, kraj ter število in starost otrok.",
+          "en": "Tell us the date, the place, and the number and ages of the children.",
+          "sh": "Recite nam datum, mjesto te broj i dob djece."
+        }
+      },
+      {
+        "icon": "calendar",
+        "title": {
+          "sl": "Dogovorimo se za program",
+          "en": "We plan the programme together",
+          "sh": "Dogovorimo program"
+        },
+        "text": {
+          "sl": "Predlagamo program in ga prilagodimo vašim željam.",
+          "en": "We suggest a programme and adjust it to your wishes.",
+          "sh": "Predložimo program i prilagodimo ga vašim željama."
+        }
+      },
+      {
+        "icon": "party",
+        "title": {
+          "sl": "Zabava se začne",
+          "en": "Let the party begin",
+          "sh": "Zabava počinje"
+        },
+        "text": {
+          "sl": "Pripomočke prinesemo s seboj, vi pa uživate z gosti.",
+          "en": "We bring everything we need; you enjoy time with your guests.",
+          "sh": "Sve potrebno donosimo sa sobom, a vi uživate s gostima."
+        }
+      }
+    ]
+  },
+  "packages": {
+    "buttonLabel": {
+      "sl": "Izberi",
+      "en": "Choose",
+      "sh": "Odaberi"
+    },
+    "note": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "items": [
+      {
+        "name": {
+          "sl": "Mala zabava",
+          "en": "Small party",
+          "sh": "Mala zabava"
+        },
+        "price": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "duration": {
+          "sl": "1 ura",
+          "en": "1 hour",
+          "sh": "1 sat"
+        },
+        "features": {
+          "sl": "Igre in animacija\nGlasba in ples\nDo 10 otrok",
+          "en": "Games and entertainment\nMusic and dancing\nUp to 10 children",
+          "sh": "Igre i animacija\nPjesme i ples\nDo 10 djece"
+        },
+        "highlight": false,
+        "badge": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      {
+        "name": {
+          "sl": "Velika zabava",
+          "en": "Big party",
+          "sh": "Velika zabava"
+        },
+        "price": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "duration": {
+          "sl": "2 uri",
+          "en": "2 hours",
+          "sh": "2 sata"
+        },
+        "features": {
+          "sl": "Igre in animacija\nPoslikava obraza\nModeliranje balonov\nDo 20 otrok",
+          "en": "Games and entertainment\nFace painting\nBalloon modelling\nUp to 20 children",
+          "sh": "Igre i animacija\nOslikavanje lica\nModeliranje balona\nDo 20 djece"
+        },
+        "highlight": true,
+        "badge": {
+          "sl": "Najbolj priljubljeno",
+          "en": "Most popular",
+          "sh": "Najpopularnije"
+        }
+      },
+      {
+        "name": {
+          "sl": "Po meri",
+          "en": "Made to measure",
+          "sh": "Po mjeri"
+        },
+        "price": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "duration": {
+          "sl": "po dogovoru",
+          "en": "by arrangement",
+          "sh": "po dogovoru"
+        },
+        "features": {
+          "sl": "Program po vaših željah\nZa večje skupine in dogodke\nTematske zabave",
+          "en": "A programme built around your wishes\nFor larger groups and events\nThemed parties",
+          "sh": "Program po vašim željama\nZa veće grupe i događaje\nTematske zabave"
+        },
+        "highlight": false,
+        "badge": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      }
+    ]
+  },
+  "schedule": {
+    "note": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "items": [
+      {
+        "title": {
+          "sl": "Športne urice, 3–5 let",
+          "en": "Sports class, ages 3–5",
+          "sh": "Sportska igraonica, 3–5 godina"
+        },
+        "day": "tue",
+        "when": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "time": "17:00–17:45",
+        "place": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "note": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      {
+        "title": {
+          "sl": "Športne urice, 6–9 let",
+          "en": "Sports class, ages 6–9",
+          "sh": "Sportska igraonica, 6–9 godina"
+        },
+        "day": "thu",
+        "when": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "time": "17:00–18:00",
+        "place": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        },
+        "note": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      }
+    ]
+  },
+  "about": {
+    "text": {
+      "sl": "**Otroško animiranje Ema** poskrbi, da je praznovanje za otroke doživetje, za starše pa brez skrbi.\n\nProgram vedno prilagodimo starosti in številu otrok, prostoru ter vašim željam. Na zabavo prinesemo vse pripomočke, otroke pa vodimo skozi igre, ples in ustvarjanje, dokler ni čas za torto.",
+      "en": "**Otroško animiranje Ema** makes every celebration an adventure for the children and stress-free for the parents.\n\nWe always tailor the programme to the children's ages and number, the venue and your wishes. We bring everything we need and keep the children busy with games, dancing and crafts until it is time for cake.",
+      "sh": "**Otroško animiranje Ema** brine se da proslava bude doživljaj za djecu, a za roditelje bez brige.\n\nProgram uvijek prilagođavamo dobi i broju djece, prostoru i vašim željama. Donosimo sav potreban pribor, a djecu vodimo kroz igre, ples i stvaranje sve dok ne dođe vrijeme za tortu."
+    },
+    "photo": "",
+    "photoAlt": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "photoShape": "blob",
+    "stats": []
+  },
+  "gallery": {
+    "layout": "grid",
+    "images": []
+  },
+  "testimonials": {
+    "showStars": true,
+    "items": []
+  },
+  "faq": {
+    "items": [
+      {
+        "q": {
+          "sl": "Za katero starost so zabave primerne?",
+          "en": "What ages are the parties for?",
+          "sh": "Za koju su dob zabave prikladne?"
+        },
+        "a": {
+          "sl": "Program prilagodimo starosti otrok, od malčkov do osnovnošolcev. Ob povpraševanju nam povejte, koliko so stari.",
+          "en": "We adapt the programme to the children's ages, from toddlers to primary school children. Just tell us their ages when you get in touch.",
+          "sh": "Program prilagođavamo dobi djece, od mališana do osnovnoškolaca. U upitu nam samo recite koliko su stari."
+        }
+      },
+      {
+        "q": {
+          "sl": "Kje izvajate zabave?",
+          "en": "Where do the parties take place?",
+          "sh": "Gdje održavate zabave?"
+        },
+        "a": {
+          "sl": "Doma, v najetem prostoru, v vrtcu ali na prostem. Za oddaljene kraje se vnaprej dogovorimo o potnih stroških.",
+          "en": "At home, in a rented venue, at kindergarten or outdoors. For places further away, we agree on travel costs in advance.",
+          "sh": "Kod kuće, u iznajmljenom prostoru, u vrtiću ili na otvorenom. Za udaljena mjesta unaprijed dogovaramo putne troškove."
+        }
+      },
+      {
+        "q": {
+          "sl": "Koliko prej moram rezervirati?",
+          "en": "How far ahead should I book?",
+          "sh": "Koliko unaprijed trebam rezervirati?"
+        },
+        "a": {
+          "sl": "Čim prej, saj se termini ob vikendih hitro zapolnijo. Pišite nam in preverimo, ali je vaš datum še prost.",
+          "en": "As early as you can: weekend dates fill up quickly. Write to us and we will check whether your date is free.",
+          "sh": "Što prije, jer se termini vikendom brzo popune. Pišite nam i provjerit ćemo je li vaš datum slobodan."
+        }
+      },
+      {
+        "q": {
+          "sl": "Kaj moram pripraviti jaz?",
+          "en": "What do I need to prepare?",
+          "sh": "Što ja trebam pripremiti?"
+        },
+        "a": {
+          "sl": "Samo dovolj prostora za igro. Vse pripomočke prinesemo s seboj.",
+          "en": "Just enough room to play. We bring everything else.",
+          "sh": "Samo dovoljno prostora za igru. Sav pribor donosimo sa sobom."
+        }
+      }
+    ]
+  },
+  "contact": {
+    "phone": "",
+    "email": "",
+    "whatsapp": true,
+    "viber": true,
+    "address": "",
+    "area": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "hours": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "mapUrl": ""
+  },
+  "form": {
+    "provider": "mailto",
+    "formspree": {
+      "formId": ""
+    },
+    "custom": {
+      "action": "",
+      "providerName": "",
+      "privacyUrl": "",
+      "extraName": "",
+      "extraValue": "",
+      "mode": "json"
+    },
+    "fields": {
+      "name": {
+        "show": true,
+        "required": true,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "email": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "phone": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "date": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "time": {
+        "show": false,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "location": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "children": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "age": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "service": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      },
+      "message": {
+        "show": true,
+        "required": false,
+        "label": {
+          "sl": "",
+          "en": "",
+          "sh": ""
+        }
+      }
+    },
+    "requireContact": true,
+    "buttonLabel": {
+      "sl": "Pošlji povpraševanje",
+      "en": "Send inquiry",
+      "sh": "Pošalji upit"
+    },
+    "privacyNote": {
+      "sl": "Podatke uporabimo samo za odgovor na vaše povpraševanje. Več v {privacy}.",
+      "en": "We only use your details to reply to your inquiry. More in our {privacy}.",
+      "sh": "Vaše podatke koristimo samo za odgovor na upit. Više u {privacy}."
+    },
+    "successTitle": {
+      "sl": "Hvala, sporočilo je oddano!",
+      "en": "Thank you, your message is on its way!",
+      "sh": "Hvala, poruka je poslana!"
+    },
+    "successBody": {
+      "sl": "Odgovorimo vam v najkrajšem možnem času.",
+      "en": "We'll get back to you as soon as we can.",
+      "sh": "Odgovorit ćemo vam što je prije moguće."
+    }
+  },
+  "thanks": {
+    "title": {
+      "sl": "Hvala za povpraševanje!",
+      "en": "Thank you for your inquiry!",
+      "sh": "Hvala na upitu!"
+    },
+    "body": {
+      "sl": "Sporočilo smo prejeli in vam odgovorimo v najkrajšem možnem času.",
+      "en": "We've received your message and will reply as soon as we can.",
+      "sh": "Primili smo vašu poruku i odgovorit ćemo vam što prije."
+    }
+  },
+  "floating": {
+    "enabled": true,
+    "action": "phone",
+    "label": {
+      "sl": "Pokličite",
+      "en": "Call us",
+      "sh": "Nazovite"
+    },
+    "where": "mobile",
+    "side": "right"
+  },
+  "footer": {
+    "text": {
+      "sl": "Z veseljem poskrbimo za nasmehe na vaši zabavi.",
+      "en": "Happy to bring smiles to your party.",
+      "sh": "Rado ćemo donijeti osmijehe na vašu zabavu."
+    },
+    "showContact": true,
+    "showSocials": true,
+    "showBusiness": true
+  },
+  "socials": [
+    {
+      "platform": "facebook",
+      "url": "",
+      "label": ""
+    },
+    {
+      "platform": "instagram",
+      "url": "",
+      "label": ""
+    },
+    {
+      "platform": "tiktok",
+      "url": "",
+      "label": ""
+    },
+    {
+      "platform": "youtube",
+      "url": "",
+      "label": ""
+    }
+  ],
+  "business": {
+    "name": "",
+    "address": "",
+    "registration": "",
+    "taxNumber": "",
+    "vatId": ""
+  },
+  "theme": {
+    "preset": "rainbow",
+    "colors": {
+      "bg": "#fffaf3",
+      "alt": "#fff0e1",
+      "surface": "#ffffff",
+      "border": "#f0dcc4",
+      "text": "#2b2340",
+      "muted": "#5c5372",
+      "accent": "#d6336c",
+      "onAccent": "#ffffff",
+      "accent2": "#1c6fc7",
+      "accent3": "#fcc419"
+    },
+    "headingFont": "baloo",
+    "bodyFont": "nunito",
+    "baseSize": 18,
+    "radius": 22,
+    "buttonStyle": "toy",
+    "cardStyle": "shadow",
+    "divider": "wave",
+    "pattern": "confetti",
+    "patternStrength": 35,
+    "decoration": "balloons",
+    "alternate": true,
+    "animations": true,
+    "favicon": ""
+  },
+  "textStyles": {
+    "heroTitle": {
+      "font": "",
+      "weight": 0,
+      "size": 100,
+      "case": "default",
+      "color": "default",
+      "customColor": "#2b2340",
+      "tracking": 0,
+      "shadow": "none"
+    },
+    "sectionTitles": {
+      "font": "",
+      "weight": 0,
+      "size": 100,
+      "case": "default",
+      "color": "default",
+      "customColor": "#2b2340",
+      "tracking": 0,
+      "shadow": "none"
+    },
+    "cardTitles": {
+      "font": "",
+      "weight": 0,
+      "size": 100,
+      "case": "default",
+      "color": "default",
+      "customColor": "#2b2340",
+      "tracking": 0,
+      "shadow": "none"
+    },
+    "menu": {
+      "font": "",
+      "weight": 0,
+      "size": 100,
+      "case": "default",
+      "color": "default",
+      "customColor": "#2b2340",
+      "tracking": 0,
+      "shadow": "none"
+    },
+    "buttons": {
+      "font": "",
+      "weight": 0,
+      "size": 100,
+      "case": "default",
+      "color": "default",
+      "customColor": "#2b2340",
+      "tracking": 0,
+      "shadow": "none"
+    }
+  },
+  "privacy": {
+    "effectiveDate": "2026-11-08",
+    "retentionMonths": 12,
+    "photos": true,
+    "hosting": {
+      "sl": "GitHub Pages (GitHub, Inc., ZDA)",
+      "en": "GitHub Pages (GitHub, Inc., United States)",
+      "sh": "GitHub Pages (GitHub, Inc., SAD)"
+    },
+    "outsideEu": true,
+    "extra": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    }
+  },
+  "terms": {
+    "enabled": false,
+    "title": {
+      "sl": "Pogoji poslovanja",
+      "en": "Terms and conditions",
+      "sh": "Uvjeti poslovanja"
+    },
+    "body": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    }
+  },
+  "seo": {
+    "title": {
+      "sl": "Otroško animiranje Ema | Rojstnodnevne zabave in animacija za otroke",
+      "en": "Otroško animiranje Ema | Children's parties and entertainment",
+      "sh": "Otroško animiranje Ema | Dječje proslave i animacija"
+    },
+    "description": {
+      "sl": "Rojstnodnevne zabave, športne urice in animacija za otroke na dogodkih. Pošljite povpraševanje in rezervirajte termin.",
+      "en": "Birthday parties, sports classes and children's entertainment at events. Send an inquiry and book your date.",
+      "sh": "Rođendanske proslave, sportske aktivnosti i animacija za djecu na događajima. Pošaljite upit i rezervirajte termin."
+    },
+    "ogImage": "",
+    "ogImageAlt": {
+      "sl": "",
+      "en": "",
+      "sh": ""
+    },
+    "indexable": false,
+    "areaServed": "",
+    "priceRange": ""
+  }
+}

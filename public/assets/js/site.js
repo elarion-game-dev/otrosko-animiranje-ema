@@ -232,6 +232,22 @@ if (programme) {
   }
 }
 
+/** The line boil (rainbow mark, signature) only runs while one of them is on screen, and never when motion is off. */
+const boilDefs = $('#boil-defs');
+if (boilDefs && typeof boilDefs.pauseAnimations === 'function') {
+  const targets = $$('.invite .mark, .sign');
+  if (reduce || !targets.length) boilDefs.pauseAnimations();
+  else if (hasIO) {
+    const visible = new Set();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
+      if (visible.size) boilDefs.unpauseAnimations();
+      else boilDefs.pauseAnimations();
+    });
+    targets.forEach((el) => io.observe(el));
+  }
+}
+
 /** Place cards lean gently towards the pointer. */
 if (!reduce && fine.matches) {
   $$('[data-tilt]').forEach((card) => {

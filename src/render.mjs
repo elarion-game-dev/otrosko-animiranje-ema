@@ -468,7 +468,7 @@ ${font ? `<link rel="preload" href="${esc(ctx.url(`/assets/fonts/${font}`))}" as
 <link rel="stylesheet" href="${esc(ctx.url(`/assets/css/site.css${v}`))}">
 ${ctx.preview ? '' : `<script type="module" src="${esc(ctx.url(`/assets/js/site.js${v}`))}"></script>\n`}${home ? jsonLd(s, ctx) : ''}</head>
 <body class="page-${info.id}">
-${flags}<a class="skip" href="#main">${esc(ui('skip', lang))}</a>
+${flags}${home && t.animations ? boilFilter() : ''}<a class="skip" href="#main">${esc(ui('skip', lang))}</a>
 ${announcement(s, ctx)}
 ${header(s, ctx)}
 ${mobileMenu(s, ctx)}
@@ -495,6 +495,17 @@ const PENNANTS = [
   'M1338.1 28.0L1375.8 23.1L1362.1 65.2Z', 'M1393.5 20.7L1431.1 15.3L1417.9 57.6Z',
 ];
 const TONES = ['coral', 'gold', 'sage', 'sky', 'lilac'];
+
+// Line boil: the hero's rainbow mark and Ema's signature wobble a little, as if redrawn by hand every few frames.
+// Two filters, medium (#boil, the mark) and subtle (#boil-soft, the signature): SMIL steps the noise through three
+// seeds at 8 frames a second (no script needed), site.css decides what uses them and keeps them off when motion is
+// off, and site.js pauses them while nothing that uses them is on screen. The region is generous so the
+// handwriting's tall loops are not clipped.
+function boilFilter() {
+  const filter = (id, scale) =>
+    `<filter id="${id}" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3"><animate attributeName="seed" values="3;17;41" dur="0.375s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="${scale}" xChannelSelector="R" yChannelSelector="G"/></filter>`;
+  return `<svg class="fx-defs" id="boil-defs" aria-hidden="true" focusable="false">${filter('boil', 4.5)}${filter('boil-soft', 3)}</svg>`;
+}
 
 function garland() {
   const flags = PENNANTS.map((d, i) => `<g class="pennant f-${TONES[i % 5]} o${i <= 12 ? 13 - i : i - 13}"><path d="${d}"/></g>`).join('');

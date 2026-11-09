@@ -442,10 +442,13 @@ await test('Theme CSS carries the fonts from the base path and the derived colou
 await test('Decorations can be switched off', () => {
   const on = site(DEFAULT_SETTINGS)['index.html'];
   assert.ok(on.includes('class="garland"') && on.includes('class="hero confetti"') && on.includes('data-edges="scallop"') && on.includes('data-motion="on"'));
+  assert.ok(on.includes('<filter id="boil"'), 'the line boil filter is on the home page');
+  assert.ok(!site(DEFAULT_SETTINGS)['zasebnost/index.html'].includes('id="boil"'), 'and only there');
   const s = structuredClone(DEFAULT_SETTINGS);
   s.theme = { ...s.theme, garland: false, confetti: false, scallops: false, animations: false };
   const off = site(s)['index.html'];
   assert.ok(!off.includes('class="garland"') && !off.includes(' confetti"') && off.includes('data-edges="plain"') && off.includes('data-motion="off"'));
+  assert.ok(!off.includes('id="boil"'), 'no line boil when animations are off');
 });
 
 await test('Click-to-edit markers only in the preview', () => {

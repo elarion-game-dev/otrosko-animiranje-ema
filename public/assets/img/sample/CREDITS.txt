@@ -1,0 +1,34 @@
+Sample photos that come with the site
+======================================
+
+These are free stock photos, used so the site looks finished before the owner adds her own. They are not
+photos from Otroško animiranje Ema's events. Replace them in the editor (the overview lists each one) with
+your own photos, published with the parents' consent.
+
+All were uploaded in 2020-2021 by the photographers below, before photorealistic AI images existed, and
+were checked for brand logos, readable text and recognisable adults. Cropped and resized for this site;
+all metadata removed.
+
+Pexels License (https://www.pexels.com/license/): free for commercial use, no attribution required.
+Unsplash License (https://unsplash.com/license): free for commercial use, no attribution required.
+Neither licence allows implying that the people shown endorse a business, so these photos are only
+illustrations and must not be presented as customers or as photos from real parties.
+
+hero-party.webp        Thirdman (Pexels 7600079)
+                       https://www.pexels.com/photo/kids-lying-on-the-floor-7600079/
+hero-play.webp         Vlada Karpovich (Pexels 7099921)
+                       https://www.pexels.com/photo/boy-in-white-shirt-holding-hands-of-girl-in-yellow-long-sleeve-shirt-7099921/
+sport.webp             cottonbro studio (Pexels 7207107)
+                       https://www.pexels.com/photo/girls-playing-skipping-rope-7207107/
+gallery-balloons.webp  Ivan S (Pexels 8101705)
+                       https://www.pexels.com/photo/children-sitting-on-sofa-8101705/
+gallery-cake.webp      Nathan Dumlao (Unsplash As8zq82LBpw)
+                       https://unsplash.com/photos/As8zq82LBpw
+gallery-ball.webp      Kampus Production (Pexels 8813572)
+                       https://www.pexels.com/photo/a-child-playing-football-at-a-park-8813572/
+gallery-hats.webp      Vlada Karpovich (Pexels 7099924)
+                       https://www.pexels.com/photo/kids-wearing-party-hat-hugging-boy-in-white-shirt-7099924/
+gallery-group.webp     RDNE Stock project (Pexels 8385872)
+                       https://www.pexels.com/photo/a-group-of-kids-with-face-paint-during-a-party-8385872/
+share.jpg              Ivan S (Pexels 8101708)
+                       https://www.pexels.com/photo/happy-kids-on-a-sofa-8101708/

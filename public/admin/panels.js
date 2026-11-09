@@ -1,38 +1,31 @@
 // The editor's panels. Each panel returns DOM nodes bound to paths in the settings draft.
 // `page` is the preview page a panel switches to when it is opened, `anchor` the home page section it scrolls to.
 
-import { FIELD_LABELS, LANG_INFO, pagePath } from '../assets/lib/i18n.mjs';
+import { FLAGS, SH_FLAG_CHOICES } from '../assets/lib/flags.mjs';
+import { LANG_INFO, pagePath } from '../assets/lib/i18n.mjs';
 import { PROVIDERS, resolveProvider } from '../assets/lib/providers.mjs';
 import {
   BAR_STYLES,
   DAY_OPTIONS,
-  FLOAT_ACTIONS,
-  FLOAT_PLACES,
-  FORM_FIELDS,
-  FORM_FIELD_LABELS,
-  GALLERY_LAYOUTS,
-  HERO_LAYOUTS,
+  FORM_ASK,
+  FORM_TOPICS,
   LIMITS,
   LINK_TARGETS,
-  PHOTO_SHAPES,
   SECTION_LABELS,
-  SIDES,
   SOCIAL_PLATFORMS,
   enabledLangs,
+  isSample,
   missingTranslations,
   setupChecklist,
   t3,
 } from '../assets/lib/settings.mjs';
 import {
-  BUTTON_STYLES,
-  CARD_STYLES,
   COLOR_KEYS,
-  DECORATIONS,
+  DECOR_TOGGLES,
   DEFAULT_TEXT_STYLE,
-  DIVIDERS,
   FONTS,
-  PATTERNS,
   PRESETS,
+  RAINBOW,
   TEXT_CASES,
   TEXT_COLORS,
   TEXT_ROLES,
@@ -56,8 +49,8 @@ function head(title, description) {
 
 const sectionIndex = (app, id) => app.get('sections').findIndex((s) => s.id === id);
 
-/** On/off, menu, heading, intro and menu label of one home page section. */
-function sectionHead(app, id, { intro = true, title } = {}) {
+/** On/off, menu, kicker, heading, intro and menu label of one home page section. */
+function sectionHead(app, id, { intro = true, title, introHelp } = {}) {
   const i = sectionIndex(app, id);
   const p = `sections.${i}`;
   const enabled = app.get(`${p}.enabled`);
@@ -67,8 +60,9 @@ function sectionHead(app, id, { intro = true, title } = {}) {
     toggle(app, `${p}.enabled`, { label: `Pokaži razdelek »${SECTION_LABELS[id]}«`, rerender: true }),
     enabled
       ? [
+          tx(app, `${p}.kicker`, { label: 'Majhen napis nad naslovom (neobvezno)', maxlength: 40, placeholder: 'npr. Program' }),
           h('div', { class: 'grid-2' }, tx(app, `${p}.heading`, { label: 'Naslov razdelka', maxlength: 100 }), tx(app, `${p}.menuLabel`, { label: 'Ime v meniju', maxlength: 30, help: 'Kratko, ena ali dve besedi.' })),
-          intro ? tx(app, `${p}.intro`, { label: 'Uvodni stavek pod naslovom (neobvezno)', multiline: true, rows: 2, maxlength: 600 }) : null,
+          intro ? tx(app, `${p}.intro`, { label: 'Uvodni stavek pod naslovom (neobvezno)', multiline: true, rows: 2, maxlength: 600, help: introHelp }) : null,
           toggle(app, `${p}.inMenu`, { label: 'Pokaži v meniju na vrhu strani' }),
         ]
       : note('Razdelek je izklopljen, zato ga obiskovalci ne vidijo. Vsebino lahko vseeno pripravite.', 'warn')
@@ -146,7 +140,7 @@ function overview(app) {
       left ? 'Ti koraki poskrbijo, da vas starši lahko pokličejo in da je stran v skladu z zakonom.' : 'Kontakt, obrazec in podatki o podjetju so izpolnjeni.',
       h('ul', { class: 'checklist' }, items)
     ),
-    note('Besedila, storitve, paketi in vprašanja so vzorčni. Preglejte jih in jih prilagodite svoji ponudbi, preden stran pokažete strankam.', 'info'),
+    note('Besedila, program, paketi in vprašanja so vzorčni, fotografije pa brezplačne iz zbirk Pexels in Unsplash. Preglejte in prilagodite jih svoji ponudbi, preden stran pokažete strankam.', 'info'),
     card(
       'Vaša stran',
       null,
@@ -163,6 +157,49 @@ function overview(app) {
 }
 
 // --- languages -------------------------------------------------------------------------
+
+/** A round flag (static SVG strings from flags.mjs, clipped to a circle in admin.css). */
+function flagIcon(code) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 512 512');
+  svg.setAttribute('class', 'flag-icon');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = FLAGS[code].svg;
+  return svg;
+}
+
+/** Which flags stand next to the third language: one to three, in a fixed order. */
+function flagPicker(app) {
+  const path = 'languages.sh.flags';
+  const current = app.get(path) ?? [];
+  const choice = (code) =>
+    h(
+      'label',
+      { class: 'flag-choice' },
+      h('input', {
+        type: 'checkbox',
+        checked: current.includes(code),
+        onchange: (event) => {
+          const next = event.target.checked ? [...current, code] : current.filter((c) => c !== code);
+          if (!next.length || next.length > 3) {
+            event.target.checked = !event.target.checked;
+            return;
+          }
+          app.set(path, SH_FLAG_CHOICES.filter((c) => next.includes(c)));
+          app.rerender();
+        },
+      }),
+      flagIcon(code),
+      h('span', {}, FLAGS[code].label)
+    );
+  return h(
+    'div',
+    { class: 'field', dataset: { path } },
+    h('span', { class: 'field-label' }, 'Zastavice v izbirniku jezika'),
+    h('div', { class: 'flag-choices' }, SH_FLAG_CHOICES.map(choice)),
+    h('p', { class: 'field-help' }, 'Ena do tri. Več zastavic se prikaže ena čez drugo. Slovenščina ima slovensko, angleščina britansko zastavico.')
+  );
+}
 
 /** Human name of a settings path, for the list of missing translations. */
 function placeOf(app, path) {
@@ -226,6 +263,7 @@ function languages(app) {
         text(app, `languages.${id}.label`, { label: 'Ime jezika (v izbirniku)', maxlength: 30 }),
         text(app, `languages.${id}.short`, { label: 'Kratica na gumbu', maxlength: 6, help: id === 'sh' ? 'Npr. SH, BHS ali HR/SR.' : null })
       ),
+      id === 'sh' ? flagPicker(app) : null,
       h('p', { class: 'field-help' }, `Naslov: ${app.siteRoot}${pagePath('home', id)}`)
     );
 
@@ -240,35 +278,62 @@ function languages(app) {
 // --- hero --------------------------------------------------------------------------------
 
 function hero(app) {
-  const layout = app.get('hero.layout');
+  const photos = app.get('hero.photos') ?? [];
   return [
-    head('Vrh strani', 'Prvo, kar obiskovalec vidi: velik naslov, kratek opis, gumba in slika. Namig: klik na besedilo v predogledu odpre njegovo polje.'),
+    head('Vabilo na vrhu strani', 'Prvo, kar obiskovalec vidi: vabilo z naslovom, opisom, podrobnostmi in gumboma, ob njem dve fotografiji. Namig: klik na besedilo v predogledu odpre njegovo polje.'),
     card(
-      'Postavitev',
+      'Besedilo vabila',
       null,
-      segmented(app, 'hero.layout', { label: 'Razporeditev', options: HERO_LAYOUTS }),
-      layout === 'cover' ? note('Za to postavitev naložite sliko spodaj. Besedilo je belo na zatemnjeni sliki.', 'info') : select(app, 'theme.decoration', { label: 'Okraski v ozadju', options: DECORATIONS })
-    ),
-    card(
-      'Besedilo',
-      null,
-      tx(app, 'hero.badge', { label: 'Napis nad naslovom (neobvezno)', maxlength: 80, placeholder: 'npr. Animacija za otroke od 3 do 12 let' }),
-      tx(app, 'hero.title', { label: 'Glavni naslov', maxlength: 140, counter: 60 }),
+      tx(app, 'hero.badge', { label: 'Napis nad naslovom', maxlength: 60, placeholder: 'npr. Vabilo', help: 'Bere se skupaj z naslovom: »Vabilo na najlepšo zabavo leta«.' }),
+      tx(app, 'hero.title', { label: 'Glavni naslov', maxlength: 140, counter: 60, help: 'Besedo med zvezdicama, npr. *leta*, izpišemo poševno v glavni barvi.' }),
       tx(app, 'hero.text', { label: 'Opis pod naslovom', multiline: true, rows: 3, maxlength: 500, help: MARKDOWN_HELP })
     ),
-    card('Gumba', 'Prvi gumb je poudarjen, drugi je bel. Gumb brez besedila se ne prikaže.', buttonFields(app, 'hero.primary', { title: 'Glavni gumb', allowNone: true }), buttonFields(app, 'hero.secondary', { title: 'Drugi gumb', allowNone: true })),
     card(
-      'Slika',
-      'Brez slike je prikazana ilustracija balonov v barvah strani.',
-      image(app, 'hero.image', { label: 'Fotografija', help: 'Vsaj 1200 px široka. Objavite le fotografije otrok, za katere imate soglasje staršev.', upload: { maxWidth: layout === 'cover' ? 2400 : 1600, maxHeight: 1600, name: 'naslovna' } }),
-      app.get('hero.image') ? tx(app, 'hero.imageAlt', { label: 'Opis slike (za slabovidne in iskalnike)', maxlength: 200, placeholder: 'npr. Otroci se igrajo s padalom na rojstnodnevni zabavi' }) : null,
-      layout === 'cover'
-        ? range(app, 'hero.overlay', { label: 'Zatemnitev slike', min: 0, max: 90, unit: ' %', help: 'Več zatemnitve = bolj berljivo besedilo.' })
-        : app.get('hero.image')
-          ? segmented(app, 'hero.imageShape', { label: 'Oblika slike', options: PHOTO_SHAPES })
-          : null
+      'Podrobnosti na vabilu',
+      'Kratke vrstice kot na pravem vabilu: za koga, kje, kaj … Na telefonu so ena pod drugo.',
+      repeater(app, 'hero.details', {
+        max: LIMITS.details,
+        addLabel: 'Dodaj vrstico',
+        empty: 'Ni podrobnosti.',
+        itemTitle: (x) => `${name(app, x.term, '…')}: ${name(app, x.value)}`,
+        newItem: () => ({ term: t3('', '', ''), value: t3('', '', '') }),
+        fields: (p) => [h('div', { class: 'grid-2' }, tx(app, `${p}.term`, { label: 'Kaj', maxlength: 30, placeholder: 'npr. Kje' }), tx(app, `${p}.value`, { label: 'Besedilo', maxlength: 80, placeholder: 'npr. Doma ali v najetem prostoru' }))],
+      }),
+      toggle(app, 'hero.showDate', { label: 'Vrstica »Kdaj« z izbiro datuma', help: 'Izbrani datum se prenese v obrazec. Prikaže se, ko obrazec deluje; na telefonu je skrita.' })
+    ),
+    card('Gumba', 'Prvi gumb je poudarjen, drugi obrobljen. Gumb brez besedila se ne prikaže.', buttonFields(app, 'hero.primary', { title: 'Glavni gumb', allowNone: true }), buttonFields(app, 'hero.secondary', { title: 'Drugi gumb', allowNone: true })),
+    card(
+      'Fotografiji ob vabilu',
+      'Dve fotografiji kot polaroidki, s pripisom v ročni pisavi. Brez fotografije je prikazana ilustracija.',
+      photos.some((x) => isSample(x.src)) ? note('Vzorčni fotografiji iz zbirk Pexels in Unsplash. Zamenjajte ju s svojima, za kateri imate soglasje staršev.', 'warn') : null,
+      repeater(app, 'hero.photos', {
+        max: LIMITS.heroPhotos,
+        addLabel: 'Dodaj fotografijo',
+        empty: 'Ni fotografij. Vabilo je na sredini, brez polaroidk.',
+        itemTitle: (x, i) => `${i === 0 ? 'Leva' : 'Desna'}: ${name(app, x.caption, 'brez pripisa')}${isSample(x.src) ? ' · vzorčna' : ''}`,
+        onOpen: () => app.previewAnchor('hero'),
+        newItem: () => ({ src: '', alt: t3('', '', ''), caption: t3('', '', '') }),
+        fields: (p) => [
+          image(app, `${p}.src`, { label: 'Fotografija', help: 'Pokončna je najboljša (4 : 5). Objavite le fotografije otrok, za katere imate soglasje staršev.', upload: { maxWidth: 900, maxHeight: 1200, name: 'vabilo' } }),
+          tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi', maxlength: 40, placeholder: 'npr. Rojstni dan!' }),
+          tx(app, `${p}.alt`, { label: 'Opis slike (za slabovidne in iskalnike)', maxlength: 200, placeholder: 'npr. Otroci plešejo v krogu' }),
+        ],
+      })
     ),
   ];
+}
+
+/** A list of stamps (short lines with an icon), used by the sports classes and "About me". */
+function stampList(app, path, { max, empty, placeholder, onOpen }) {
+  return repeater(app, path, {
+    max,
+    addLabel: 'Dodaj značko',
+    empty,
+    itemTitle: (x) => name(app, x.text, 'Nova značka'),
+    onOpen,
+    newItem: () => ({ icon: 'check', text: t3('', '', '') }),
+    fields: (p) => [tx(app, `${p}.text`, { label: 'Besedilo', maxlength: 60, placeholder }), iconPicker(app, `${p}.icon`)],
+  });
 }
 
 // --- sections, header, announcement ---------------------------------------------------------
@@ -310,14 +375,37 @@ function sections(app) {
 
 // --- content sections ------------------------------------------------------------------------
 
+function program(app) {
+  return [
+    head('Program zabave', 'Potek zabave kot jedilnik: ura, kaj se dogaja in kratek opis. Na velikem zaslonu se do ure nariše pikčasta črta.'),
+    sectionHead(app, 'steps'),
+    card(
+      'Točke programa',
+      'Ure so okvirne, od začetka zabave (0:00, 0:15 …). Brez ure je vrstica brez nje.',
+      repeater(app, 'steps.items', {
+        max: LIMITS.steps,
+        addLabel: 'Dodaj točko',
+        itemTitle: (s) => `${s.time ? `${s.time} · ` : ''}${name(app, s.title, 'Nova točka')}`,
+        onOpen: () => app.previewAnchor('steps'),
+        newItem: () => ({ icon: 'star', time: '', title: t3('Nova točka', '', ''), text: t3('', '', '') }),
+        fields: (p) => [
+          h('div', { class: 'grid-2' }, tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }), text(app, `${p}.time`, { label: 'Ura', maxlength: 12, placeholder: '0:15' })),
+          tx(app, `${p}.text`, { label: 'Kratek opis', maxlength: 300 }),
+          iconPicker(app, `${p}.icon`),
+        ],
+      })
+    ),
+  ];
+}
+
 function services(app) {
   return [
-    head('Ponudba', 'Vaše storitve kot kartice z ikono ali sliko, in kratek opis, kako poteka rezervacija.'),
+    head('Ponudba (dodatno)', 'Dodaten razdelek s karticami storitev, npr. poslikava obraza ali delavnice. Privzeto je izklopljen, ker ima stran za glavne storitve svoje razdelke.'),
     sectionHead(app, 'services'),
     card(
       'Storitve',
       'Odprite storitev za urejanje. Če dodate sliko, ta zamenja ikono.',
-      toggle(app, 'services.showInquiry', { label: 'Pod vsako storitvijo povezava »Povprašaj«', help: 'Odpre obrazec in v njem že izbere to storitev.' }),
+      toggle(app, 'services.showInquiry', { label: 'Pod vsako storitvijo povezava »Povprašajte«', help: 'Odpre obrazec za povpraševanje.' }),
       repeater(app, 'services.items', {
         max: LIMITS.services,
         addLabel: 'Dodaj storitev',
@@ -333,104 +421,100 @@ function services(app) {
         ],
       })
     ),
-    sectionHead(app, 'steps', { title: 'Razdelek »Kako poteka«', intro: true }),
-    card(
-      'Koraki',
-      'Trije ali štirje kratki koraki od povpraševanja do zabave. Številke se dodajo same.',
-      repeater(app, 'steps.items', {
-        max: LIMITS.steps,
-        addLabel: 'Dodaj korak',
-        itemTitle: (s, i) => `${i + 1}. ${name(app, s.title)}`,
-        onOpen: () => app.previewAnchor('steps'),
-        newItem: () => ({ icon: 'star', title: t3('Nov korak', '', ''), text: t3('', '', '') }),
-        fields: (p) => [tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }), tx(app, `${p}.text`, { label: 'Opis', multiline: true, rows: 2, maxlength: 300 }), iconPicker(app, `${p}.icon`)],
-      })
-    ),
   ];
 }
 
 function packages(app) {
   return [
-    head('Paketi in cene', 'Paketi s ceno, trajanjem in seznamom, kaj vključujejo. Gumb pod paketom odpre obrazec z že izbranim paketom.'),
+    head('Paketi', 'Paketi kot kartice za mizo: ime, za koga in koliko časa, cena in kaj vključujejo. Gumb odpre obrazec z že izbranim paketom.'),
     sectionHead(app, 'packages'),
     card(
       'Paketi',
-      'Brez vpisane cene je prikazano »Cena po dogovoru«. Priporočljivo so trije paketi, srednji poudarjen.',
+      'Brez vpisane cene piše »Cena po dogovoru«. Poudarjen paket ima polni gumb. Najlepše sta dva paketa, lahko pa jih je do štiri.',
       repeater(app, 'packages.items', {
         max: LIMITS.packages,
         addLabel: 'Dodaj paket',
         itemTitle: (p) => `${name(app, p.name, 'Nov paket')}${p.price?.sl ? ` · ${p.price.sl}` : ''}${p.highlight ? ' ★' : ''}`,
         onOpen: () => app.previewAnchor('packages'),
-        newItem: () => ({ name: t3('Nov paket', '', ''), price: t3('', '', ''), duration: t3('', '', ''), features: t3('', '', ''), highlight: false, badge: t3('', '', '') }),
+        newItem: () => ({ name: t3('Nov paket', '', ''), price: t3('', '', ''), duration: t3('', '', ''), features: t3('', '', ''), highlight: false, badge: t3('', '', ''), button: t3('', '', '') }),
         fields: (p) => [
           tx(app, `${p}.name`, { label: 'Ime paketa', maxlength: 60 }),
-          h('div', { class: 'grid-2' }, tx(app, `${p}.price`, { label: 'Cena', maxlength: 40, placeholder: 'npr. od 150 €' }), tx(app, `${p}.duration`, { label: 'Trajanje', maxlength: 40, placeholder: 'npr. 2 uri' })),
+          h('div', { class: 'grid-2' }, tx(app, `${p}.duration`, { label: 'Za koga in koliko časa', maxlength: 60, placeholder: 'npr. do 10 otrok · 1,5 ure' }), tx(app, `${p}.price`, { label: 'Cena', maxlength: 40, placeholder: 'npr. od 150 €', help: '»od« na začetku je izpisan manjše.' })),
           tx(app, `${p}.features`, { label: 'Kaj vključuje', multiline: true, rows: 5, maxlength: 800, help: 'Vsaka vrstica je ena točka s kljukico.' }),
+          tx(app, `${p}.button`, { label: 'Besedilo gumba (neobvezno)', maxlength: 40, placeholder: 'npr. Izberite mali paket', help: 'Prazno = skupno besedilo spodaj.' }),
           toggle(app, `${p}.highlight`, { label: 'Poudari ta paket', rerender: true }),
-          app.get(`${p}.highlight`) ? tx(app, `${p}.badge`, { label: 'Napis na poudarjenem paketu', maxlength: 40, placeholder: 'npr. Najbolj priljubljeno' }) : null,
+          app.get(`${p}.highlight`) ? tx(app, `${p}.badge`, { label: 'Trak na poudarjenem paketu (neobvezno)', maxlength: 40, placeholder: 'npr. Najbolj priljubljen' }) : null,
         ],
       }),
-      tx(app, 'packages.buttonLabel', { label: 'Besedilo gumba pod paketi', maxlength: 40 }),
-      tx(app, 'packages.note', { label: 'Opomba pod paketi (neobvezno)', multiline: true, rows: 2, maxlength: 500, placeholder: 'npr. Za kraje, oddaljene več kot 30 km, dodamo potne stroške.', help: MARKDOWN_HELP })
+      tx(app, 'packages.buttonLabel', { label: 'Skupno besedilo gumbov', maxlength: 40 }),
+      tx(app, 'packages.note', { label: 'Značke pod paketi (neobvezno)', multiline: true, rows: 3, maxlength: 500, placeholder: '**Vi pripravite:** prostor, torto in pijačo', help: 'Vsaka vrstica je ena značka. **Krepko** za poudarek.' })
     ),
   ];
 }
 
 function schedule(app) {
+  const items = app.get('schedule.items') ?? [];
   return [
-    head('Urnik', 'Redne dejavnosti, kot so športne urice: dan, ura, kraj in starost otrok.'),
+    head('Športne urice in dogodki', 'Športne urice so vstopnica: besedilo in značke levo, termini na odtrgljivem delu desno. Pod njimi je pas »Animacija na dogodkih«.'),
     sectionHead(app, 'schedule'),
     card(
-      'Termini',
+      'Fotografija',
       null,
+      image(app, 'schedule.photo', { label: 'Fotografija ob vstopnici (neobvezno)', help: isSample(app.get('schedule.photo')) ? 'To je vzorčna fotografija. Zamenjajte jo s svojo s športnih uric.' : 'Pokončna je najboljša.', upload: { maxWidth: 1000, maxHeight: 1250, name: 'sportne-urice' } }),
+      app.get('schedule.photo') ? tx(app, 'schedule.photoAlt', { label: 'Opis slike', maxlength: 200 }) : null
+    ),
+    card('Značke', 'Kratka dejstva z ikono, npr. starost, kraj, cena ali sezona. Vpišite le, kar drži.', stampList(app, 'schedule.facts', { max: LIMITS.facts, empty: 'Ni značk.', placeholder: 'npr. 4–6 let, do 10 otrok', onOpen: () => app.previewAnchor('schedule') })),
+    card(
+      'Termini na vstopnici',
+      items.length ? 'Termini so tudi izbira v obrazcu za prijavo.' : 'Brez terminov na vstopnici piše »Po dogovoru«.',
+      h('div', { class: 'grid-2' }, tx(app, 'schedule.stubLabel', { label: 'Napis nad termini', maxlength: 30 }), tx(app, 'schedule.buttonLabel', { label: 'Gumb na vstopnici', maxlength: 30, help: 'Odpre obrazec s temo Športne urice.' })),
       repeater(app, 'schedule.items', {
         max: LIMITS.schedule,
         addLabel: 'Dodaj termin',
-        itemTitle: (s) => `${s.day === 'custom' ? s.when?.sl || '…' : DAY_OPTIONS[s.day]} ${s.time} · ${name(app, s.title)}`,
+        empty: 'Ni terminov.',
+        itemTitle: (s) => `${s.day === 'custom' ? s.when?.sl || '…' : DAY_OPTIONS[s.day]} ${s.time}${s.title?.sl ? ` · ${name(app, s.title)}` : ''}`,
         onOpen: () => app.previewAnchor('schedule'),
-        newItem: () => ({ title: t3('Nov termin', '', ''), day: 'mon', when: t3('', '', ''), time: '17:00–18:00', place: t3('', '', ''), note: t3('', '', '') }),
+        newItem: () => ({ title: t3('', '', ''), day: 'tue', when: t3('', '', ''), time: '17.00', place: t3('', '', ''), note: t3('', '', '') }),
         fields: (p) => [
-          tx(app, `${p}.title`, { label: 'Naziv', maxlength: 80, placeholder: 'npr. Športne urice, 4–6 let' }),
-          h('div', { class: 'grid-2' }, select(app, `${p}.day`, { label: 'Dan', options: DAY_OPTIONS, rerender: true }), text(app, `${p}.time`, { label: 'Ura', maxlength: 30, placeholder: '17:00–18:00' })),
+          h('div', { class: 'grid-2' }, select(app, `${p}.day`, { label: 'Dan', options: DAY_OPTIONS, rerender: true }), text(app, `${p}.time`, { label: 'Ura', maxlength: 30, placeholder: '17.00' })),
           app.get(`${p}.day`) === 'custom' ? tx(app, `${p}.when`, { label: 'Kdaj', maxlength: 60, placeholder: 'npr. Vsako drugo soboto' }) : null,
-          tx(app, `${p}.place`, { label: 'Kraj', maxlength: 120, placeholder: 'npr. Telovadnica OŠ …' }),
+          tx(app, `${p}.title`, { label: 'Skupina (neobvezno)', maxlength: 60, placeholder: 'npr. 4–6 let' }),
+          tx(app, `${p}.place`, { label: 'Kraj (neobvezno)', maxlength: 120, placeholder: 'npr. Telovadnica OŠ …' }),
           tx(app, `${p}.note`, { label: 'Opomba (neobvezno)', maxlength: 160 }),
         ],
       }),
-      tx(app, 'schedule.note', { label: 'Opomba pod urnikom (neobvezno)', multiline: true, rows: 2, maxlength: 500, help: MARKDOWN_HELP })
+      tx(app, 'schedule.note', { label: 'Opomba pod značkami (neobvezno)', multiline: true, rows: 2, maxlength: 500, placeholder: 'npr. Prva urica je poskusna.', help: MARKDOWN_HELP })
     ),
+    sectionHead(app, 'events', { title: 'Pas »Animacija na dogodkih«' }),
+    card('Gumb v pasu', null, tx(app, 'events.buttonLabel', { label: 'Besedilo gumba', maxlength: 40, help: 'Odpre obrazec s temo »Drug dogodek«.' })),
   ];
 }
 
 function about(app) {
   return [
-    head('O nas', 'Predstavitev s fotografijo in nekaj številkami, ki vzbudijo zaupanje.'),
+    head('O meni', 'Predstavitev s fotografijo, kratkim besedilom, značkami in podpisom v ročni pisavi.'),
     sectionHead(app, 'about', { intro: false }),
-    card('Besedilo', null, tx(app, 'about.text', { label: 'Predstavitev', multiline: true, rows: 9, maxlength: 4000, help: MARKDOWN_HELP })),
+    card(
+      'Besedilo',
+      null,
+      tx(app, 'about.text', { label: 'Predstavitev', multiline: true, rows: 7, maxlength: 4000, help: MARKDOWN_HELP }),
+      tx(app, 'about.signature', { label: 'Podpis v ročni pisavi', maxlength: 60, placeholder: 'npr. Se vidimo na zabavi! Ema' })
+    ),
     card(
       'Fotografija',
-      null,
-      image(app, 'about.photo', { label: 'Fotografija (neobvezno)', upload: { maxWidth: 1200, maxHeight: 1400, name: 'predstavitev' } }),
-      app.get('about.photo') ? [tx(app, 'about.photoAlt', { label: 'Opis slike', maxlength: 200 }), segmented(app, 'about.photoShape', { label: 'Oblika', options: PHOTO_SHAPES })] : null
+      'Brez fotografije je na njenem mestu začetnica imena strani.',
+      image(app, 'about.photo', { label: 'Vaša fotografija (neobvezno)', help: 'Pokončna je najboljša (4 : 5).', upload: { maxWidth: 1000, maxHeight: 1250, name: 'o-meni' } }),
+      app.get('about.photo') ? tx(app, 'about.photoAlt', { label: 'Opis slike', maxlength: 200, placeholder: 'npr. Ema z žogo v telovadnici' }) : null
     ),
-    card(
-      'Številke',
-      'Do štiri kratke poudarke pod besedilom. Vpišite le resnične podatke.',
-      repeater(app, 'about.stats', {
-        max: LIMITS.stats,
-        addLabel: 'Dodaj številko',
-        empty: 'Npr. »10+« let izkušenj, »500« zabav, »100 %« nasmejanih otrok.',
-        itemTitle: (x) => `${x.value} ${name(app, x.label)}`,
-        newItem: () => ({ value: '', label: t3('', '', '') }),
-        fields: (p) => [h('div', { class: 'grid-2' }, text(app, `${p}.value`, { label: 'Številka', maxlength: 12, placeholder: '10+' }), tx(app, `${p}.label`, { label: 'Opis', maxlength: 40, placeholder: 'let izkušenj' }))],
-      })
-    ),
+    card('Značke', 'Do šest kratkih poudarkov z ikono, npr. »8 let v vrtcu« ali »Tečaj prve pomoči«. Vpišite le resnične podatke.', stampList(app, 'about.badges', { max: LIMITS.badges, empty: 'Ni značk.', placeholder: 'npr. Tečaj prve pomoči', onOpen: () => app.previewAnchor('about') })),
   ];
 }
 
 function gallery(app) {
   const files = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', multiple: true, class: 'visually-hidden', id: 'gallery-files' });
   const status = h('span', { class: 'image-status' });
+  const images = app.get('gallery.images') ?? [];
+  const samples = images.filter((i) => isSample(i.src)).length;
   files.addEventListener('change', async () => {
     const chosen = [...(files.files ?? [])];
     files.value = '';
@@ -441,7 +525,7 @@ function gallery(app) {
     for (const file of chosen.slice(0, room)) {
       status.textContent = `Obdelujem ${++n} od ${Math.min(chosen.length, room)} …`;
       try {
-        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: t3('', '', '') });
+        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: t3('', '', ''), caption: t3('', '', '') });
       } catch (error) {
         status.textContent = error.message;
       }
@@ -450,36 +534,48 @@ function gallery(app) {
     app.rerender();
   });
   return [
-    head('Galerija', 'Fotografije z zabav. Na spletu se odprejo v velikem pogledu in po njih se lahko lista.'),
-    note('Objavite samo fotografije, za katere imate soglasje staršev. Če kdo soglasje prekliče, sliko odstranite in objavite.', 'warn'),
+    head('Utrinki (galerija)', 'Fotografije kot polaroidke na steni, s pripisom v ročni pisavi. Na spletu se odprejo v velikem pogledu.'),
+    samples
+      ? note(`${samples === 1 ? 'Ena fotografija je vzorčna' : `${samples} fotografije so vzorčne`} (brezplačne iz zbirk Pexels in Unsplash). Niso z vaših zabav, zato jih zamenjajte s svojimi, preden stran pokažete strankam.`, 'warn')
+      : note('Objavite samo fotografije, za katere imate soglasje staršev. Če kdo soglasje prekliče, sliko odstranite in objavite.', 'warn'),
     sectionHead(app, 'gallery'),
     card(
       'Slike',
-      'Slike se pred nalaganjem pomanjšajo in očistijo skritih podatkov (npr. GPS lokacije).',
-      segmented(app, 'gallery.layout', { label: 'Razporeditev', options: GALLERY_LAYOUTS }),
+      'Slike se pred nalaganjem pomanjšajo in očistijo skritih podatkov (npr. GPS lokacije). Najlepše so kvadratne.',
       h('div', { class: 'button-row' }, h('label', { class: 'btn btn-ghost', for: 'gallery-files' }, icon('upload'), 'Dodaj več slik naenkrat'), files, status),
       repeater(app, 'gallery.images', {
         max: LIMITS.gallery,
         addLabel: 'Dodaj eno sliko',
         empty: 'Galerija je prazna, zato se na spletu ne prikaže.',
-        itemTitle: (x, i) => name(app, x.alt, `Slika ${i + 1}`),
+        itemTitle: (x, i) => `${name(app, x.caption, '') || name(app, x.alt, `Slika ${i + 1}`)}${isSample(x.src) ? ' · vzorčna' : ''}`,
         onOpen: () => app.previewAnchor('gallery'),
-        newItem: () => ({ src: '', alt: t3('', '', '') }),
-        fields: (p) => [image(app, `${p}.src`, { label: 'Slika', upload: { maxWidth: 1800, maxHeight: 1800, name: 'galerija' } }), tx(app, `${p}.alt`, { label: 'Opis slike', maxlength: 200, placeholder: 'npr. Poslikava obraza: metulj' })],
-      })
+        newItem: () => ({ src: '', alt: t3('', '', ''), caption: t3('', '', '') }),
+        fields: (p) => [
+          image(app, `${p}.src`, { label: 'Slika', upload: { maxWidth: 1800, maxHeight: 1800, name: 'galerija' } }),
+          tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi (neobvezno)', maxlength: 40, placeholder: 'npr. Torta!' }),
+          tx(app, `${p}.alt`, { label: 'Opis slike', maxlength: 200, placeholder: 'npr. Poslikava obraza: metulj' }),
+        ],
+      }),
+      tx(app, 'gallery.note', { label: 'Opomba pod galerijo', maxlength: 200 })
     ),
   ];
 }
 
 function reviews(app) {
   return [
-    head('Mnenja staršev', 'Kratka mnenja zadovoljnih staršev. Razdelek se prikaže, ko dodate prvo mnenje.'),
+    head('Mnenja staršev', 'Mnenja kot zahvalne kartice. Razdelek se prikaže, ko dodate prvo mnenje.'),
     note('Objavite samo resnična mnenja, za katera imate dovoljenje avtorja. Izmišljena ali prirejena mnenja so po zakonu prepovedana.', 'warn'),
-    sectionHead(app, 'testimonials'),
+    sectionHead(app, 'testimonials', { intro: false }),
+    card(
+      'Ocena (neobvezno)',
+      'Npr. povprečna ocena na Googlu. Prikaže se pod naslovom mnenj in v obrazcu za rezervacijo.',
+      tx(app, 'testimonials.ratingNote', { label: 'Besedilo ocene', maxlength: 100, placeholder: 'npr. Ocena na Googlu 4,9 od 5 (23 mnenj)' }),
+      text(app, 'testimonials.ratingUrl', { label: 'Povezava do mnenj (neobvezno)', type: 'url', mono: true, placeholder: 'https://…', validate: httpsOnly })
+    ),
     card(
       'Mnenja',
       null,
-      toggle(app, 'testimonials.showStars', { label: 'Pokaži zvezdice' }),
+      toggle(app, 'testimonials.showStars', { label: 'Pokaži zvezdice pod mnenji' }),
       repeater(app, 'testimonials.items', {
         max: LIMITS.testimonials,
         addLabel: 'Dodaj mnenje',
@@ -500,7 +596,7 @@ function reviews(app) {
 function faq(app) {
   return [
     head('Pogosta vprašanja', 'Kratki odgovori na vprašanja, ki jih starši najpogosteje zastavijo. Prihranijo vam klice.'),
-    sectionHead(app, 'faq'),
+    sectionHead(app, 'faq', { introHelp: 'Kjer napišete {phone}, bo vaša telefonska številka kot povezava za klic. Dokler številke ni, se stavek ne prikaže.' }),
     card(
       'Vprašanja',
       null,
@@ -521,33 +617,27 @@ function faq(app) {
 function contact(app) {
   const phone = app.get('contact.phone');
   return [
-    head('Kontakt', 'Telefon, WhatsApp, Viber in e-pošta. Prikažejo se v razdelku Kontakt, v nogi strani in na gumbih.'),
+    head('Kontakt', 'Telefon, Viber, WhatsApp in e-pošta. Prikažejo se na kartici za rezervacijo, v nogi strani in na gumbih.'),
     sectionHead(app, 'contact'),
     card(
       'Kontaktni podatki',
       null,
       text(app, 'contact.phone', { label: 'Telefon', type: 'tel', maxlength: 30, placeholder: '041 123 456', validate: (v) => (isPhone(v) ? '' : 'Vpišite telefonsko številko, npr. 041 123 456 ali +386 41 123 456.'), rerender: true }),
       phone
-        ? h('div', { class: 'grid-2' }, toggle(app, 'contact.whatsapp', { label: 'Na tej številki sem dosegljiv/-a na WhatsAppu' }), toggle(app, 'contact.viber', { label: 'Na tej številki sem dosegljiv/-a na Vibru' }))
+        ? h('div', { class: 'grid-2' }, toggle(app, 'contact.whatsapp', { label: 'Na tej številki sem dosegljiva na WhatsAppu' }), toggle(app, 'contact.viber', { label: 'Na tej številki sem dosegljiva na Vibru' }))
         : null,
       text(app, 'contact.email', { label: 'E-pošta', type: 'email', maxlength: 254, placeholder: 'ime@primer.si', validate: (v) => (isEmail(v) ? '' : 'Vpišite veljaven e-poštni naslov.'), rerender: true, help: 'Javno vidna. Nanjo prihajajo tudi povpraševanja.' }),
       tx(app, 'contact.area', { label: 'Kje delujete (neobvezno)', maxlength: 160, placeholder: 'npr. Ljubljana z okolico in Gorenjska' }),
       tx(app, 'contact.hours', { label: 'Kdaj ste dosegljivi (neobvezno)', multiline: true, rows: 2, maxlength: 300, placeholder: 'npr. Pon–pet 9.00–19.00' }),
-      text(app, 'contact.address', { label: 'Naslov (neobvezno)', multiline: true, rows: 2, maxlength: 200, help: 'Le če imate prostor, kamor lahko pridejo stranke, npr. igralnico.' }),
+      text(app, 'contact.address', { label: 'Naslov (neobvezno)', multiline: true, rows: 2, maxlength: 200, help: 'Le če imate prostor, kamor lahko pridejo stranke. Prikaže se v nogi strani.' }),
       text(app, 'contact.mapUrl', { label: 'Povezava do zemljevida (neobvezno)', type: 'url', mono: true, placeholder: 'https://maps.app.goo.gl/…', validate: httpsOnly })
     ),
     card(
-      'Plavajoči gumb',
-      'Okrogel gumb v kotu zaslona, ki je vedno pri roki, npr. »Pokličite«.',
-      toggle(app, 'floating.enabled', { label: 'Pokaži plavajoči gumb', rerender: true }),
-      app.get('floating.enabled')
-        ? [
-            segmented(app, 'floating.action', { label: 'Kaj naredi', options: FLOAT_ACTIONS }),
-            tx(app, 'floating.label', { label: 'Besedilo', maxlength: 30 }),
-            h('div', { class: 'grid-2' }, segmented(app, 'floating.where', { label: 'Kje', options: FLOAT_PLACES }), segmented(app, 'floating.side', { label: 'Stran zaslona', options: SIDES })),
-            app.get('floating.action') !== 'contact' && !phone ? note('Gumb se prikaže, ko vpišete telefonsko številko.', 'warn') : null,
-          ]
-        : null
+      'Hitri gumbi na telefonu',
+      'Pas na dnu zaslona telefona s klicem, Vibrom in gumbom za rezervacijo. Pokaže se, ko obiskovalec podrsa mimo vabila.',
+      toggle(app, 'floating.enabled', { label: 'Pokaži hitre gumbe na telefonih', rerender: true }),
+      app.get('floating.enabled') ? tx(app, 'floating.label', { label: 'Besedilo glavnega gumba', maxlength: 30 }) : null,
+      app.get('floating.enabled') && !phone ? note('Gumba za klic in Viber se prikažeta, ko vpišete telefonsko številko.', 'info') : null
     ),
   ];
 }
@@ -578,22 +668,11 @@ function form(app) {
   const provider = resolveProvider(s.form, s.contact.email);
   const def = PROVIDERS[id] ?? PROVIDERS.none;
   const options = Object.fromEntries(Object.entries(PROVIDERS).map(([key, p]) => [key, p.label]));
-
-  const fieldRows = FORM_FIELDS.map((f) => {
-    const p = `form.fields.${f}`;
-    const shown = app.get(`${p}.show`);
-    return h(
-      'div',
-      { class: 'form-field-row' },
-      h('span', { class: 'form-field-name' }, FORM_FIELD_LABELS[f]),
-      f === 'name' ? h('span', { class: 'muted' }, 'vedno') : toggle(app, `${p}.show`, { label: 'Prikaži', rerender: true }),
-      shown ? toggle(app, `${p}.required`, { label: 'Obvezno' }) : h('span', {}),
-      shown ? tx(app, `${p}.label`, { label: 'Lastno ime polja (neobvezno)', maxlength: 60, placeholder: FIELD_LABELS[f][app.lang] }) : null
-    );
-  });
+  const scheduleOn = s.sections.some((x) => x.id === 'schedule' && x.enabled);
+  const topicCount = Object.keys(FORM_TOPICS).filter((k) => app.get(`form.topics.${k}`)).length;
 
   return [
-    head('Obrazec za povpraševanje', 'Obrazec v razdelku Kontakt. Starši vpišejo datum, kraj, število in starost otrok, vi pa dobite vse podatke na en mah.'),
+    head('Obrazec za povpraševanje', 'Kartica »Prosim za odgovor« na dnu strani. Starši izberejo, kaj jih zanima, in vidijo samo vprašanja za to temo.'),
     card(
       'Kam pridejo povpraševanja',
       null,
@@ -610,17 +689,26 @@ function form(app) {
       ),
       id === 'custom' ? segmented(app, 'form.custom.mode', { label: 'Kaj se zgodi po pošiljanju', options: PROVIDERS.custom.modes }) : null,
       id === 'none'
-        ? note('Obrazec je izklopljen. V razdelku Kontakt so samo telefon, WhatsApp, Viber in e-pošta.', 'info')
+        ? note('Obrazec je izklopljen. Na kartici za rezervacijo so samo telefon, Viber, WhatsApp in e-pošta.', 'info')
         : provider.ready
           ? note(`Pripravljeno. ${id === 'mailto' ? 'Obrazec odpre e-poštni program obiskovalca.' : `Povpraševanja pošilja ${provider.name}.`} Objavite in pošljite poskusno povpraševanje.`, 'ok')
-          : note(`Še manjka: ${provider.missing.join(', ')}. Do takrat obrazec namesto polj pokaže obvestilo.`, 'warn'),
+          : note(`Še manjka: ${provider.missing.join(', ')}. Do takrat je namesto obrazca obvestilo.`, 'warn'),
       PROVIDER_GUIDES[id] ? h('details', { class: 'guide', open: !provider.ready }, h('summary', {}, 'Navodila'), steps(PROVIDER_GUIDES[id](app))) : null
     ),
     card(
-      'Polja obrazca',
-      'Ime je vedno prikazano. Sprašujte le, kar res potrebujete; za otroke samo število in starost, nikoli imen.',
-      h('div', { class: 'form-fields' }, fieldRows),
-      toggle(app, 'form.requireContact', { label: 'Zahtevaj e-pošto ali telefon (vsaj enega)', help: 'Da lahko odgovorite. Priporočeno.' })
+      'Vprašanja v obrazcu',
+      'Ime ter telefon ali e-pošta so vedno obvezni. Za otroke obrazec sprašuje le starost in število, nikoli imen.',
+      h('h4', { class: 'subhead' }, 'Teme (Kaj vas zanima?)'),
+      ...Object.entries(FORM_TOPICS).map(([key, label]) =>
+        toggle(app, `form.topics.${key}`, {
+          label,
+          rerender: true,
+          help: key === 'sport' && !scheduleOn ? 'Prikaže se, ko vklopite razdelek Športne urice.' : key === 'party' ? 'Datum, starost slavljenca, število otrok in paket.' : key === 'event' ? 'Vrsta dogodka, datum, število otrok in kraj.' : 'Starost otroka, termin in želja po poskusni urici.',
+        })
+      ),
+      topicCount === 1 ? note('Z eno samo temo izbira teme odpade in obrazec takoj pokaže njena vprašanja.', 'info') : null,
+      h('h4', { class: 'subhead' }, 'Neobvezna vprašanja'),
+      ...Object.entries(FORM_ASK).map(([key, label]) => toggle(app, `form.ask.${key}`, { label }))
     ),
     card(
       'Besedila obrazca',
@@ -704,7 +792,7 @@ function appearance(app) {
       h(
         'span',
         { class: 'preset-swatches' },
-        ['bg', 'accent', 'accent2', 'accent3', 'text'].map((k) => {
+        ['bg', 'accent', 'coral', 'gold', 'sage', 'sky', 'text'].map((k) => {
           const swatch = h('span', { class: 'preset-swatch' });
           swatch.style.background = preset.colors[k];
           return swatch;
@@ -725,15 +813,15 @@ function appearance(app) {
   };
   updateReport();
 
-  const colorFields = COLOR_KEYS.map(([key, label]) =>
+  const colorField = ([key, label]) =>
     color(app, `theme.colors.${key}`, {
       label,
       onChange: () => {
         app.set('theme.preset', 'custom');
         updateReport();
       },
-    })
-  );
+    });
+  const rainbowKeys = new Set(RAINBOW);
 
   const fontOptions = Object.fromEntries(Object.entries(FONTS).map(([id, f]) => [id, f.label]));
   const fontSample = (path) => {
@@ -746,36 +834,42 @@ function appearance(app) {
   const bodySample = fontSample('theme.bodyFont');
 
   return [
-    head('Barve in oblika', 'Izberite izhodišče, nato po želji prilagodite barve, pisave, gumbe in okraske.'),
-    card('Pripravljene kombinacije', 'Kombinacija zamenja barve, pisave, gumbe, kartice in okraske.', h('div', { class: 'presets' }, presetCards)),
-    card('Barve', null, h('div', { class: 'grid-2' }, colorFields), h('h4', { class: 'subhead' }, 'Berljivost (WCAG AA)'), report),
+    head('Barve in oblika', 'Stran je oblikovana kot vabilo. Izberite barvno različico, nato po želji prilagodite barve in pisave.'),
+    card('Barvne različice', 'Različica zamenja barve in pisave; postavitev ostane enaka.', h('div', { class: 'presets' }, presetCards)),
+    card(
+      'Barve',
+      'Iz teh barv se samodejno izračunajo svetlejši odtenki (ozadja kartic) in temnejši (besedilo v barvi), da ostane vse berljivo.',
+      h('div', { class: 'grid-2' }, COLOR_KEYS.filter(([k]) => !rainbowKeys.has(k)).map(colorField)),
+      h('h4', { class: 'subhead' }, 'Mavrica (logotip, zastavice, konfeti, kartice)'),
+      h('div', { class: 'grid-2' }, COLOR_KEYS.filter(([k]) => rainbowKeys.has(k)).map(colorField)),
+      h('h4', { class: 'subhead' }, 'Berljivost (WCAG AA)'),
+      report
+    ),
     card(
       'Pisave',
-      'Vse pisave so naložene s te strani in imajo vse šumnike (č, š, ž, ć, đ).',
+      'Vse pisave so naložene s te strani in imajo vse šumnike (č, š, ž, ć, đ). Pripisi pod fotografijami in podpis so vedno v ročni pisavi Caveat.',
       h(
         'div',
         { class: 'grid-2' },
         h('div', {}, select(app, 'theme.headingFont', { label: 'Naslovi', options: fontOptions, onChange: () => headingSample.update() }), headingSample),
         h('div', {}, select(app, 'theme.bodyFont', { label: 'Besedilo', options: fontOptions, onChange: () => bodySample.update() }), bodySample)
       ),
-      h('div', { class: 'grid-2' }, range(app, 'theme.baseSize', { label: 'Velikost besedila', min: 15, max: 22, unit: ' px' }), range(app, 'theme.radius', { label: 'Zaobljenost vogalov', min: 0, max: 40, unit: ' px' })),
+      range(app, 'theme.baseSize', { label: 'Velikost besedila', min: 15, max: 21, unit: ' px' }),
       h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => app.goto('text') }, icon('type'), 'Pisave po posameznih delih strani')
     ),
-    card('Gumbi in kartice', null, segmented(app, 'theme.buttonStyle', { label: 'Gumbi', options: BUTTON_STYLES }), segmented(app, 'theme.cardStyle', { label: 'Kartice (storitve, paketi …)', options: CARD_STYLES })),
     card(
-      'Ozadje in okraski',
+      'Okraski in gibanje',
       null,
-      toggle(app, 'theme.alternate', { label: 'Razdelki izmenično v dveh barvah ozadja', rerender: true }),
-      segmented(app, 'theme.divider', { label: 'Meja med razdelki', options: DIVIDERS, help: theme.alternate ? null : 'Meja je vidna, ko so razdelki izmenično obarvani.' }),
-      segmented(app, 'theme.pattern', { label: 'Vzorec v ozadju', options: PATTERNS }),
-      theme.pattern !== 'none' ? range(app, 'theme.patternStrength', { label: 'Moč vzorca', min: 5, max: 100, unit: ' %' }) : null,
-      select(app, 'theme.decoration', { label: 'Okraski na vrhu strani', options: DECORATIONS }),
-      toggle(app, 'theme.animations', { label: 'Animacije (plavajoči baloni, poskakujoče ikone)', help: 'Obiskovalcem, ki imajo v sistemu vklopljeno zmanjšano gibanje, so vedno izklopljene.' })
+      ...Object.entries(DECOR_TOGGLES).map(([key, label]) => toggle(app, `theme.${key}`, { label })),
+      toggle(app, 'theme.animations', {
+        label: 'Animacije (zastavice, vabilo, kartice, konfeti po pošiljanju)',
+        help: 'Obiskovalcem, ki imajo v sistemu vklopljeno zmanjšano gibanje, so vedno izklopljene. V predogledu so izklopljene, da ne motijo med urejanjem; poglejte jih na spletni strani.',
+      })
     ),
     card(
       'Ikona v zavihku brskalnika',
       null,
-      image(app, 'theme.favicon', { label: 'Ikona (neobvezno)', help: 'Kvadratna slika, vsaj 180 × 180 px. Brez nje je prikazan balon v glavni barvi.', upload: { maxWidth: 256, maxHeight: 256, format: 'image/png', name: 'ikona' } })
+      image(app, 'theme.favicon', { label: 'Ikona (neobvezno)', help: 'Kvadratna slika, vsaj 180 × 180 px. Brez nje je prikazana mavrica v barvah strani.', upload: { maxWidth: 256, maxHeight: 256, format: 'image/png', name: 'ikona' } })
     ),
   ];
 }
@@ -1008,17 +1102,18 @@ function access(app) {
 
 export const PANELS = [
   { id: 'overview', label: 'Pregled', icon: 'overview', render: overview, page: 'home' },
-  { id: 'hero', label: 'Vrh strani', icon: 'hero', render: hero, group: 'Vsebina', page: 'home' },
+  { id: 'hero', label: 'Vabilo (vrh strani)', icon: 'hero', render: hero, group: 'Vsebina', page: 'home' },
   { id: 'sections', label: 'Razdelki in meni', icon: 'sections', render: sections, group: 'Vsebina', page: 'home' },
-  { id: 'services', label: 'Ponudba', icon: 'services', render: services, group: 'Vsebina', page: 'home', anchor: 'services' },
-  { id: 'packages', label: 'Paketi in cene', icon: 'packages', render: packages, group: 'Vsebina', page: 'home', anchor: 'packages' },
-  { id: 'schedule', label: 'Urnik', icon: 'schedule', render: schedule, group: 'Vsebina', page: 'home', anchor: 'schedule' },
-  { id: 'about', label: 'O nas', icon: 'about', render: about, group: 'Vsebina', page: 'home', anchor: 'about' },
-  { id: 'gallery', label: 'Galerija', icon: 'gallery', render: gallery, group: 'Vsebina', page: 'home', anchor: 'gallery' },
+  { id: 'program', label: 'Program zabave', icon: 'program', render: program, group: 'Vsebina', page: 'home', anchor: 'steps' },
+  { id: 'packages', label: 'Paketi', icon: 'packages', render: packages, group: 'Vsebina', page: 'home', anchor: 'packages' },
+  { id: 'schedule', label: 'Športne urice in dogodki', icon: 'schedule', render: schedule, group: 'Vsebina', page: 'home', anchor: 'schedule' },
+  { id: 'about', label: 'O meni', icon: 'about', render: about, group: 'Vsebina', page: 'home', anchor: 'about' },
+  { id: 'gallery', label: 'Utrinki (galerija)', icon: 'gallery', render: gallery, group: 'Vsebina', page: 'home', anchor: 'gallery' },
   { id: 'reviews', label: 'Mnenja staršev', icon: 'reviews', render: reviews, group: 'Vsebina', page: 'home', anchor: 'testimonials' },
   { id: 'faq', label: 'Vprašanja', icon: 'faq', render: faq, group: 'Vsebina', page: 'home', anchor: 'faq' },
   { id: 'contact', label: 'Kontakt', icon: 'contact', render: contact, group: 'Vsebina', page: 'home', anchor: 'contact' },
   { id: 'form', label: 'Obrazec', icon: 'form', render: form, group: 'Vsebina', page: 'home', anchor: 'contact' },
+  { id: 'services', label: 'Ponudba (dodatno)', icon: 'services', render: services, group: 'Vsebina', page: 'home', anchor: 'services' },
   { id: 'appearance', label: 'Barve in oblika', icon: 'appearance', render: appearance, group: 'Videz', page: 'home' },
   { id: 'text', label: 'Pisave po delih', icon: 'type', render: textStyles, group: 'Videz', page: 'home' },
   { id: 'languages', label: 'Jeziki in prevodi', icon: 'languages', render: languages, group: 'Nastavitve', page: 'home' },
@@ -1032,13 +1127,13 @@ export const PANELS = [
 // Which panel holds the field for a settings path (first matching prefix wins).
 const PATH_PANELS = [
   ['hero.', 'hero'],
-  ['theme.decoration', 'hero'],
   ['announcement.', 'sections'],
   ['header.', 'sections'],
+  ['steps.', 'program'],
   ['services.', 'services'],
-  ['steps.', 'services'],
   ['packages.', 'packages'],
   ['schedule.', 'schedule'],
+  ['events.', 'schedule'],
   ['about.', 'about'],
   ['gallery.', 'gallery'],
   ['testimonials.', 'reviews'],
@@ -1059,7 +1154,7 @@ const PATH_PANELS = [
   ['theme.', 'appearance'],
 ];
 
-const SECTION_PANELS = { services: 'services', steps: 'services', packages: 'packages', schedule: 'schedule', about: 'about', gallery: 'gallery', testimonials: 'reviews', faq: 'faq', contact: 'contact' };
+const SECTION_PANELS = { steps: 'program', packages: 'packages', schedule: 'schedule', events: 'schedule', about: 'about', gallery: 'gallery', testimonials: 'reviews', faq: 'faq', contact: 'contact', services: 'services' };
 
 /** Panel id for a settings path. Section headings open the panel of their section. */
 export function panelForPath(path, settings) {

@@ -13,7 +13,7 @@ shrani vsako spremembo kot commit v ta repozitorij, GitHub Actions pa stran zgra
 
 | Pot (SL / EN / SH)                          | Kaj                                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `/` · `/en/` · `/sh/`                       | domača stran: vrh, ponudba, kako poteka, paketi, urnik, o nas, galerija, mnenja, vprašanja, kontakt z obrazcem |
+| `/` · `/en/` · `/sh/`                       | domača stran: vabilo (vrh), program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
 | `/zasebnost/` · `/en/privacy/` · `/sh/privatnost/` | politika zasebnosti, sestavljena iz nastavitev                                  |
 | `/pogoji/` · `/en/terms/` · `/sh/uvjeti/`   | pogoji poslovanja (neobvezno, privzeto izklopljeno)                                    |
 | `/hvala/` · `/en/thank-you/` · `/sh/hvala/` | zahvala po povpraševanju (za storitve, ki preusmerijo)                                 |
@@ -23,12 +23,47 @@ shrani vsako spremembo kot commit v ta repozitorij, GitHub Actions pa stran zgra
 Razdelke domače strani lahko vklopite, izklopite in premikate. Prazni razdelki (galerija brez slik, mnenja brez
 mnenj) se na spletu ne prikažejo.
 
+## Oblikovanje »Vabilo«
+
+Stran je oblikovana kot komplet vabil (izbrani osnutek »Vabilo«): vrh je vabilo z zastavicami in dvema
+polaroidkama, program je jedilni list s pikčastimi črtami do ure, paketi so kartice za mizo, športne urice
+vstopnica z odtrgljivim delom, mnenja zahvalne kartice, obrazec pa kartica »Prosim za odgovor« v kuverti.
+Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko razdelke poljubno premikate.
+
+- **Pisave:** DM Serif Display (naslovi, tudi ležeča), Nunito Sans (besedilo), Caveat (pripisi in podpis).
+  Vse so na tej strani, z vsemi šumniki. Naslovno in besedilno pisavo lahko zamenjate v urejevalniku.
+- **Barve:** osem barv strani in pet barv mavrice; svetlejši odtenki (ozadja kartic), temnejši (besedilo v barvi)
+  in obrobe polj se izračunajo sami, tako da ostanejo berljivi (WCAG AA). Šest barvnih različic, ena temna.
+- **Zastavice ob jezikih:** okrogle zastavice (circle-flags, licenca MIT) v izbirniku jezika, meniju na telefonu
+  in nogi. Za srbohrvaščino lastnica izbere eno do tri (privzeto hrvaška in srbska, ena čez drugo).
+- **Animacije:** zastavice padejo in zanihajo, vabilo se poravna, mavrica se nariše, besede naslova se dvignejo,
+  razdelki se ob pomikanju pokažejo (značke se »odtisnejo«, polaroidke se pripnejo, zahvalne kartice pridrsajo),
+  paketi se nagnejo proti miški, polaroidke na vrhu se ob pomikanju premikajo (kjer brskalnik to podpira),
+  po pošiljanju obrazca poletijo konfeti. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
+  obiskovalec v sistemu vklopljeno zmanjšano gibanje ali če lastnica animacije izklopi; v predogledu urejevalnika
+  so izklopljene, da ne motijo med tipkanjem.
+- **Brez JavaScripta** stran deluje enako: meni na telefonu se odpre s `:target`, jeziki in vprašanja so
+  `<details>`, teme obrazca se preklapljajo s CSS `:has()`.
+
+Izvirni osnutek je v mapi `designs/` (ni v repozitoriju).
+
+## Vzorčne fotografije
+
+Da je stran videti dokončana, ima devet brezplačnih fotografij iz zbirk Pexels in Unsplash (licenci dovoljujeta
+komercialno rabo brez navedbe avtorja), naloženih v letih 2020–2021, torej pred fotorealističnimi slikami z umetno
+inteligenco. Izbrane so tako, da otroci in prostori spominjajo na Slovenijo, brez logotipov, napisov in odraslih
+obrazov. Avtorji in povezave so v `public/assets/img/sample/CREDITS.txt`.
+
+To niso fotografije z Eminih zabav. Pregled v urejevalniku zato opozarja, dokler jih ne zamenjate s svojimi
+(na vrhu, pri športnih uricah, v galeriji in slika za deljenje), naslov galerije pa ne trdi, da so z zabav.
+V razdelku *O meni* je do nalaganja prave fotografije začetnica imena, ne fotografija tuje osebe.
+
 ## Urejevalnik
 
 V slogu urejevalnikov Elarion in Urban & Monika: meni na levi, nastavitve na sredini, predogled v živo na desni
 (na telefonu gumb *Predogled*). Svetla tema je topla, papirnata (Urban & Monika), temna je Elarionova.
 
-- Vse besedilo, slike, cene, urnik, vprašanja, kontakt, obrazec, barve, pisave, oblika gumbov in kartic, okraski.
+- Vse besedilo, slike, cene, termini, vprašanja, kontakt, obrazec, barve, pisave, zastavice jezikov in okraski.
 - **Jezik urejanja** (SL / EN / SH) zgoraj: polja pokažejo izbrani jezik, pod vsakim je slovenski izvirnik.
   Številka pri jeziku pove, koliko besedil še ni prevedenih; seznam je pod *Jeziki in prevodi*. Neprevedeno
   besedilo se na tisti jezikovni različici pokaže v slovenščini.
@@ -68,6 +103,10 @@ Stran je statična, zato obrazec pošilja na enega od teh načinov (nastavi se v
 | Druga storitev / lasten strežnik | Poljuben naslov `https://` (npr. Web3Forms ali PHP skripta po selitvi), z enim skritim poljem za ključ. |
 | Brez obrazca                  | Samo telefon, WhatsApp, Viber in e-pošta.                                                     |
 
+Starši najprej izberejo temo (rojstni dan, športne urice ali drug dogodek) in vidijo samo vprašanja zanjo.
+Gumbi drugod na strani temo izberejo sami (»Izberite veliki paket« izbere tudi paket), datum z vabila se prenese
+v obrazec. Lastnica v urejevalniku izklopi teme ali neobvezna vprašanja (ura, prostor, kraj, način odgovora).
+
 Povpraševanja se nikoli ne shranjujejo na tej strani ali v repozitoriju. Obrazec sprašuje samo za število in
 starost otrok, nikoli za imena. Zaščita pred roboti: skrito polje, najkrajši čas izpolnjevanja, največ trije
 poskusi na minuto.
@@ -87,7 +126,8 @@ poskusi na minuto.
 | Urejevalnik | Brez baze gesel. Dostop je žeton, omejen na ta repozitorij; urejevalnik se pogovarja samo z `api.github.com`, ne deluje v okvirju (iframe) in je `noindex`. |
 | Dobavna veriga | Brez odvisnosti npm. GitHub Actions so pripeti na commit SHA, posodablja jih Dependabot. |
 
-Vzorčna vsebina ne vsebuje izmišljenih mnenj, fotografij, cen ali številk: tisto vpiše lastnica sama.
+Vzorčna vsebina ne vsebuje izmišljenih mnenj, cen, terminov, nazivov ali številk: tisto vpiše lastnica sama.
+Fotografije so vzorčne in označene za zamenjavo (glej zgoraj).
 
 ## Lokalni razvoj
 
@@ -125,16 +165,17 @@ src/                     skupno za gradnjo in predogled v urejevalniku
   render.mjs             vse strani, sitemap, robots.txt, manifest
   i18n.mjs               jeziki, naslovi strani, fiksna besedila strani
   policy.mjs             politika zasebnosti v treh jezikih
-  themes.mjs             kombinacije barv, pisave, theme.css, preverjanje kontrasta
+  themes.mjs             barvne različice, izpeljane barve, pisave, theme.css, preverjanje kontrasta
   providers.mjs          načini pošiljanja obrazca
-  icons.mjs              ikone storitev in znamk
+  icons.mjs              ikone, mavrica, ilustracije namesto manjkajočih fotografij
+  flags.mjs              okrogle zastavice za izbirnik jezika
 public/                  kopirano, kot je (CSS, skripta strani, pisave, urejevalnik)
+public/assets/css/site.css   oblikovanje »Vabilo« in animacije
+public/assets/js/site.js     obrazec, meni, animacije ob pomikanju, galerija
+public/assets/img/sample/    vzorčne fotografije in CREDITS.txt
 public/assets/uploads/   slike, naložene v urejevalniku
 scripts/                 gradnja, razvojni strežnik, preizkusi
 ```
 
-Ko pride končni grafični dizajn, se večina sprememb zgodi v `public/assets/css/site.css` (oblika),
-`src/themes.mjs` (barve, pisave, kombinacije) in po potrebi `src/render.mjs` (zgradba strani).
-
 Pisave so z licenco SIL Open Font License (glej `public/assets/fonts/LICENSES.txt`), vse imajo č, š, ž, ć in đ.
-Ikone znamk so iz Simple Icons (CC0).
+Ikone znamk so iz Simple Icons (CC0), zastavice iz circle-flags (MIT, HatScripts).

@@ -1,16 +1,18 @@
 // Languages, page addresses and the fixed texts of the public site (labels, messages, aria labels).
 // Texts the owner writes live in the settings; these are the ones that come with the site.
 // Slovenian is the main language and lives at the site root; the others under /en/ and /sh/.
+// The site speaks as Ema, in the first person singular, and addresses parents formally ("vi").
 
 import { LANGS } from './util.mjs';
 
 export { LANGS };
 
 export const LANG_INFO = {
-  sl: { name: 'Slovenščina', short: 'SL', prefix: '', locale: 'sl-SI', og: 'sl_SI', hreflang: ['sl'] },
-  en: { name: 'English', short: 'EN', prefix: 'en', locale: 'en-GB', og: 'en_GB', hreflang: ['en'] },
+  sl: { name: 'Slovenščina', short: 'SL', prefix: '', locale: 'sl-SI', og: 'sl_SI', hreflang: ['sl'], flags: ['si'] },
+  en: { name: 'English', short: 'EN', prefix: 'en', locale: 'en-GB', og: 'en_GB', hreflang: ['en'], flags: ['gb'] },
   // Serbo-Croatian, Latin script. Search engines don't know "sh", so the page is offered for hr, bs and sr too.
-  sh: { name: 'Srpskohrvatski', short: 'SH', prefix: 'sh', locale: 'hr', og: 'hr_HR', hreflang: ['hr', 'bs', 'sr-Latn'] },
+  // Its flags are chosen in the settings (languages.sh.flags).
+  sh: { name: 'Srpskohrvatski', short: 'SH', prefix: 'sh', locale: 'hr', og: 'hr_HR', hreflang: ['hr', 'bs', 'sr-Latn'], flags: [] },
 };
 
 /** Address of each page in each language (without the site's base path). */
@@ -29,15 +31,16 @@ export function pagePath(page, lang) {
 
 /** Anchor (#…) of each home page section, so shared links read naturally in every language. */
 export const ANCHORS = {
-  services: { sl: 'storitve', en: 'services', sh: 'usluge' },
-  steps: { sl: 'kako-poteka', en: 'how-it-works', sh: 'kako-funkcionira' },
+  steps: { sl: 'program', en: 'programme', sh: 'program' },
   packages: { sl: 'paketi', en: 'packages', sh: 'paketi' },
-  schedule: { sl: 'urnik', en: 'schedule', sh: 'raspored' },
-  about: { sl: 'predstavitev', en: 'about', sh: 'o-nama' },
-  gallery: { sl: 'galerija', en: 'gallery', sh: 'galerija' },
+  schedule: { sl: 'sportne-urice', en: 'sports-classes', sh: 'sportske-aktivnosti' },
+  events: { sl: 'dogodki', en: 'events', sh: 'dogadaji' },
+  about: { sl: 'o-meni', en: 'about', sh: 'o-meni' },
+  gallery: { sl: 'utrinki', en: 'gallery', sh: 'galerija' },
   testimonials: { sl: 'mnenja', en: 'reviews', sh: 'utisci' },
   faq: { sl: 'vprasanja', en: 'faq', sh: 'pitanja' },
-  contact: { sl: 'kontakt', en: 'contact', sh: 'kontakt' },
+  contact: { sl: 'rezervacija', en: 'booking', sh: 'rezervacija' },
+  services: { sl: 'ponudba', en: 'services', sh: 'ponuda' },
 };
 
 export const WEEKDAYS = {
@@ -46,24 +49,46 @@ export const WEEKDAYS = {
   sh: ['ponedjeljak', 'utorak', 'srijeda', 'četvrtak', 'petak', 'subota', 'nedjelja'],
 };
 
-// Plural forms: Slovenian has four (1, 2, 3–4, 5+), the others are simplified to what the site needs.
+/** "On Tuesdays": how a weekly class is announced. */
+export const WEEKDAYS_ON = {
+  sl: ['ob ponedeljkih', 'ob torkih', 'ob sredah', 'ob četrtkih', 'ob petkih', 'ob sobotah', 'ob nedeljah'],
+  en: ['Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays', 'Sundays'],
+  sh: ['ponedjeljkom', 'utorkom', 'srijedom', 'četvrtkom', 'petkom', 'subotom', 'nedjeljom'],
+};
+
 export const UI = {
   skip: { sl: 'Preskoči na vsebino', en: 'Skip to content', sh: 'Preskoči na sadržaj' },
+  home: { sl: 'na začetno stran', en: 'home page', sh: 'na početnu stranicu' },
   menu: { sl: 'Meni', en: 'Menu', sh: 'Meni' },
   closeMenu: { sl: 'Zapri meni', en: 'Close menu', sh: 'Zatvori meni' },
   mainNav: { sl: 'Glavni meni', en: 'Main menu', sh: 'Glavni meni' },
   language: { sl: 'Jezik', en: 'Language', sh: 'Jezik' },
+  languageNow: { sl: 'jezik: {name}', en: 'language: {name}', sh: 'jezik: {name}' },
   call: { sl: 'Pokličite', en: 'Call', sh: 'Nazovite' },
-  writeEmail: { sl: 'Pišite nam', en: 'Email us', sh: 'Pišite nam' },
+  callNumber: { sl: 'Pokličite {phone}', en: 'Call {phone}', sh: 'Nazovite {phone}' },
+  sameNumber: { sl: 'Na isto številko', en: 'Same number', sh: 'Na isti broj' },
+  writeViber: { sl: 'Pišite na Viber', en: 'Message me on Viber', sh: 'Pišite na Viber' },
+  writeWhatsapp: { sl: 'Pišite na WhatsApp', en: 'Message me on WhatsApp', sh: 'Pišite na WhatsApp' },
   phone: { sl: 'Telefon', en: 'Phone', sh: 'Telefon' },
   email: { sl: 'E-pošta', en: 'Email', sh: 'E-mail' },
   address: { sl: 'Naslov', en: 'Address', sh: 'Adresa' },
-  area: { sl: 'Kje delujemo', en: 'Where we work', sh: 'Gdje radimo' },
-  hours: { sl: 'Kdaj smo dosegljivi', en: 'When to reach us', sh: 'Kada smo dostupni' },
+  area: { sl: 'Kje delujem', en: 'Where I work', sh: 'Gdje radim' },
+  hours: { sl: 'Kdaj sem dosegljiva', en: 'When to reach me', sh: 'Kada sam dostupna' },
   map: { sl: 'Odpri zemljevid', en: 'Open the map', sh: 'Otvori kartu' },
-  inquire: { sl: 'Povprašaj', en: 'Ask about this', sh: 'Pošalji upit' },
+  contactDirect: { sl: 'Neposreden kontakt', en: 'Contact me directly', sh: 'Izravan kontakt' },
+  orForm: { sl: 'ali izpolnite obrazec', en: 'or fill in the form', sh: 'ili ispunite obrazac' },
+  quickBar: { sl: 'Hitri kontakt', en: 'Quick contact', sh: 'Brzi kontakt' },
+  inquire: { sl: 'Povprašajte', en: 'Ask about this', sh: 'Pošaljite upit' },
   priceOnRequest: { sl: 'Cena po dogovoru', en: 'Price on request', sh: 'Cijena po dogovoru' },
+  byArrangement: { sl: 'Po dogovoru', en: 'By arrangement', sh: 'Po dogovoru' },
+  at: { sl: 'ob', en: 'at', sh: 'u' },
+  when: { sl: 'Kdaj', en: 'When', sh: 'Kada' },
+  whenHint: { sl: 'Datum bo prenesen v obrazec za povpraševanje.', en: 'The date will be copied into the enquiry form.', sh: 'Datum će biti prenesen u obrazac za upit.' },
+  thanksNote: { sl: 'Hvala!', en: 'Thank you!', sh: 'Hvala!' },
   rating: { sl: 'Ocena {n} od 5', en: 'Rated {n} out of 5', sh: 'Ocjena {n} od 5' },
+  gallery: { sl: 'Galerija fotografij', en: 'Photo gallery', sh: 'Galerija fotografija' },
+  swipe: { sl: 'Podrsajte', en: 'Swipe', sh: 'Povucite' },
+  photo: { sl: 'Fotografija', en: 'Photo', sh: 'Fotografija' },
   enlarge: { sl: 'Povečaj sliko', en: 'Enlarge photo', sh: 'Uvećaj sliku' },
   close: { sl: 'Zapri', en: 'Close', sh: 'Zatvori' },
   previous: { sl: 'Prejšnja slika', en: 'Previous photo', sh: 'Prethodna slika' },
@@ -72,6 +97,9 @@ export const UI = {
   // As it reads inside a sentence: "Več v {privacy}."
   privacyInSentence: { sl: 'politiki zasebnosti', en: 'privacy policy', sh: 'politici privatnosti' },
   backHome: { sl: 'Nazaj na začetno stran', en: 'Back to the home page', sh: 'Natrag na početnu stranicu' },
+  footContact: { sl: 'Kontakt', en: 'Contact', sh: 'Kontakt' },
+  footPages: { sl: 'Stran', en: 'On this site', sh: 'Stranica' },
+  footFollow: { sl: 'Sledite', en: 'Follow', sh: 'Pratite' },
   social: { sl: 'Družbena omrežja', en: 'Social media', sh: 'Društvene mreže' },
   business: { sl: 'Podatki o podjetju', en: 'Company details', sh: 'Podaci o tvrtki' },
   registration: { sl: 'Matična številka', en: 'Registration no.', sh: 'Matični broj' },
@@ -79,46 +107,34 @@ export const UI = {
   vatId: { sl: 'ID za DDV', en: 'VAT ID', sh: 'PDV ID' },
   effective: { sl: 'Velja od', en: 'Effective', sh: 'Vrijedi od' },
   // Form
-  required: { sl: 'obvezno', en: 'required', sh: 'obavezno' },
-  chooseService: { sl: 'Izberite …', en: 'Choose …', sh: 'Odaberite …' },
-  otherService: { sl: 'Nekaj drugega', en: 'Something else', sh: 'Nešto drugo' },
   honeypot: { sl: 'Tega polja ne izpolnjujte', en: 'Leave this field empty', sh: 'Ne ispunjavajte ovo polje' },
   sending: { sl: 'Pošiljam …', en: 'Sending …', sh: 'Šaljem …' },
-  errRequired: { sl: 'Izpolnite to polje.', en: 'Please fill in this field.', sh: 'Ispunite ovo polje.' },
-  errEmail: { sl: 'Vpišite veljaven e-poštni naslov.', en: 'Please enter a valid email address.', sh: 'Upišite ispravnu e-mail adresu.' },
-  errPhone: { sl: 'Vpišite veljavno telefonsko številko.', en: 'Please enter a valid phone number.', sh: 'Upišite ispravan broj telefona.' },
-  errContact: {
-    sl: 'Vpišite e-pošto ali telefon, da vam lahko odgovorimo.',
-    en: 'Please give an email address or phone number so we can reply.',
-    sh: 'Upišite e-mail ili telefon kako bismo vam mogli odgovoriti.',
-  },
-  errDate: { sl: 'Ta datum je že mimo.', en: 'That date has already passed.', sh: 'Taj datum je već prošao.' },
   errTooMany: {
     sl: 'Preveč poskusov. Počakajte minuto in poskusite znova.',
     en: 'Too many attempts. Please wait a minute and try again.',
     sh: 'Previše pokušaja. Pričekajte minutu i pokušajte ponovno.',
   },
   errNetwork: {
-    sl: 'Sporočila ni bilo mogoče poslati. Preverite povezavo ali nas pokličite.',
-    en: "The message couldn't be sent. Check your connection or give us a call.",
-    sh: 'Poruku nije bilo moguće poslati. Provjerite vezu ili nas nazovite.',
+    sl: 'Sporočila ni bilo mogoče poslati. Preverite povezavo ali me pokličite.',
+    en: "The message couldn't be sent. Check your connection or give me a call.",
+    sh: 'Poruku nije bilo moguće poslati. Provjerite vezu ili me nazovite.',
   },
   mailtoNote: {
     sl: 'Ob kliku se odpre vaš e-poštni program s pripravljenim sporočilom.',
     en: 'This opens your email app with the message ready to send.',
     sh: 'Klikom se otvara vaš program za e-poštu s pripremljenom porukom.',
   },
-  mailtoSubject: { sl: 'Povpraševanje s spletne strani', en: 'Inquiry from the website', sh: 'Upit s web stranice' },
+  mailtoSubject: { sl: 'Povpraševanje s spletne strani', en: 'Enquiry from the website', sh: 'Upit s web stranice' },
   mailtoDoneTitle: { sl: 'Še en korak', en: 'One more step', sh: 'Još jedan korak' },
   mailtoDoneBody: {
-    sl: 'V e-poštnem programu se je odprlo pripravljeno sporočilo. Pošljite ga in odgovorimo vam v najkrajšem možnem času.',
-    en: 'Your email app has opened with the message ready. Send it, and we will reply as soon as we can.',
-    sh: 'U programu za e-poštu otvorila se pripremljena poruka. Pošaljite je i odgovorit ćemo vam što prije.',
+    sl: 'V e-poštnem programu se je odprlo pripravljeno sporočilo. Pošljite ga in odgovorim vam čim prej.',
+    en: 'Your email app has opened with the message ready. Send it, and I will reply as soon as I can.',
+    sh: 'U programu za e-poštu otvorila se pripremljena poruka. Pošaljite je i odgovorit ću vam što prije.',
   },
   formClosed: {
-    sl: 'Obrazec trenutno ni na voljo. Pokličite nas ali nam pišite.',
-    en: 'The form is not available right now. Please call or email us.',
-    sh: 'Obrazac trenutno nije dostupan. Nazovite nas ili nam pišite.',
+    sl: 'Obrazec trenutno ni na voljo. Pokličite me ali mi pišite.',
+    en: 'The form is not available right now. Please call or email me.',
+    sh: 'Obrazac trenutno nije dostupan. Nazovite me ili mi pišite.',
   },
   notFoundTitle: { sl: 'Te strani ni', en: 'Page not found', sh: 'Ova stranica ne postoji' },
   notFoundText: {
@@ -128,45 +144,91 @@ export const UI = {
   },
 };
 
-/** Default labels of the inquiry form fields (the owner can override each one in the admin). */
-export const FIELD_LABELS = {
-  name: { sl: 'Ime in priimek', en: 'Your name', sh: 'Ime i prezime' },
-  email: { sl: 'E-pošta', en: 'Email', sh: 'E-mail' },
-  phone: { sl: 'Telefon', en: 'Phone', sh: 'Telefon' },
-  date: { sl: 'Datum dogodka', en: 'Date of the event', sh: 'Datum događaja' },
-  time: { sl: 'Ura', en: 'Time', sh: 'Vrijeme' },
-  location: { sl: 'Kraj ali naslov', en: 'Place or address', sh: 'Mjesto ili adresa' },
-  children: { sl: 'Število otrok', en: 'Number of children', sh: 'Broj djece' },
-  age: { sl: 'Starost otrok', en: "Children's ages", sh: 'Dob djece' },
-  service: { sl: 'Kaj vas zanima?', en: 'What are you interested in?', sh: 'Što vas zanima?' },
+/** Texts of the booking form. Labels follow the design; the owner chooses which optional questions are asked. */
+export const FORM_TEXT = {
+  topic: { sl: 'Kaj vas zanima?', en: 'What are you interested in?', sh: 'Što vas zanima?' },
+  topicParty: { sl: 'Rojstni dan', en: 'Birthday party', sh: 'Rođendan' },
+  topicSport: { sl: 'Športne urice', en: 'Sports classes', sh: 'Sportske aktivnosti' },
+  topicEvent: { sl: 'Drug dogodek', en: 'Another event', sh: 'Drugi događaj' },
+  partyDate: { sl: 'Datum zabave', en: 'Date of the party', sh: 'Datum zabave' },
+  partyAge: { sl: 'Starost slavljenca', en: "Birthday child's age", sh: 'Dob slavljenika' },
+  kids: { sl: 'Število otrok', en: 'Number of children', sh: 'Broj djece' },
+  kidsPlaceholder: { sl: 'npr. 12', en: 'e.g. 12', sh: 'npr. 12' },
+  package: { sl: 'Paket', en: 'Package', sh: 'Paket' },
+  notSure: { sl: 'Še ne vem', en: 'Not sure yet', sh: 'Još ne znam' },
+  choose: { sl: 'Izberite', en: 'Choose', sh: 'Odaberite' },
+  time: { sl: 'Okvirna ura', en: 'Rough time of day', sh: 'Okvirno vrijeme' },
+  morning: { sl: 'Dopoldne', en: 'Morning', sh: 'Prijepodne' },
+  afternoon: { sl: 'Popoldne', en: 'Afternoon', sh: 'Poslijepodne' },
+  where: { sl: 'Kje bo zabava?', en: 'Where will the party be?', sh: 'Gdje će biti zabava?' },
+  whereHome: { sl: 'Pri nas doma', en: 'At our home', sh: 'Kod nas doma' },
+  whereVenue: { sl: 'V najetem prostoru', en: 'In a rented venue', sh: 'U iznajmljenom prostoru' },
+  town: { sl: 'Kraj', en: 'Town', sh: 'Mjesto' },
+  townHint: { sl: '(neobvezno, za izračun potnih stroškov)', en: '(optional, to work out travel costs)', sh: '(neobavezno, za izračun putnih troškova)' },
+  townPlaceholder: { sl: 'npr. Domžale', en: 'e.g. Ljubljana', sh: 'npr. Ljubljana' },
+  sportAge: { sl: 'Starost otroka', en: "Child's age", sh: 'Dob djeteta' },
+  slot: { sl: 'Kateri termin vam ustreza?', en: 'Which class suits you?', sh: 'Koji termin vam odgovara?' },
+  slotOther: { sl: 'Zanima me drug termin', en: "I'd like a different time", sh: 'Zanima me drugi termin' },
+  trial: { sl: 'Najprej bi radi prišli na poskusno urico', en: "We'd like to come to a trial class first", sh: 'Najprije bismo došli na probni sat' },
+  eventType: { sl: 'Kakšen dogodek?', en: 'What kind of event?', sh: 'Kakav događaj?' },
+  eventTypePlaceholder: { sl: 'npr. poroka, krst', en: 'e.g. a wedding, a christening', sh: 'npr. vjenčanje, krštenje' },
+  eventDate: { sl: 'Datum', en: 'Date', sh: 'Datum' },
+  eventKids: { sl: 'Približno število otrok', en: 'Roughly how many children', sh: 'Približan broj djece' },
+  optional: { sl: '(neobvezno)', en: '(optional)', sh: '(neobavezno)' },
+  name: { sl: 'Vaše ime', en: 'Your name', sh: 'Vaše ime' },
+  contact: { sl: 'Telefon ali e-pošta', en: 'Phone or email', sh: 'Telefon ili e-mail' },
+  reply: { sl: 'Kako naj vam odgovorim?', en: 'How should I reply?', sh: 'Kako da vam odgovorim?' },
+  replyCall: { sl: 'Pokličite me', en: 'Call me', sh: 'Nazovite me' },
+  replyText: { sl: 'SMS, Viber ali WhatsApp', en: 'SMS, Viber or WhatsApp', sh: 'SMS, Viber ili WhatsApp' },
+  replyEmail: { sl: 'E-pošta', en: 'Email', sh: 'E-mail' },
   message: { sl: 'Sporočilo', en: 'Message', sh: 'Poruka' },
+  messageHint: { sl: 'Želje, tema zabave ali vprašanja', en: 'Wishes, a party theme or questions', sh: 'Želje, tema zabave ili pitanja' },
+  dateAdded: { sl: 'Datum {d} je dodan v povpraševanje.', en: 'The date {d} has been added to your enquiry.', sh: 'Datum {d} dodan je u upit.' },
+  errRequired: { sl: 'Izpolnite to polje.', en: 'Please fill in this field.', sh: 'Ispunite ovo polje.' },
+  errChoose: { sl: 'Izberite eno možnost.', en: 'Please choose one option.', sh: 'Odaberite jednu mogućnost.' },
+  errContact: { sl: 'Vpišite telefon ali e-pošto, da vam lahko odgovorim.', en: 'Please give a phone number or email so I can reply.', sh: 'Upišite telefon ili e-mail kako bih vam mogla odgovoriti.' },
+  errContactInvalid: { sl: 'Vpišite veljavno telefonsko številko ali e-poštni naslov.', en: 'Please enter a valid phone number or email address.', sh: 'Upišite ispravan broj telefona ili e-mail adresu.' },
+  errNeedMail: { sl: 'Za odgovor po e-pošti vpišite e-poštni naslov.', en: 'To get a reply by email, please enter an email address.', sh: 'Za odgovor e-poštom upišite e-mail adresu.' },
+  errPast: { sl: 'Izberite današnji ali poznejši datum.', en: 'Please choose today or a later date.', sh: 'Odaberite današnji ili kasniji datum.' },
+  errKidsMax: { sl: 'Za več kot {n} otrok me raje pokličite.', en: 'For more than {n} children, please give me a call.', sh: 'Za više od {n} djece radije me nazovite.' },
+  errKidsMin: { sl: 'Vpišite vsaj enega otroka.', en: 'Please enter at least one child.', sh: 'Upišite barem jedno dijete.' },
 };
 
-export const FIELD_PLACEHOLDERS = {
-  age: { sl: 'npr. 5–7 let', en: 'e.g. 5–7 years', sh: 'npr. 5–7 godina' },
-  location: { sl: 'npr. Ljubljana, doma', en: 'e.g. Ljubljana, at home', sh: 'npr. Ljubljana, kod kuće' },
-  message: {
-    sl: 'Povejte nam kaj več o praznovanju: priložnost, želje, posebnosti …',
-    en: 'Tell us a bit more: the occasion, wishes, anything special …',
-    sh: 'Recite nam nešto više o proslavi: povod, želje, posebnosti …',
-  },
+/** Ages offered in the form's age selects. */
+export const AGES = {
+  sl: ['2 leti', '3 leta', '4 leta', '5 let', '6 let', '7 let', '8 let', '9 let', '10 let ali več'],
+  en: ['2 years', '3 years', '4 years', '5 years', '6 years', '7 years', '8 years', '9 years', '10 years or older'],
+  sh: ['2 godine', '3 godine', '4 godine', '5 godina', '6 godina', '7 godina', '8 godina', '9 godina', '10 godina ili više'],
 };
 
-/** Field names sent to the form service. Slovenian keys, so the owner's notification emails read naturally. */
-export const FIELD_KEYS = {
-  name: 'ime',
-  email: 'email',
-  phone: 'telefon',
+/**
+ * Field names sent to the form service. Slovenian keys, so the owner's notification emails read naturally
+ * whatever language the parent used.
+ */
+export const FORM_KEYS = {
+  topic: 'zanima',
   date: 'datum',
-  time: 'ura',
-  location: 'lokacija',
-  children: 'stevilo_otrok',
   age: 'starost',
-  service: 'storitev',
+  kids: 'stevilo_otrok',
+  package: 'paket',
+  time: 'cas',
+  where: 'kje',
+  town: 'kraj',
+  slot: 'termin',
+  trial: 'poskusna_urica',
+  eventType: 'dogodek',
+  name: 'ime',
+  contact: 'kontakt',
+  reply: 'odgovor',
   message: 'sporocilo',
 };
 
 export const ui = (key, lang, vars = {}) => {
   const text = UI[key]?.[lang] ?? UI[key]?.sl ?? key;
+  return text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
+};
+
+export const ft = (key, lang, vars = {}) => {
+  const text = FORM_TEXT[key]?.[lang] ?? FORM_TEXT[key]?.sl ?? key;
   return text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
 };

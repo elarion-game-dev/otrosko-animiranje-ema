@@ -1170,6 +1170,42 @@ body:has(.shell) {
   gap: 0.5rem;
 }
 
+/* Flags for the third language */
+.flag-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.flag-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.flag-choice:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.flag-choice input {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.flag-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  clip-path: circle(50%);
+  flex: none;
+}
+
 .contrast {
   display: grid;
   gap: 0.3rem;

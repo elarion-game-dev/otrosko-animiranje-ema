@@ -38,6 +38,14 @@ export const SERVICE_ICONS = {
   users: { label: 'Skupina', svg: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 20a6.5 6.5 0 0 0-3-5.5"/>' },
   calendar: { label: 'Koledar', svg: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>' },
   chat: { label: 'Pogovor', svg: '<path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/>' },
+  wave: { label: 'Pozdrav', svg: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7 6 6 0 0 1-5-3l-2.5-4.5a1.5 1.5 0 0 1 2.5-1.6L8 14"/>' },
+  pin: { label: 'Kraj', svg: '<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>' },
+  euro: { label: 'Cena', svg: '<path d="M17 6.5A7 7 0 0 0 6.5 12 7 7 0 0 0 17 17.5M4 10h9M4 14h9"/>' },
+  clock: { label: 'Ura', svg: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' },
+  shield: { label: 'Varnost', svg: '<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z"/><path d="m9 12 2 2 4-4"/>' },
+  check: { label: 'Kljukica', svg: '<path d="m5 12.5 4.5 4.5L19 7.5"/>' },
+  home: { label: 'Dom', svg: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/>' },
+  school: { label: 'Vrtec', svg: '<path d="M3 10.5 12 5l9 5.5-9 5.5z"/><path d="M7 13v4.5c1.5 1.3 3.2 2 5 2s3.5-.7 5-2V13"/><path d="M21 10.5V16"/>' },
 };
 
 // Line icons for the site's own controls.
@@ -61,7 +69,31 @@ export const UI_ICONS = {
   email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   hourglass: '<path d="M6 3h12M6 21h12M7.5 3c0 4.5 4.5 5.5 4.5 9s-4.5 4.5-4.5 9M16.5 3c0 4.5-4.5 5.5-4.5 9s4.5 4.5 4.5 9"/>',
   megaphone: '<path d="M3 10v4h3l7 4V6L6 10z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  star: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  alert: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/>',
+  swipe: '<path d="M4 12h14M14 8l4 4-4 4"/>',
+  shield: '<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z"/><path d="m9 12 2 2 4-4"/>',
+  camera: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
 };
+
+/** The rainbow mark: four arcs, coloured from theme.css through the classes c1–c4. */
+export function rainbowMark(cls = 'mark') {
+  return `<svg class="${cls}" viewBox="0 0 60 34" aria-hidden="true" focusable="false"><g fill="none" stroke-width="5" stroke-linecap="round"><path class="c1" pathLength="1" d="M4 31a26 26 0 0 1 52 0"/><path class="c2" pathLength="1" d="M11 31a19 19 0 0 1 38 0"/><path class="c3" pathLength="1" d="M18 31a12 12 0 0 1 24 0"/><path class="c4" pathLength="1" d="M25 31a5 5 0 0 1 10 0"/></g></svg>`;
+}
+
+// Soft illustrations shown in place of a photo until one is uploaded (filled with the current colour).
+export const ILLUSTRATIONS = {
+  balloons: '<ellipse cx="56" cy="58" rx="22" ry="27"/><ellipse cx="95" cy="46" rx="24" ry="29" opacity=".75"/><ellipse cx="112" cy="88" rx="19" ry="23" opacity=".55"/><path d="M56 85c-5 18 10 28 22 45M95 75c6 20-4 34-17 55M112 111c-4 10-18 12-34 19" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>',
+  ball: '<circle cx="68" cy="92" r="34"/><path d="M68 76l13 9.5-5 15.5H60l-5-15.5z" fill="#fff" opacity=".85"/><path d="M68 76V58M81 85.5l15-6M76 101l9 13M60 101l-9 13M55 85.5l-15-6" stroke="#fff" stroke-width="3" opacity=".85" fill="none"/><path d="M116 126l14-48 14 48z" opacity=".75"/><path d="M120 112h20M124 98h12" stroke="#fff" stroke-width="5" opacity=".75"/><rect x="18" y="126" width="132" height="6" rx="3" opacity=".45"/>',
+  cake: '<rect x="36" y="86" width="88" height="42" rx="12"/><rect x="50" y="62" width="60" height="28" rx="10" opacity=".75"/><rect x="64" y="40" width="7" height="22" rx="3.5" opacity=".6"/><rect x="77" y="36" width="7" height="26" rx="3.5" opacity=".6"/><rect x="90" y="40" width="7" height="22" rx="3.5" opacity=".6"/><ellipse cx="67.5" cy="33" rx="4" ry="6"/><ellipse cx="80.5" cy="29" rx="4" ry="6"/><ellipse cx="93.5" cy="33" rx="4" ry="6"/><path d="M36 104c10 8 18 8 29 0s19-8 29 0 20 8 30 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>',
+  hat: '<path d="M80 30 116 122H44z"/><g fill="#fff" opacity=".75"><circle cx="76" cy="66" r="5"/><circle cx="90" cy="84" r="5.5"/><circle cx="68" cy="96" r="5.5"/><circle cx="96" cy="108" r="4.5"/><circle cx="78" cy="114" r="4"/></g><circle cx="80" cy="24" r="12" opacity=".7"/><path d="M40 124l8-9 8 9 8-9 8 9 8-9 8 9 8-9 8 9 8-9 8 9" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round" opacity=".8"/>',
+  gift: '<rect x="34" y="72" width="92" height="60" rx="8"/><rect x="28" y="56" width="104" height="22" rx="6" opacity=".8"/><rect x="74" y="56" width="12" height="76" fill="#fff" opacity=".7"/><path d="M80 56c-6-16-30-22-30-8 0 8 16 8 30 8zM80 56c6-16 30-22 30-8 0 8-16 8-30 8z" opacity=".75"/>',
+};
+
+export function illustration(name, cls = 'ill') {
+  return `<svg class="${cls}" viewBox="0 0 160 160" fill="currentColor" aria-hidden="true" focusable="false">${ILLUSTRATIONS[name] ?? ILLUSTRATIONS.balloons}</svg>`;
+}
 
 const STROKE_ATTRS = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
 
@@ -80,7 +112,7 @@ export function brandIcon(platform, cls = 'icon') {
   return uiIcon(UI_ICONS[platform] ? platform : 'website', cls);
 }
 
-/** Browser tab icon when none is uploaded: a balloon in the accent colour. */
+/** Browser tab icon when none is uploaded: the rainbow mark in the theme's rainbow colours. */
 export function faviconSvg(colors) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="${colors.accent}" d="M32 4C19.8 4 11 13.4 11 24.6 11 37.4 21.4 48 32 48s21-10.6 21-23.4C53 13.4 44.2 4 32 4z"/><path fill="${colors.accent}" d="m28 47-2.5 5h13L36 47z"/><path fill="none" stroke="${colors.accent}" stroke-width="2.5" stroke-linecap="round" d="M32 52c0 4-4 5-4 9"/><ellipse cx="23.5" cy="18" rx="4" ry="6.5" fill="#fff" fill-opacity=".45" transform="rotate(25 23.5 18)"/></svg>\n`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -13 60 60"><g fill="none" stroke-width="5.5" stroke-linecap="round"><path d="M4 31a26 26 0 0 1 52 0" stroke="${colors.coral}"/><path d="M11 31a19 19 0 0 1 38 0" stroke="${colors.gold}"/><path d="M18 31a12 12 0 0 1 24 0" stroke="${colors.sage}"/><path d="M25 31a5 5 0 0 1 10 0" stroke="${colors.sky}"/></g></svg>\n`;
 }

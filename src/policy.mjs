@@ -6,19 +6,24 @@
 import { markdown } from './markdown.mjs';
 import { LANG_INFO } from './i18n.mjs';
 import { resolveProvider } from './providers.mjs';
-import { FORM_FIELDS } from './settings.mjs';
+import { formQuestions } from './settings.mjs';
 import { esc, formatDate, tr } from './util.mjs';
 
 const FIELD_NAMES = {
-  name: { sl: 'ime in priimek', en: 'your name', sh: 'ime i prezime' },
-  email: { sl: 'e-poštni naslov', en: 'email address', sh: 'e-mail adresa' },
-  phone: { sl: 'telefonska številka', en: 'phone number', sh: 'broj telefona' },
-  date: { sl: 'datum dogodka', en: 'date of the event', sh: 'datum događaja' },
-  time: { sl: 'ura dogodka', en: 'time of the event', sh: 'vrijeme događaja' },
-  location: { sl: 'kraj dogodka', en: 'place of the event', sh: 'mjesto događaja' },
-  children: { sl: 'število otrok', en: 'number of children', sh: 'broj djece' },
-  age: { sl: 'starost otrok', en: "children's ages", sh: 'dob djece' },
-  service: { sl: 'izbrana storitev', en: 'the service you chose', sh: 'odabrana usluga' },
+  name: { sl: 'vaše ime', en: 'your name', sh: 'vaše ime' },
+  contact: { sl: 'telefonska številka ali e-poštni naslov', en: 'phone number or email address', sh: 'broj telefona ili e-mail adresa' },
+  topic: { sl: 'kaj vas zanima (rojstni dan, športne urice ali drug dogodek)', en: 'what you are interested in (a birthday party, sports classes or another event)', sh: 'što vas zanima (rođendan, sportske aktivnosti ili drugi događaj)' },
+  date: { sl: 'datum zabave ali dogodka', en: 'date of the party or event', sh: 'datum zabave ili događaja' },
+  age: { sl: 'starost otroka', en: "the child's age", sh: 'dob djeteta' },
+  kids: { sl: 'število otrok', en: 'number of children', sh: 'broj djece' },
+  package: { sl: 'izbrani paket', en: 'the package you chose', sh: 'odabrani paket' },
+  time: { sl: 'okvirna ura', en: 'rough time of day', sh: 'okvirno vrijeme' },
+  where: { sl: 'vrsta prostora (doma ali najet prostor)', en: 'type of venue (home or rented)', sh: 'vrsta prostora (kod kuće ili iznajmljeni)' },
+  town: { sl: 'kraj', en: 'town', sh: 'mjesto' },
+  slot: { sl: 'želeni termin športnih uric', en: 'preferred sports class', sh: 'željeni termin sportskih aktivnosti' },
+  trial: { sl: 'želja po poskusni urici', en: 'whether you would like a trial class', sh: 'želja za probnim satom' },
+  eventType: { sl: 'vrsta dogodka', en: 'type of event', sh: 'vrsta događaja' },
+  reply: { sl: 'kako želite odgovor', en: 'how you would like a reply', sh: 'kako želite odgovor' },
   message: { sl: 'vaše sporočilo', en: 'your message', sh: 'vaša poruka' },
 };
 
@@ -33,7 +38,7 @@ export function privacyBody(settings, lang, ctx) {
   const owner = b.name || s.site.name;
   const mail = c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : '';
   const contactLine = [mail, c.phone ? esc(c.phone) : ''].filter(Boolean).join(L(lang, ' ali ', ' or ', ' ili '));
-  const fields = FORM_FIELDS.filter((f) => s.form.fields[f].show).map((f) => FIELD_NAMES[f][lang]);
+  const fields = formQuestions(s).map((f) => FIELD_NAMES[f][lang]);
   const hosting = esc(tr(p.hosting, lang));
   const providerName = prov.ready && prov.name ? (prov.privacyUrl ? `<a href="${esc(prov.privacyUrl)}" rel="noopener" target="_blank">${esc(prov.name)}</a>` : esc(prov.name)) : '';
   const providerRegion = prov.ready && prov.region ? ` (${esc(prov.region[lang])})` : '';

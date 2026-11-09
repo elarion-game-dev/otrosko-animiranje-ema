@@ -455,7 +455,7 @@ await test('Privacy policy never names an empty form service', () => {
     }
   };
   check(DEFAULT_SETTINGS, 'no email yet');
-  check(withForm(DEFAULT_SETTINGS, { provider: 'formspree', formspree: { id: '' } }), 'Formspree without an id');
+  check(withForm(DEFAULT_SETTINGS, { provider: 'formspree', formspree: { formId: 'not an id' } }), 'Formspree with an invalid id');
   const ready = site(withContact(DEFAULT_SETTINGS, { email: 'ema@example.si' }));
   assert.match(ready['zasebnost/index.html'], /se odpre vaš e-poštni program/);
 });
@@ -479,7 +479,8 @@ await test('Phones get PNG home-screen icons; an uploaded icon replaces them', (
   const files = site(DEFAULT_SETTINGS);
   assert.match(files['index.html'], new RegExp(`<link rel="apple-touch-icon" href="${BASE}/assets/img/icon-180\\.png\\?v=v">`));
   const icons = JSON.parse(files['site.webmanifest']).icons;
-  assert.deepEqual(icons.filter((i) => i.type === 'image/png').map((i) => i.sizes), ['192x192', '512x512']);
+  assert.deepEqual(icons.filter((i) => i.type === 'image/png').map((i) => `${i.sizes} ${i.purpose ?? 'any'}`), ['192x192 any', '512x512 any', '512x512 maskable']);
+  assert.ok(icons.every((i) => i.src.endsWith('?v=v')), 'icons are versioned');
   for (const size of ICON_SIZES) {
     const png = iconPng(normalizeSettings(DEFAULT_SETTINGS).theme.colors, size);
     assert.equal(png.subarray(1, 4).toString(), 'PNG');
@@ -508,6 +509,29 @@ await test('Terms draft: never published by itself, placeholders flagged until f
   assert.equal(item(s).done, false);
   for (const lang of ['sl', 'en', 'sh']) s.terms.body[lang] = s.terms.body[lang].replace(/\[[^\]\n]+\](?!\()/g, '7');
   assert.equal(item(s).done, true);
+
+  // A switched-off language does not hold the checklist back.
+  const off = structuredClone(s);
+  off.terms.body.sh = TERMS_DRAFT.sh;
+  assert.equal(item(off).done, false);
+  off.languages.sh.enabled = false;
+  assert.equal(item(off).done, true);
+
+  // Switched on but empty: no page, no footer link, not done.
+  const empty = structuredClone(DEFAULT_SETTINGS);
+  empty.terms.enabled = true;
+  const emptyFiles = site(empty);
+  assert.equal(Object.keys(emptyFiles).some((f) => /pogoji|terms|uvjeti/.test(f)), false);
+  assert.doesNotMatch(emptyFiles['index.html'], /\/pogoji\//);
+  assert.equal(item(empty).done, false);
+});
+
+await test('Form messages keep the number and date for the browser to fill in', () => {
+  const files = site(withContact(DEFAULT_SETTINGS, { email: 'ema@example.si' }));
+  assert.match(files['index.html'], /data-msg-kidsmax="Za več kot \{n\} otrok/);
+  assert.match(files['index.html'], /data-msg-added="Datum \{d\} je dodan/);
+  assert.match(files['en/index.html'], /data-msg-added="The date \{d\} has been added/);
+  assert.doesNotMatch(files['index.html'], /\{(name|phone|privacy)\}/);
 });
 
 await test('content/site.json renders', async () => {

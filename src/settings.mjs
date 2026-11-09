@@ -882,7 +882,7 @@ export function setupChecklist(settings) {
     },
     {
       id: 'terms',
-      done: s.terms.enabled && !Object.values(s.terms.body).some((t) => placeholders(t).length),
+      done: termsLive(s) && !Object.keys(termsBlanks(s)).length,
       optional: true,
       title: s.terms.enabled ? 'Dopolnite pogoje poslovanja' : 'Objavite pogoje poslovanja (neobvezno)',
       detail: 'Starši pred rezervacijo radi preberejo, kako je z aro, odpovedjo in alergijami. V urejevalniku lahko vstavite osnutek in ga dopolnite.',
@@ -1029,3 +1029,15 @@ export const TERMS_DRAFT = { sl: TERMS_SL, en: TERMS_EN, sh: TERMS_SH };
 
 /** Placeholders left in a text: "[like this]", but not markdown links "[text](https://…)". */
 export const placeholders = (text) => String(text ?? '').match(/\[[^\]\n]+\](?!\()/g) ?? [];
+
+/** The terms page goes live only when it is switched on and has a text; a heading alone is not published. */
+export const termsLive = (settings) => settings.terms.enabled && Boolean(String(settings.terms.body.sl ?? '').trim());
+
+/** Placeholders still in the terms, per published language: { sl: ['[znesek]'], en: [...] }. */
+export function termsBlanks(settings) {
+  return Object.fromEntries(
+    enabledLangs(settings)
+      .map((l) => [l, [...new Set(placeholders(settings.terms.body[l]))]])
+      .filter(([, list]) => list.length)
+  );
+}

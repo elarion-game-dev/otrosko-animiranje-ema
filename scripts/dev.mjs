@@ -92,8 +92,12 @@ async function local(req, res, action) {
     res.writeHead(status, { 'Content-Type': TYPES['.json'], 'Cache-Control': 'no-store' });
     res.end(JSON.stringify(data));
   };
+  // Only this machine's own addresses: a website that points its domain at 127.0.0.1 (DNS rebinding) would
+  // otherwise pass the same-origin check below with its own Host header.
+  const host = String(req.headers.host ?? '');
   const origin = req.headers.origin;
-  if (req.headers['x-local-admin'] !== '1' || (origin && origin !== `http://${req.headers.host}`)) return send(403, { error: 'Forbidden' });
+  const localHost = [`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`].includes(host);
+  if (!localHost || req.headers['x-local-admin'] !== '1' || (origin && origin !== `http://${host}`)) return send(403, { error: 'Forbidden' });
   try {
     if (action === 'ping') return send(200, { ok: true });
     if (action.startsWith('file')) {
@@ -105,6 +109,7 @@ async function local(req, res, action) {
     if (action === 'commit' && req.method === 'POST') {
       const { files, expect } = JSON.parse(await readBody(req));
       if (!Array.isArray(files) || !files.every((f) => LOCAL_FILES.test(f?.path ?? ''))) return send(400, { error: 'Not allowed' });
+      if (expect && !LOCAL_FILES.test(expect.path ?? '')) return send(400, { error: 'Not allowed' });
       if (expect) {
         const current = await readFile(path.join(root, expect.path), 'utf8').catch(() => '');
         if (hash(current) !== expect.sha) return send(409, { error: 'Datoteka se je medtem spremenila.' });
@@ -149,7 +154,25 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Each rebuild runs in a fresh process, so edits to src/*.mjs are picked up (Node caches imported modules).
-const rebuild = () =>
+// One build at a time: two builds would delete and copy dist/ under each other. Changes that arrive during a
+// build trigger exactly one more build after it.
+let building = null;
+let again = false;
+async function rebuild() {
+  if (building) {
+    again = true;
+    return building;
+  }
+  building = buildOnce();
+  await building;
+  building = null;
+  if (again) {
+    again = false;
+    await rebuild();
+  }
+}
+
+const buildOnce = () =>
   new Promise((resolve) => {
     execFile(process.execPath, [path.join(root, 'scripts', 'build.mjs')], async (error, stdout, stderr) => {
       process.stdout.write(stdout);
@@ -163,7 +186,7 @@ await rebuild();
 server.listen(port, '127.0.0.1', () => console.log(`Serving http://127.0.0.1:${port}${base}/  (admin: http://127.0.0.1:${port}${base}/admin/)`));
 
 let timer;
-for (const dir of ['src', 'public', 'content']) {
+for (const dir of ['src', 'public', 'content', 'scripts']) {
   watch(path.join(root, dir), { recursive: true }, () => {
     clearTimeout(timer);
     timer = setTimeout(rebuild, 150);

@@ -223,12 +223,9 @@ export const FORM_KEYS = {
   message: 'sporocilo',
 };
 
-export const ui = (key, lang, vars = {}) => {
-  const text = UI[key]?.[lang] ?? UI[key]?.sl ?? key;
-  return text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
-};
+// A placeholder without a value stays as it is, so site.js can fill it in the browser ({n}, {d} in form messages).
+const fill = (text, vars) => text.replace(/\{(\w+)\}/g, (match, name) => String(vars[name] ?? match));
 
-export const ft = (key, lang, vars = {}) => {
-  const text = FORM_TEXT[key]?.[lang] ?? FORM_TEXT[key]?.sl ?? key;
-  return text.replace(/\{(\w+)\}/g, (_, name) => String(vars[name] ?? ''));
-};
+export const ui = (key, lang, vars = {}) => fill(UI[key]?.[lang] ?? UI[key]?.sl ?? key, vars);
+
+export const ft = (key, lang, vars = {}) => fill(FORM_TEXT[key]?.[lang] ?? FORM_TEXT[key]?.sl ?? key, vars);

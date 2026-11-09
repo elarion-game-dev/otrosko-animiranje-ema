@@ -17,11 +17,8 @@ const ARCS = [
 const ART = 0.72;
 const ART_CENTER_Y = 18;
 
-function rgb(color) {
-  const hex = String(color).replace('#', '');
-  const full = hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex.slice(0, 6);
-  return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) || 0);
-}
+// Theme colours are always #rrggbb (normalizeSettings checks them).
+const rgb = (color) => [1, 3, 5].map((i) => parseInt(color.slice(i, i + 2), 16));
 
 // Distance from a point to the stroke's centre line: the upper half circle, or its nearest end below it.
 function distance(x, y, r) {

@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { renderSite } from '../src/render.mjs';
+import { drawnIcons, renderSite } from '../src/render.mjs';
 import { normalizeSettings } from '../src/settings.mjs';
 import { ICON_SIZES, iconPng } from './icon-png.mjs';
 
@@ -63,7 +63,7 @@ export async function build({ log = console.log } = {}) {
   }
 
   // Home-screen icons, unless the owner uploaded an icon of their own.
-  if (!settings.theme.favicon) {
+  if (drawnIcons(settings)) {
     for (const size of ICON_SIZES) await writeFile(path.join(dist, 'assets', 'img', `icon-${size}.png`), iconPng(settings.theme.colors, size));
   }
 

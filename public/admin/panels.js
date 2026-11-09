@@ -17,7 +17,7 @@ import {
   enabledLangs,
   isSample,
   missingTranslations,
-  placeholders,
+  termsBlanks,
   setupChecklist,
   t3,
 } from '../assets/lib/settings.mjs';
@@ -922,8 +922,25 @@ function textStyles(app) {
 
 function legal(app) {
   const body = app.get('terms.body');
-  const blanks = [...new Set(placeholders(body.sl))];
-  const blankLangs = enabledLangs(app.normalized()).filter((l) => l !== 'sl' && placeholders(body[l]).length);
+  // What is still missing in the terms; refreshed as the owner types, not only when the panel opens.
+  const termsWarning = h('div', {});
+  const updateTermsWarning = () => {
+    const s = app.normalized();
+    const blanks = termsBlanks(s);
+    const others = Object.keys(blanks)
+      .filter((l) => l !== 'sl')
+      .map((l) => s.languages[l].label);
+    const missing = [blanks.sl?.join(', '), others.length ? `${blanks.sl ? 'tudi ' : ''}v prevodih (${others.join(', ')})` : ''].filter(Boolean).join('; ');
+    const text = !s.terms.body.sl.trim()
+      ? s.terms.enabled
+        ? 'Stran s pogoji je vklopljena, a nima besedila, zato se ne objavi. Vstavite osnutek ali napišite svoje pogoje.'
+        : ''
+      : missing
+        ? `Še za dopolnitev: ${missing}.${s.terms.enabled ? ' Stran s pogoji je vklopljena, zato jih dopolnite pred objavo.' : ' Stran vklopite, ko jih dopolnite.'}`
+        : '';
+    termsWarning.replaceChildren(...(text ? [note(text, 'warn')] : []));
+  };
+  updateTermsWarning();
   const insertDraft = h('button', { type: 'button', class: 'btn btn-ghost' }, icon('plus'), 'Vstavi osnutek pogojev');
   insertDraft.addEventListener('click', async () => {
     if (Object.values(body).some((t) => t.trim())) {
@@ -957,12 +974,10 @@ function legal(app) {
       'Neobvezna stran, npr. o rezervaciji, ari in odpovedi termina. Povezava je v nogi strani.',
       note('Osnutek pokriva rezervacijo, aro, odpoved, alergije, fotografije in športne urice. Besedilo v oglatih oklepajih [ ] zamenjajte s svojimi podatki, vrstice, ki za vas ne veljajo, pa izbrišite. Osnutek ni pravni nasvet.', 'info'),
       h('div', { class: 'button-row' }, insertDraft),
-      blanks.length || blankLangs.length
-        ? note(`Še za dopolnitev: ${blanks.join(', ') || 'samo v prevodih'}${blankLangs.length ? ` (in v prevodih: ${blankLangs.map((l) => app.get(`languages.${l}.label`)).join(', ')})` : ''}.${app.get('terms.enabled') ? ' Stran s pogoji je vklopljena, zato jih dopolnite pred objavo.' : ' Stran vklopite, ko jih dopolnite.'}`, 'warn')
-        : null,
+      termsWarning,
       toggle(app, 'terms.enabled', { label: 'Objavi stran s pogoji', rerender: true }),
       tx(app, 'terms.title', { label: 'Naslov strani', maxlength: 80 }),
-      tx(app, 'terms.body', { label: 'Besedilo', multiline: true, rows: 10, maxlength: 12000, help: `${MARKDOWN_HELP} »## « na začetku vrstice za podnaslov.` })
+      tx(app, 'terms.body', { label: 'Besedilo', multiline: true, rows: 10, maxlength: 12000, help: `${MARKDOWN_HELP} »## « na začetku vrstice za podnaslov.`, onInput: updateTermsWarning })
     ),
   ];
 }

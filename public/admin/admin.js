@@ -859,7 +859,9 @@ async function publish({ force = false } = {}) {
       updateReverts();
     }
     toast(app.local ? 'Shranjeno v mapo projekta. Na splet gre, ko spremembe potisnete na GitHub (git push).' : 'Objavljeno! Spletna stran se posodobi v približno minuti.');
-    watchDeploy(commit.sha);
+    // Local mode only writes into the project folder: there is no GitHub run to wait for.
+    if (app.local) setDeploy('idle', '');
+    else watchDeploy(commit.sha);
   } catch (error) {
     if (error instanceof ConflictError) conflict = true;
     else toast(explain(error), 'error');

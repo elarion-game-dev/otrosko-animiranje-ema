@@ -201,12 +201,15 @@ export function text(app, path, { label, help, placeholder, maxlength, type = 't
   };
   let previous = input.value;
   input.addEventListener('input', () => {
+    // A cleared number field keeps the last value instead of saving 0 (which the normaliser would clamp).
+    if (type === 'number' && (input.value.trim() === '' || !Number.isFinite(Number(input.value)))) return;
     app.set(valuePath, type === 'number' ? Number(input.value) : input.value);
     onInput?.(input.value, previous);
     previous = input.value;
     check();
   });
   input.addEventListener('change', () => {
+    if (type === 'number' && input.value.trim() === '') input.value = app.get(valuePath) ?? '';
     if (rerender) app.rerender();
   });
   check();

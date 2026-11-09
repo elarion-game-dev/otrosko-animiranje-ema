@@ -647,6 +647,13 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 /* Motion off: by the owner's setting, or the visitor's system preference */
 [data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after { animation: none !important; transition: none !important; }
 [data-motion="off"] [data-reveal].pre { opacity: 1; translate: none; }
+/* Printing or saving as PDF before scrolling: show what has not faded in yet */
+@media print {
+  .js [data-reveal].pre { opacity: 1; translate: none; }
+  .js .envelope.pre .rsvp { translate: none; }
+  .js .envelope.pre::before { scale: none; }
+  .js .menu[data-draw] .lead { transform: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

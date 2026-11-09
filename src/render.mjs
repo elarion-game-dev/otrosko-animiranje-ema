@@ -16,7 +16,7 @@ import { AGES, ANCHORS, FORM_KEYS, ft, LANG_INFO, LANGS, pagePath, ui, WEEKDAYS_
 import { inline, markdown } from './markdown.mjs';
 import { privacyBody } from './policy.mjs';
 import { resolveProvider } from './providers.mjs';
-import { DAYS, enabledLangs, formTopics, isVisible, SECTION_IDS, SOCIAL_PLATFORMS } from './settings.mjs';
+import { DAYS, enabledLangs, formTopics, isVisible, SECTION_IDS, SOCIAL_PLATFORMS, termsLive } from './settings.mjs';
 import { preloadFont, themeCss } from './themes.mjs';
 import { basePath, esc, phoneDigits, tr } from './util.mjs';
 
@@ -153,7 +153,7 @@ export function livePages(settings) {
   const pages = [];
   for (const lang of enabledLangs(settings)) {
     pages.push(['home', lang], ['privacy', lang], ['thanks', lang]);
-    if (settings.terms.enabled) pages.push(['terms', lang]);
+    if (termsLive(settings)) pages.push(['terms', lang]);
   }
   pages.push(['notfound', 'sl']);
   return pages;
@@ -161,7 +161,7 @@ export function livePages(settings) {
 
 /** Every page the admin can preview, including ones that are switched off on the live site. */
 export function previewPages(settings) {
-  return [...PAGE_IDS, 'notfound'].map((id) => ({ id, label: PAGE_LABELS[id], hidden: id === 'terms' && !settings.terms.enabled }));
+  return [...PAGE_IDS, 'notfound'].map((id) => ({ id, label: PAGE_LABELS[id], hidden: id === 'terms' && !termsLive(settings) }));
 }
 
 /** Page and language for a path inside the site, such as "/en/privacy/" (base path already removed). */
@@ -335,7 +335,7 @@ function footer(settings, ctx) {
     : [];
   const legal = [
     `<a href="${esc(ctx.url(pagePath('privacy', ctx.lang)))}">${esc(ui('privacyPolicy', ctx.lang))}</a>`,
-    s.terms.enabled ? `<a href="${esc(ctx.url(pagePath('terms', ctx.lang)))}">${esc(T(ctx, s.terms.title))}</a>` : '',
+    termsLive(s) ? `<a href="${esc(ctx.url(pagePath('terms', ctx.lang)))}">${esc(T(ctx, s.terms.title))}</a>` : '',
     ...langLinks(ctx)
       .filter((x) => !x.current)
       .map(({ l, href }) => `<a href="${esc(href)}" hreflang="${l}" lang="${l}">${flagIcons(langFlags(settings, l))}${esc(langName(settings, l))}</a>`),
@@ -411,7 +411,7 @@ function layout(settings, ctx, info, main) {
   const v = ctx.version ? `?v=${esc(ctx.version)}` : '';
   const favicon = t.favicon ? ctx.img(t.favicon) : ctx.url(`/assets/img/favicon.svg${v}`);
   // iOS ignores SVG icons for "Add to Home Screen": an uploaded PNG icon, or the PNG the build draws.
-  const touchIcon = t.favicon ? (/\.png$/i.test(t.favicon) ? ctx.img(t.favicon) : '') : ctx.url(`/assets/img/icon-180.png${v}`);
+  const touchIcon = drawnIcons(s) ? ctx.url(`/assets/img/icon-180.png${v}`) : /\.png$/i.test(t.favicon) ? ctx.img(t.favicon) : '';
   const font = ctx.preview ? '' : preloadFont(t.headingFont);
   const alternates =
     info.id === 'notfound' || ctx.langs.length < 2
@@ -1066,6 +1066,9 @@ export function renderPage(settings, pageId, lang = 'sl', opts = {}) {
   return layout(settings, ctx, info, bodies[info.id]());
 }
 
+/** Without an uploaded icon, the build draws PNG icons for phones (scripts/icon-png.mjs) and the pages link them. */
+export const drawnIcons = (settings) => !settings.theme.favicon;
+
 /** Extra CSS variables for theme.css that come from outside the theme settings. */
 export const themeExtras = (settings) => ({ textStyles: settings.textStyles, logoHeight: settings.header.logoHeight });
 
@@ -1096,6 +1099,7 @@ ${urls.join('\n')}
   // Search engines only read robots.txt at the root of a domain, so this one matters once the site has its own.
   files['robots.txt'] = s.seo.indexable ? `User-agent: *\nAllow: /\nDisallow: ${base}/admin/\n\nSitemap: ${s.site.url}/sitemap.xml\n` : 'User-agent: *\nDisallow: /\n';
 
+  const v = opts.version ? `?v=${encodeURIComponent(opts.version)}` : '';
   files['site.webmanifest'] = JSON.stringify(
     {
       name: s.site.name,
@@ -1105,14 +1109,16 @@ ${urls.join('\n')}
       display: 'browser',
       background_color: s.theme.colors.bg,
       theme_color: s.theme.colors.bg,
-      // The PNGs are drawn by the build (scripts/icon-png.mjs); the 512 one keeps the artwork in the maskable safe zone.
-      icons: s.theme.favicon
-        ? [{ src: base + s.theme.favicon, sizes: 'any' }]
-        : [
-            { src: `${base}/assets/img/favicon.svg`, sizes: 'any', type: 'image/svg+xml' },
-            { src: `${base}/assets/img/icon-192.png`, sizes: '192x192', type: 'image/png' },
-            { src: `${base}/assets/img/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
-          ],
+      // The PNGs are drawn by the build (scripts/icon-png.mjs), with the artwork inside the maskable safe zone,
+      // so the 512 one also serves as the maskable icon. Versioned, so new theme colours reach phones.
+      icons: drawnIcons(s)
+        ? [
+            { src: `${base}/assets/img/favicon.svg${v}`, sizes: 'any', type: 'image/svg+xml' },
+            { src: `${base}/assets/img/icon-192.png${v}`, sizes: '192x192', type: 'image/png' },
+            { src: `${base}/assets/img/icon-512.png${v}`, sizes: '512x512', type: 'image/png' },
+            { src: `${base}/assets/img/icon-512.png${v}`, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          ]
+        : [{ src: base + s.theme.favicon, sizes: 'any' }],
     },
     null,
     2

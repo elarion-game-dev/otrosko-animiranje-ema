@@ -158,24 +158,31 @@ if (!reduce && !CSS.supports('selector(::details-content)')) {
     const summary = $('summary', item);
     const body = $('.faq-a', item);
     let running = null;
+    let closing = false; // the item stays open while it animates shut
     summary.addEventListener('click', (event) => {
       event.preventDefault();
+      // A click mid-animation turns it around from where it is now.
+      const from = running ? { height: `${body.offsetHeight}px`, opacity: getComputedStyle(body).opacity } : null;
+      const opening = !item.open || closing;
       running?.cancel();
+      closing = false;
       body.style.overflow = 'hidden';
       const finish = () => {
         body.style.overflow = '';
         running = null;
       };
-      if (item.open) {
-        running = body.animate([{ height: `${body.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 280, easing: EASE });
+      if (opening) {
+        item.open = true;
+        running = body.animate([from ?? { height: '0px', opacity: 0 }, { height: `${body.offsetHeight}px`, opacity: 1 }], { duration: 360, easing: EASE });
+        running.onfinish = finish;
+      } else {
+        closing = true;
+        running = body.animate([from ?? { height: `${body.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 280, easing: EASE });
         running.onfinish = () => {
           item.open = false;
+          closing = false;
           finish();
         };
-      } else {
-        item.open = true;
-        running = body.animate([{ height: '0px', opacity: 0 }, { height: `${body.offsetHeight}px`, opacity: 1 }], { duration: 360, easing: EASE });
-        running.onfinish = finish;
       }
     });
   });

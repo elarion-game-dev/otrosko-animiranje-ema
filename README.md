@@ -44,7 +44,7 @@ Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko r
 - **Animacije:** zastavice padejo, zanihajo in nato rahlo plapolajo v vetru, vabilo se poravna, mavrica se nariše, besede naslova se dvignejo,
   razdelki se ob pomikanju pokažejo (značke se »odtisnejo«, polaroidke se pripnejo, zahvalne kartice pridrsajo),
   paketi se nagnejo proti miški, polaroidke na vrhu se ob pomikanju premikajo (kjer brskalnik to podpira),
-  ob izbiri paketa po strani zadežujejo rojstnodnevni konfeti, po pošiljanju obrazca poletijo še enkrat. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
+  ko gumb obiskovalca pripelje do rezervacije, z dna razdelka izstrelijo rojstnodnevni konfeti (ob ročnem pomikanju ne), po pošiljanju obrazca poletijo še enkrat. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
   obiskovalec v sistemu vklopljeno zmanjšano gibanje ali če lastnica animacije izklopi; v predogledu urejevalnika
   so izklopljene, da ne motijo med tipkanjem.
 - **Brez JavaScripta** stran deluje enako: meni na telefonu se odpre s `:target`, jeziki in vprašanja so

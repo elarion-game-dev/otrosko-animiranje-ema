@@ -311,14 +311,23 @@ function confetti(target) {
   }
 }
 
-/** Birthday confetti raining over the whole screen: paper squares, dots and streamers that tumble as they fall. */
-function confettiRain() {
+/**
+ * Birthday confetti shot up from the bottom edge of a section (or of the screen, when the section runs past it):
+ * paper squares, dots and streamers fly up in a fan, tumble, and fall back down.
+ */
+function confettiCannon(section) {
   if (reduce || typeof Element.prototype.animate !== 'function') return;
-  const w = innerWidth;
-  const h = innerHeight;
+  const r = section.getBoundingClientRect();
+  const left = Math.max(0, r.left);
+  const width = Math.min(innerWidth, r.right) - left;
+  const bottom = Math.min(innerHeight, r.bottom);
+  const top = Math.max(0, r.top);
+  const reach = Math.max(160, (bottom - top) * 0.85); // how high the highest pieces fly
+  if (width <= 0 || bottom <= 0) return;
   const style = getComputedStyle(root);
   const colors = ['--coral', '--gold', '--sage', '--sky', '--lilac', '--accent'].map((v) => style.getPropertyValue(v).trim()).filter(Boolean);
-  const count = Math.round(Math.min(120, 46 + w / 11));
+  const count = Math.round(Math.min(110, 40 + width / 12));
+  const steps = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   for (let i = 0; i < count; i++) {
     const piece = d.createElement('span');
     piece.className = 'confetti-burst';
@@ -331,18 +340,22 @@ function confettiRain() {
       piece.style.height = '20px';
     }
     d.body.append(piece);
-    const x = Math.random() * w;
-    const y = -30 - Math.random() * 60;
-    const drift = (Math.random() - 0.5) * 220;
-    const sway = 18 + Math.random() * 34;
+    // Launch from along the bottom edge, leaning outwards from the middle like a fan.
+    const x0 = left + width * (0.08 + Math.random() * 0.84);
+    const y0 = bottom + 10;
+    const lean = (x0 - (left + width / 2)) / (width / 2); // -1 … 1
+    const drift = lean * (40 + Math.random() * 120) + (Math.random() - 0.5) * 90;
+    const apex = reach * (0.45 + Math.random() * 0.55);
+    // A thrown arc: highest at 45% of the flight, back below the edge at the end.
+    const ta = 0.45;
+    const y = (t) => y0 - (2 * apex * t) / ta + (apex * t * t) / (ta * ta);
     const spin = (Math.random() < 0.5 ? -1 : 1) * (360 + Math.random() * 720);
     const flip = 360 + Math.random() * 900;
-    const fall = h + 80;
-    const frames = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
-      transform: `translate(${x + drift * t + Math.sin(t * Math.PI * 3) * sway}px, ${y + fall * t}px) rotate(${spin * t}deg) rotateX(${flip * t}deg)`,
-      opacity: t < 0.85 ? 1 : 0,
+    const frames = steps.map((t) => ({
+      transform: `translate(${x0 + drift * (1 - (1 - t) ** 2)}px, ${y(t)}px) rotate(${spin * t}deg) rotateX(${flip * t}deg)`,
+      opacity: t < 0.8 ? 1 : 1 - (t - 0.8) * 5,
     }));
-    const animation = piece.animate(frames, { duration: 2600 + Math.random() * 1800, delay: Math.random() * 700, easing: 'cubic-bezier(.25, .4, .55, 1)', fill: 'backwards' });
+    const animation = piece.animate(frames, { duration: 1900 + Math.random() * 900, delay: Math.random() * 260, easing: 'linear', fill: 'backwards' });
     animation.onfinish = () => piece.remove();
   }
 }
@@ -666,13 +679,36 @@ d.addEventListener('click', (event) => {
   if (bookings.map((b) => b.preset(link)).some(Boolean)) event.preventDefault();
 });
 
-// Picking a party package: birthday confetti once the page has arrived at the booking section.
+// Any button or link that takes the visitor to the booking section celebrates with confetti once the page has
+// arrived there. Scrolling there by hand does not. A link from another page leaves a note for the next page.
+const BOOKING_NOTE = 'confetti-booking';
+const bookingSection = $('section.sec-contact');
+
 d.addEventListener('click', (event) => {
-  const link = event.target.closest('a[data-paket]');
+  const link = event.target.closest('a[href*="#"]');
   if (!link) return;
   const url = new URL(link.href, location.href);
-  if (url.pathname === location.pathname && url.hash) whenScrollStops(confettiRain);
+  if (url.origin !== location.origin || !url.hash) return;
+  if (url.pathname === location.pathname) {
+    if (bookingSection && url.hash === `#${bookingSection.id}`) whenScrollStops(() => confettiCannon(bookingSection));
+    return;
+  }
+  try {
+    sessionStorage.setItem(BOOKING_NOTE, url.pathname + url.hash);
+  } catch {
+    // no storage (private mode): the next page just skips the confetti
+  }
 });
+
+try {
+  const note = sessionStorage.getItem(BOOKING_NOTE);
+  sessionStorage.removeItem(BOOKING_NOTE);
+  if (note && bookingSection && note === location.pathname + location.hash && location.hash === `#${bookingSection.id}`) {
+    whenScrollStops(() => confettiCannon(bookingSection));
+  }
+} catch {
+  // no storage
+}
 
 // --- gallery lightbox -----------------------------------------------------------------------------------
 

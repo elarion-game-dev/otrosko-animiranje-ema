@@ -1125,6 +1125,21 @@ ${urls.join('\n')}
 `;
   // Search engines only read robots.txt at the root of a domain, so this one matters once the site has its own.
   files['robots.txt'] = s.seo.indexable ? `User-agent: *\nAllow: /\nDisallow: ${base}/admin/\n\nSitemap: ${s.site.url}/sitemap.xml\n` : 'User-agent: *\nDisallow: /\n';
+  // Where to report a security problem (RFC 9116). Like robots.txt it only counts at the root of a domain, so it
+  // is written once the site has a domain of its own. Expires must lie within a year; the monthly rebuild renews it.
+  if (!base && opts.repo?.owner && opts.repo?.repo) {
+    const expires = new Date(opts.now ?? Date.now());
+    expires.setUTCFullYear(expires.getUTCFullYear() + 1);
+    const github = `https://github.com/${opts.repo.owner}/${opts.repo.repo}`;
+    files['.well-known/security.txt'] = [
+      `Contact: ${github}/security/advisories/new`,
+      `Expires: ${expires.toISOString().slice(0, 10)}T00:00:00Z`,
+      `Policy: ${github}/blob/${opts.repo.branch || 'main'}/SECURITY.md`,
+      'Preferred-Languages: sl, en',
+      `Canonical: ${s.site.url}/.well-known/security.txt`,
+      '',
+    ].join('\n');
+  }
 
   const v = opts.version ? `?v=${encodeURIComponent(opts.version)}` : '';
   files['site.webmanifest'] = JSON.stringify(

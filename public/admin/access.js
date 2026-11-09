@@ -6,7 +6,8 @@
 // to api.github.com.
 
 const ITERATIONS = 600000;
-export const MIN_PASSWORD = 12;
+// NIST SP 800-63B-4: at least 15 characters for a password that is the only factor.
+export const MIN_PASSWORD = 15;
 const enc = new TextEncoder();
 
 const toBase64 = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes)));
@@ -53,9 +54,56 @@ export async function loadAccess() {
   }
 }
 
-/** Rough strength hint for the password field. */
+// What an attacker tries first: the site's own name, the owner's name at the start of a word, a year
+// (birthdays, "2026"), and the usual suspects.
+const GUESSABLE = /geslo|password|passw|admin|login|qwert|asdf|12345|abcde|otro[sš]ko|animir|elarion|github|(?:^|[^a-zčšž])ema|(?:19|20)\d\d/i;
+
+/** Rough strength check for the password field: '' when it is fine, otherwise what is wrong. */
 export function passwordProblem(password) {
-  if (password.length < MIN_PASSWORD) return `Geslo naj ima vsaj ${MIN_PASSWORD} znakov. Najlažje so tri ali štiri naključne besede, npr. »balon-torta-zmaj-poletje«.`;
-  if (/^(.)\1+$/.test(password) || /^(?:0123|1234|abcd|qwer|geslo|password)/i.test(password)) return 'To geslo je preveč predvidljivo.';
+  if (password.length < MIN_PASSWORD) return `Geslo naj ima vsaj ${MIN_PASSWORD} znakov. Najvarnejše je predlagano geslo iz naključnih besed (gumb »Predlagaj geslo«).`;
+  if (new Set(password.toLowerCase()).size < 8) return 'Geslo ima premalo različnih znakov.';
+  if (GUESSABLE.test(password)) return 'Geslo vsebuje nekaj, kar napadalci preizkusijo najprej (ime strani ali lastnice, letnico, »geslo«, »admin«, 12345 …). Izberite drugo.';
   return '';
+}
+
+// Plain words without č/š/ž, so the password is easy to type on any keyboard.
+export const WORDS = (
+  'balon torta zmaj sonce lisica medved zajec miska ptica riba metulj polz jez veverica sova orel ' +
+  'labod raca kokos jagoda banana limona hruska jabolko sliva malina borovnica ananas melona kivi breskev ' +
+  'oblak mavrica zvezda luna planet raketa letalo ladja vlak avto kolo skiro tramvaj traktor balonar ' +
+  'gora reka jezero morje otok plaza gozd travnik polje vrt cvet roza tulipan marjetica soncnica ' +
+  'drevo hrast lipa bukev smreka list veja korenina seme goba storz kamen pesek skala biser ' +
+  'kapa sal rokavica copat sandal majica hlace krilo obleka gumb zadrga pas torba nahrbtnik deznik ' +
+  'miza stol postelja blazina odeja omara polica okno vrata lestev stopnica streha dimnik balkon ' +
+  'boben kitara flavta violina klavir trobenta harmonika pesem ples ritem nota zvonec piscal ' +
+  'kocka zoga lok puscica kegelj frizbi kolebnica obroc tobogan gugalnica vrtiljak peskovnik ' +
+  'krona grad vitez zmajcek princesa carovnik vila palcek velikan pirat zaklad mapa kompas ' +
+  'svincnik barvica radirka zvezek knjiga pravljica slika okvir cevlji lepilo skarje papir ' +
+  'pica testenine juha palacinka keks bonbon sladoled puding kruh sir maslo med marmelada ' +
+  'jesen zima pomlad poletje jutro vecer noc dan teden praznik zabava darilo presenecenje ' +
+  'tiger lev zebra zirafa slon nosorog kamela pingvin tjulenj kit delfin morski konj hobotnica ' +
+  'pajek cebela mravlja kobilica ' +
+  'kresnicka polh krt jazbec srna jelen volk ris kuna vidra bober hrcek zelva kuza muca ' +
+  'konj krava ovca koza prasic petelin kokos puran gos osel ponij lama alpaka papiga ' +
+  'kanarcek golob vrabec lastovka strk caplja cmrlj sinica kos tascica ' +
+  'rumena modra zelena rdeca vijolicna oranzna roza siva bela crna zlata srebrna ' +
+  'kroglica kristal magnet lupa teleskop mikroskop baterija svetilka sveca lucka ogenj voda ' +
+  'veter dez sneg toca megla rosa led mavrica strela grom'
+)
+  .split(/\s+/)
+  .filter((w, i, all) => /^[a-z]{3,12}$/.test(w) && all.indexOf(w) === i);
+
+/** A uniformly random integer in [0, n), without modulo bias. */
+function randomBelow(n) {
+  const limit = Math.floor(0x100000000 / n) * n;
+  const buf = new Uint32Array(1);
+  do crypto.getRandomValues(buf);
+  while (buf[0] >= limit);
+  return buf[0] % n;
+}
+
+/** Five random words and a number, e.g. "zebra-kompas-hruska-boben-lipa-47": about 45 bits from the word list alone. */
+export function suggestPassword(words = 5) {
+  const out = Array.from({ length: words }, () => WORDS[randomBelow(WORDS.length)]);
+  return `${out.join('-')}-${10 + randomBelow(90)}`;
 }

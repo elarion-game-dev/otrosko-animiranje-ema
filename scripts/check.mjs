@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { decryptToken, encryptToken, MIN_PASSWORD, passwordProblem, suggestPassword, WORDS } from '../public/admin/access.js';
 import { markdown } from '../src/markdown.mjs';
 import { resolveProvider } from '../src/providers.mjs';
 import { renderPage, renderSite, typo } from '../src/render.mjs';
@@ -627,6 +628,59 @@ await test('Photos come in sizes that fit their frames; the lightbox still opens
   const hero = html.match(/<section class="hero[\s\S]*?<\/section>/)[0];
   assert.match(hero, /<img [^>]*decoding="async">/);
   assert.doesNotMatch(hero, /loading="lazy"|fetchpriority/);
+});
+
+// The editor and the page script only run in the browser, so nothing else would notice a module that fails to
+// parse (a name declared twice) or imports a name its source no longer exports: the editor would just be blank.
+await test('Browser modules parse and every named import exists', async () => {
+  const { execFileSync } = await import('node:child_process');
+  const { readdirSync } = await import('node:fs');
+  const { fileURLToPath } = await import('node:url');
+  const here = (p) => new URL(`../${p}`, import.meta.url);
+  const files = [...readdirSync(here('public/admin')).filter((f) => f.endsWith('.js')).map((f) => `public/admin/${f}`), 'public/assets/js/site.js'];
+  for (const file of files) {
+    execFileSync(process.execPath, ['--check', fileURLToPath(here(file))], { stdio: 'pipe' });
+    const source = await readFile(here(file), 'utf8');
+    for (const [, names, spec] of source.matchAll(/import\s*\{([^}]+)\}\s*from\s*'([^']+)'/g)) {
+      // The editor imports the shared modules from where the build publishes them (assets/lib = src/).
+      const target = spec.startsWith('../assets/lib/') ? `src/${spec.slice('../assets/lib/'.length)}` : path.posix.join(path.posix.dirname(file), spec);
+      if (target.endsWith('deploy.mjs')) continue; // written by the build
+      const exported = await readFile(here(target), 'utf8');
+      for (const name of names.split(',').map((n) => n.trim().split(/\s+as\s+/)[0]).filter(Boolean)) {
+        assert.match(exported, new RegExp(`export\\s+(?:async\\s+)?(?:const|let|function\\*?|class)\\s+${name}\\b|export\\s*\\{[^}]*\\b${name}\\b`), `${file} imports ${name} from ${spec}, which does not export it`);
+      }
+    }
+  }
+});
+
+await test('Editor passwords: long, not guessable, and suggested ones always pass', async () => {
+  assert.ok(MIN_PASSWORD >= 15);
+  for (const weak of ['kratko-geslo', 'aaaaaaaaaaaaaaaaaaaa', 'abababababababab', 'Ema2026rojstni!x', 'moje-geslo-za-stran', 'otrosko-animiranje', 'zebra-kompas-1987x', 'ema-balon-torta-zmaj', 'qwertzuiop-zmaj!']) {
+    assert.ok(passwordProblem(weak), `${weak} is refused`);
+  }
+  assert.equal(passwordProblem('tema-sonce-kolo-gozd'), '', 'a word that merely contains "ema" is fine');
+  assert.ok(WORDS.length >= 256 && WORDS.every((w) => /^[a-z]{3,12}$/.test(w)) && new Set(WORDS).size === WORDS.length, 'word list: 256+ unique plain words');
+  for (let i = 0; i < 2000; i++) {
+    const p = suggestPassword();
+    assert.match(p, /^([a-z]+-){5}\d\d$/);
+    assert.equal(passwordProblem(p), '', `suggested ${p} passes`);
+  }
+  const blob = await encryptToken('github_pat_example', 'zebra-kompas-hruska-boben-lipa-47', 'Ema');
+  assert.equal(await decryptToken(blob, 'zebra-kompas-hruska-boben-lipa-47'), 'github_pat_example');
+  assert.equal(await decryptToken(blob, 'zebra-kompas-hruska-boben-lipa-48'), null);
+});
+
+await test('security.txt only on a domain of its own, with a valid Expires', () => {
+  const repo = { owner: 'elarion-game-dev', repo: 'otrosko-animiranje-ema', branch: 'main' };
+  const now = new Date('2026-11-09T12:00:00Z');
+  const onPages = renderSite(normalizeSettings(DEFAULT_SETTINGS), { version: 'v', repo, now });
+  assert.equal(onPages['.well-known/security.txt'], undefined, 'not under a github.io sub-path');
+  const own = structuredClone(DEFAULT_SETTINGS);
+  own.site.url = 'https://www.example.si';
+  const txt = renderSite(normalizeSettings(own), { version: 'v', repo, now })['.well-known/security.txt'];
+  assert.match(txt, /^Contact: https:\/\/github\.com\/elarion-game-dev\/otrosko-animiranje-ema\/security\/advisories\/new$/m);
+  assert.match(txt, /^Expires: 2027-11-09T00:00:00Z$/m);
+  assert.match(txt, /^Canonical: https:\/\/www\.example\.si\/\.well-known\/security\.txt$/m);
 });
 
 await test('content/site.json renders', async () => {

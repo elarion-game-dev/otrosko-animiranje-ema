@@ -31,6 +31,10 @@ const MOBILE_WIDTH = 390;
 // Where the site lives, taken from this page's own address: "/otrosko-animiranje-ema" on GitHub Pages.
 const SITE_BASE = location.pathname.replace(/\/admin(\/.*)?$/, '');
 const SITE_ROOT = `${location.origin}${SITE_BASE}`;
+// Under a path such as user.github.io/repo/ the site shares its origin (and so localStorage) with every other
+// site on that host, and any of their scripts could read a remembered token. There the sign-in only lasts as
+// long as the tab; on a domain of its own the editor can remember it again.
+const SHARED_ORIGIN = SITE_BASE !== '' && location.hostname.endsWith('.github.io');
 const root = document.getElementById('app');
 
 const serialize = (settings) => JSON.stringify(settings, null, 2) + '\n';
@@ -172,6 +176,10 @@ function storedToken() {
   try {
     const session = sessionStorage.getItem(TOKEN_KEY);
     if (session) return { token: session, remembered: false };
+    if (SHARED_ORIGIN) {
+      localStorage.removeItem(TOKEN_KEY); // remembered before this rule existed
+      return null;
+    }
     const local = localStorage.getItem(TOKEN_KEY);
     return local ? { token: local, remembered: true } : null;
   } catch {
@@ -182,7 +190,7 @@ function storedToken() {
 function storeToken(token, keep) {
   try {
     clearToken();
-    (keep ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
+    (keep && !SHARED_ORIGIN ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
   } catch {
     // storage unavailable (private mode): the session simply won't survive a reload
   }
@@ -234,6 +242,8 @@ function brandLine(name = '') {
 
 function rememberBox() {
   const box = h('input', { type: 'checkbox', id: 'remember' });
+  // On a shared origin there is nothing to choose: the sign-in ends with the tab (see SHARED_ORIGIN).
+  if (SHARED_ORIGIN) return { box, label: null };
   const label = h('label', { class: 'check', for: 'remember' }, box, h('span', {}, 'Ostani prijavljen/-a na tej napravi. Na skupnih računalnikih tega ne vklopite: brez kljukice se odjavite, ko zaprete zavihek.'));
   return { box, label };
 }
@@ -981,7 +991,7 @@ async function saveAccess(password, { token, label } = {}) {
 async function removeAccess() {
   const choice = await confirmDialog({
     title: 'Izklopim prijavo z geslom?',
-    body: 'Datoteka z zaščitenim žetonom se odstrani s strani. Žeton samega prekličite tudi na GitHubu, če ga nihče več ne potrebuje.',
+    body: 'Datoteka z zaščitenim žetonom se odstrani s strani, ostane pa v javni zgodovini repozitorija, kjer jo geslo še vedno odklene. Zato žeton, ki ga je geslo varovalo, prekličite tudi na GitHubu.',
     confirm: 'Izklopi',
     danger: true,
   });

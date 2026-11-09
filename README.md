@@ -88,7 +88,8 @@ Urejevalnik se z GitHubom pogovarja z žetonom (fine-grained personal access tok
    - Permissions: **Contents: Read and write**, **Actions: Read** (za stanje objave)
    - Expiration: do enega leta
 2. Prijavite se z njim na `/admin/`.
-3. Za stranko: pod **Sistem → Dostop** nastavite geslo (vsaj 12 znakov; najlažje tri ali štiri naključne besede).
+3. Za stranko: pod **Sistem → Dostop** nastavite geslo (vsaj 15 znakov; gumb *Predlagaj geslo* sestavi pet naključnih
+   besed in število, približno 47 bitov naključnosti).
    Priporočeno je, da za stranko ustvarite ločen žeton in ga prilepite tam, da ga lahko prekličete posebej.
    Stranka potem dobi samo naslov `/admin/` in geslo.
 
@@ -96,6 +97,12 @@ Kako deluje geslo: žeton se v brskalniku zaklene z geslom (PBKDF2-SHA256, 600 0
 kot `admin/access.json`. Datoteka je javna, zato je varnost odvisna od dolžine gesla. Kdor pozna geslo, lahko ureja
 stran (ne more pa spreminjati workflowov ali drugih repozitorijev). Ko žeton poteče, ustvarite novega in geslo
 nastavite znova. Dostop odvzamete tako, da žeton prekličete na https://github.com/settings/personal-access-tokens.
+Prejšnje datoteke `access.json` ostanejo v javni zgodovini repozitorija, zato menjava gesla ne zaklene starega: če
+geslo morda pozna kdo drug, ustvarite nov žeton in starega prekličite.
+
+Dokler je stran na `elarion-game-dev.github.io/…`, si deli izvor (origin) z vsemi drugimi stranmi na tem naslovu,
+ki zato lahko berejo shranjene podatke brskalnika. Urejevalnik tam prijave ne shrani na napravo; velja, dokler je
+zavihek odprt. Na lastni domeni se možnost »Ostani prijavljen« vrne.
 
 ## Obrazec za povpraševanje
 
@@ -130,6 +137,8 @@ poskusi na minuto.
 | Vhodni podatki | Vse nastavitve gredo skozi en normalizator (dolžine, barve, URL-ji, izbire), ves izpis je ubežen. `npm test` vsako polje napade z zlonamernim vnosom. |
 | Urejevalnik | Brez baze gesel. Dostop je žeton, omejen na ta repozitorij; urejevalnik se pogovarja samo z `api.github.com`, ne deluje v okvirju (iframe) in je `noindex`. |
 | Dobavna veriga | Brez odvisnosti npm. GitHub Actions so pripeti na commit SHA, posodablja jih Dependabot. |
+| Repozitorij | Iskanje skrivnosti z zaščito ob pushu, opozorila Dependabot, zasebno prijavljanje ranljivosti (`SECURITY.md`), pravilo, ki prepove force push in brisanje veje `main`. Na lastni domeni še `/.well-known/security.txt`. |
+| Glave HTTP | GitHub Pages ne dovoli lastnih glav (`frame-ancestors`, `Permissions-Policy` …), zato je CSP v `<meta>`, urejevalnik pa se v okvirju ustavi sam. Za polne glave: lastna domena prek Cloudflara ali gostovanje z datoteko `_headers`. |
 
 Vzorčna vsebina ne vsebuje izmišljenih mnenj, cen, terminov, nazivov ali številk: tisto vpiše lastnica sama.
 Fotografije so vzorčne in označene za zamenjavo (glej zgoraj).

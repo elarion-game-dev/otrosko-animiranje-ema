@@ -56,7 +56,7 @@ export async function build({ log = console.log } = {}) {
   await writeFile(adminPage, admin.replace('href="admin.css"', `href="${stamp('admin.css')}"`).replace('src="admin.js"', `src="${stamp('admin.js')}"`));
   await writeFile(path.join(dist, 'assets', 'lib', 'deploy.mjs'), `export const DEPLOY = ${JSON.stringify(repo)};\nexport const VERSION = '${version}';\n`);
 
-  const files = renderSite(settings, { version, images: await findRenditions(dist) });
+  const files = renderSite(settings, { version, repo, images: await findRenditions(dist) });
   for (const [file, contents] of Object.entries(files)) {
     const target = path.join(dist, file);
     await mkdir(path.dirname(target), { recursive: true });

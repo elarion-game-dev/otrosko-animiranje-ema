@@ -20,7 +20,7 @@ import {
   OTHER_LANGS,
   termsBlanks,
   setupChecklist,
-  tx,
+  tx as t4,
 } from '../assets/lib/settings.mjs';
 import {
   COLOR_KEYS,
@@ -36,7 +36,7 @@ import {
   contrastReport,
 } from '../assets/lib/themes.mjs';
 import { i18nFields, isEmail, isPhone, safeUrl } from '../assets/lib/util.mjs';
-import { MIN_PASSWORD, passwordProblem } from './access.js';
+import { MIN_PASSWORD, passwordProblem, suggestPassword } from './access.js';
 import { card, code, color, confirmDialog, h, icon, iconPicker, image, link, note, range, repeater, sectionList, segmented, select, steps, text, toggle } from './ui.js';
 
 const httpsOnly = (v) => (safeUrl(v, { allowMailto: false, allowRelative: false }).startsWith('https://') ? '' : 'Vpišite celoten naslov, ki se začne s https://.');
@@ -300,7 +300,7 @@ function hero(app) {
         addLabel: 'Dodaj vrstico',
         empty: 'Ni podrobnosti.',
         itemTitle: (x) => `${name(app, x.term, '…')}: ${name(app, x.value)}`,
-        newItem: () => ({ term: tx(''), value: tx('') }),
+        newItem: () => ({ term: t4(''), value: t4('') }),
         fields: (p) => [h('div', { class: 'grid-2' }, tx(app, `${p}.term`, { label: 'Kaj', maxlength: 30, placeholder: 'npr. Kje' }), tx(app, `${p}.value`, { label: 'Besedilo', maxlength: 80, placeholder: 'npr. Doma ali v najetem prostoru' }))],
       }),
       toggle(app, 'hero.showDate', { label: 'Vrstica »Kdaj« z izbiro datuma', help: 'Izbrani datum se prenese v obrazec. Prikaže se, ko obrazec deluje; na telefonu je skrita.' })
@@ -316,7 +316,7 @@ function hero(app) {
         empty: 'Ni fotografij. Vabilo je na sredini, brez polaroidk.',
         itemTitle: (x, i) => `${i === 0 ? 'Leva' : 'Desna'}: ${name(app, x.caption, 'brez pripisa')}${isSample(x.src) ? ' · vzorčna' : ''}`,
         onOpen: () => app.previewAnchor('hero'),
-        newItem: () => ({ src: '', alt: tx(''), caption: tx('') }),
+        newItem: () => ({ src: '', alt: t4(''), caption: t4('') }),
         fields: (p) => [
           image(app, `${p}.src`, { label: 'Fotografija', help: 'Pokončna je najboljša (4 : 5). Objavite le fotografije otrok, za katere imate soglasje staršev.', upload: { maxWidth: 900, maxHeight: 1200, name: 'vabilo' } }),
           tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi', maxlength: 40, placeholder: 'npr. Rojstni dan!' }),
@@ -335,7 +335,7 @@ function stampList(app, path, { max, empty, placeholder, onOpen }) {
     empty,
     itemTitle: (x) => name(app, x.text, 'Nova značka'),
     onOpen,
-    newItem: () => ({ icon: 'check', text: tx('') }),
+    newItem: () => ({ icon: 'check', text: t4('') }),
     fields: (p) => [tx(app, `${p}.text`, { label: 'Besedilo', maxlength: 60, placeholder }), iconPicker(app, `${p}.icon`)],
   });
 }
@@ -391,7 +391,7 @@ function program(app) {
         addLabel: 'Dodaj točko',
         itemTitle: (s) => `${s.time ? `${s.time} · ` : ''}${name(app, s.title, 'Nova točka')}`,
         onOpen: () => app.previewAnchor('steps'),
-        newItem: () => ({ icon: 'star', time: '', title: tx('Nova točka'), text: tx('') }),
+        newItem: () => ({ icon: 'star', time: '', title: t4('Nova točka'), text: t4('') }),
         fields: (p) => [
           h('div', { class: 'grid-2' }, tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }), text(app, `${p}.time`, { label: 'Ura', maxlength: 12, placeholder: '0:15' })),
           tx(app, `${p}.text`, { label: 'Kratek opis', maxlength: 300 }),
@@ -416,7 +416,7 @@ function services(app) {
         empty: 'Ni še storitev.',
         itemTitle: (s) => name(app, s.title, 'Nova storitev'),
         onOpen: () => app.previewAnchor('services'),
-        newItem: () => ({ icon: 'star', image: '', title: tx('Nova storitev'), text: tx('') }),
+        newItem: () => ({ icon: 'star', image: '', title: t4('Nova storitev'), text: t4('') }),
         fields: (p) => [
           tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }),
           tx(app, `${p}.text`, { label: 'Kratek opis', multiline: true, rows: 3, maxlength: 600 }),
@@ -440,7 +440,7 @@ function packages(app) {
         addLabel: 'Dodaj paket',
         itemTitle: (p) => `${name(app, p.name, 'Nov paket')}${p.price?.sl ? ` · ${p.price.sl}` : ''}${p.highlight ? ' ★' : ''}`,
         onOpen: () => app.previewAnchor('packages'),
-        newItem: () => ({ name: tx('Nov paket'), price: tx(''), duration: tx(''), features: tx(''), highlight: false, badge: tx(''), button: tx('') }),
+        newItem: () => ({ name: t4('Nov paket'), price: t4(''), duration: t4(''), features: t4(''), highlight: false, badge: t4(''), button: t4('') }),
         fields: (p) => [
           tx(app, `${p}.name`, { label: 'Ime paketa', maxlength: 60 }),
           h('div', { class: 'grid-2' }, tx(app, `${p}.duration`, { label: 'Za koga in koliko časa', maxlength: 60, placeholder: 'npr. do 10 otrok · 1,5 ure' }), tx(app, `${p}.price`, { label: 'Cena', maxlength: 40, placeholder: 'npr. od 150 €', help: '»od« na začetku je izpisan manjše.' })),
@@ -478,7 +478,7 @@ function schedule(app) {
         empty: 'Ni terminov.',
         itemTitle: (s) => `${s.day === 'custom' ? s.when?.sl || '…' : DAY_OPTIONS[s.day]} ${s.time}${s.title?.sl ? ` · ${name(app, s.title)}` : ''}`,
         onOpen: () => app.previewAnchor('schedule'),
-        newItem: () => ({ title: tx(''), day: 'tue', when: tx(''), time: '17.00', place: tx(''), note: tx('') }),
+        newItem: () => ({ title: t4(''), day: 'tue', when: t4(''), time: '17.00', place: t4(''), note: t4('') }),
         fields: (p) => [
           h('div', { class: 'grid-2' }, select(app, `${p}.day`, { label: 'Dan', options: DAY_OPTIONS, rerender: true }), text(app, `${p}.time`, { label: 'Ura', maxlength: 30, placeholder: '17.00' })),
           app.get(`${p}.day`) === 'custom' ? tx(app, `${p}.when`, { label: 'Kdaj', maxlength: 60, placeholder: 'npr. Vsako drugo soboto' }) : null,
@@ -529,7 +529,7 @@ function gallery(app) {
     for (const file of chosen.slice(0, room)) {
       status.textContent = `Obdelujem ${++n} od ${Math.min(chosen.length, room)} …`;
       try {
-        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: tx(''), caption: tx('') });
+        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: t4(''), caption: t4('') });
       } catch (error) {
         status.textContent = error.message;
       }
@@ -553,7 +553,7 @@ function gallery(app) {
         empty: 'Galerija je prazna, zato se na spletu ne prikaže.',
         itemTitle: (x, i) => `${name(app, x.caption, '') || name(app, x.alt, `Slika ${i + 1}`)}${isSample(x.src) ? ' · vzorčna' : ''}`,
         onOpen: () => app.previewAnchor('gallery'),
-        newItem: () => ({ src: '', alt: tx(''), caption: tx('') }),
+        newItem: () => ({ src: '', alt: t4(''), caption: t4('') }),
         fields: (p) => [
           image(app, `${p}.src`, { label: 'Slika', upload: { maxWidth: 1800, maxHeight: 1800, name: 'galerija' } }),
           tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi (neobvezno)', maxlength: 40, placeholder: 'npr. Torta!' }),
@@ -586,7 +586,7 @@ function reviews(app) {
         empty: 'Ni še mnenj.',
         itemTitle: (x) => [x.name, name(app, x.quote).slice(0, 40)].filter(Boolean).join(' · ') || 'Novo mnenje',
         onOpen: () => app.previewAnchor('testimonials'),
-        newItem: () => ({ quote: tx(''), name: '', detail: tx(''), rating: 5 }),
+        newItem: () => ({ quote: t4(''), name: '', detail: t4(''), rating: 5 }),
         fields: (p) => [
           tx(app, `${p}.quote`, { label: 'Mnenje', multiline: true, rows: 4, maxlength: 800 }),
           h('div', { class: 'grid-2' }, text(app, `${p}.name`, { label: 'Ime', maxlength: 60, placeholder: 'npr. Maja' }), tx(app, `${p}.detail`, { label: 'Pripis (neobvezno)', maxlength: 80, placeholder: 'npr. mama 6-letne Zale' })),
@@ -609,7 +609,7 @@ function faq(app) {
         addLabel: 'Dodaj vprašanje',
         itemTitle: (x) => name(app, x.q, 'Novo vprašanje'),
         onOpen: () => app.previewAnchor('faq'),
-        newItem: () => ({ q: tx('Novo vprašanje?'), a: tx('') }),
+        newItem: () => ({ q: t4('Novo vprašanje?'), a: t4('') }),
         fields: (p) => [tx(app, `${p}.q`, { label: 'Vprašanje', maxlength: 200 }), tx(app, `${p}.a`, { label: 'Odgovor', multiline: true, rows: 4, maxlength: 2000, help: MARKDOWN_HELP })],
       })
     ),
@@ -652,12 +652,13 @@ const PROVIDER_GUIDES = {
     'Slabost: sporočilo mora obiskovalec poslati sam, na računalnikih brez nastavljene e-pošte pa ne deluje. Za zanesljivejše prejemanje izberite Formspree.',
     app.get('contact.email') ? `Povpraševanja bodo prišla na ${app.get('contact.email')}.` : 'Najprej pod Kontakt vpišite svojo e-pošto.',
   ],
-  formspree: () => [
+  formspree: (app) => [
     h('span', {}, 'Ustvarite brezplačen račun na ', link('https://formspree.io', 'formspree.io'), ' z e-naslovom, na katerega želite prejemati povpraševanja.'),
     h('span', {}, 'Kliknite ', h('strong', {}, '+ New Form'), ' in ga poimenujte, npr. »Spletna stran«.'),
     h('span', {}, 'Skopirajte naslov obrazca (', code('https://formspree.io/f/…'), ') in ga prilepite spodaj.'),
     'Objavite, nato pošljite poskusno povpraševanje. Prvo sporočilo morate potrditi v e-pošti, ki jo pošlje Formspree.',
     'Če Formspree sporočil ne sprejme, v nastavitvah obrazca izklopite reCAPTCHA. Stran ne nalaga Googlovih skript in ima lastno zaščito pred roboti.',
+    h('span', {}, 'Zaščita pred neželeno pošto: v nastavitvah projekta na Formspree vklopite ', h('strong', {}, 'Restrict to Domain'), ' in vpišite ', code(new URL(app.normalized().site.url).hostname), ' (po selitvi na lastno domeno vpišite njo). Sporočila, ki niso poslana s te strani, potem končajo med neželeno pošto.'),
     'Brezplačni paket ima mesečno omejitev števila sporočil; trenutno omejitev preverite na formspree.io.',
   ],
   custom: () => [
@@ -1072,6 +1073,16 @@ function access(app) {
   const other = h('input', { type: 'password', class: 'input mono', id: 'acc-token', autocomplete: 'off', placeholder: 'github_pat_… (neobvezno)' });
   const error = h('p', { class: 'field-error', role: 'alert', hidden: true });
   const save = h('button', { type: 'submit', class: 'btn btn-primary' }, a ? 'Zamenjaj geslo' : 'Vklopi prijavo z geslom');
+  // Shown in plain text so it can be written down; the browser's password manager offers to save it at sign-in.
+  const suggest = h('button', {
+    type: 'button',
+    class: 'btn btn-ghost',
+    onclick: () => {
+      pass.value = pass2.value = suggestPassword();
+      pass.type = 'text';
+      fail('');
+    },
+  }, icon('key'), 'Predlagaj geslo');
   const fail = (message) => {
     error.textContent = message;
     error.hidden = !message;
@@ -1102,7 +1113,8 @@ function access(app) {
     },
     h('div', { class: 'field' }, h('label', { class: 'field-label', for: 'acc-label' }, 'Ime za pozdrav na prijavni strani (neobvezno)'), label),
     h('div', { class: 'grid-2' }, h('div', { class: 'field' }, h('label', { class: 'field-label', for: 'acc-pass' }, 'Novo geslo'), pass), h('div', { class: 'field' }, h('label', { class: 'field-label', for: 'acc-pass2' }, 'Ponovite geslo'), pass2)),
-    h('p', { class: 'field-help' }, `Vsaj ${MIN_PASSWORD} znakov. Najlažje si zapomnite tri ali štiri naključne besede.`),
+    h('p', { class: 'field-help' }, `Vsaj ${MIN_PASSWORD} znakov. Najvarnejše je predlagano geslo iz petih naključnih besed: zapišite si ga ali ga shranite v brskalnik.`),
+    h('div', { class: 'button-row' }, suggest),
     h(
       'div',
       { class: 'field' },
@@ -1124,6 +1136,12 @@ function access(app) {
         'Kako deluje: žeton GitHub se v brskalniku zaklene z geslom in objavi kot datoteka admin/access.json. Datoteka je javna, zato je varnost odvisna od dolžine gesla. Kdor pozna geslo, lahko ureja stran. Ko žeton poteče, ga ustvarite znova in tukaj nastavite geslo še enkrat.',
         'info'
       ),
+      a
+        ? note(
+            'Prejšnje datoteke z gesli ostanejo v javni zgodovini repozitorija in staro geslo še vedno odklene isti žeton. Če geslo menjate, ker ga morda pozna kdo drug, zato ustvarite nov žeton, ga prilepite spodaj in starega prekličite na GitHubu.',
+            'warn'
+          )
+        : null,
       formEl
     ),
     card(

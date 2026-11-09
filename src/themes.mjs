@@ -1,6 +1,8 @@
 // Visual theme: self-hosted fonts, colour presets, the generated theme.css and a WCAG contrast checker.
 // Fonts are served from this site (no Google Fonts request), so visitors' IP addresses are not sent to a font CDN.
-// Every font here has the full Slovenian and Serbo-Croatian alphabet (č š ž ć đ).
+// Every font here has the full Slovenian and Croatian alphabet (č š ž ć đ). For Serbian Cyrillic each font has a
+// Cyrillic file (`cyr`): its own where the family has one, otherwise a similar family (Prata for DM Serif Display,
+// Lora for Fraunces, Nunito for the rounded ones, Caveat for handwriting). Browsers only download it for Cyrillic text.
 //
 // The page design ("Vabilo", an invitation suite) lives in site.css. The theme only supplies its colours and
 // fonts as CSS variables, plus colours derived from them that must stay readable (tints, darker "ink" shades,
@@ -14,8 +16,8 @@ export const FONTS = {
     family: 'DM Serif Display',
     fallback: "Georgia, 'Times New Roman', serif",
     faces: [
-      { weight: '400', latin: 'dm-serif-display-latin-400-normal.woff2', ext: 'dm-serif-display-latin-ext-400-normal.woff2' },
-      { weight: '400', style: 'italic', latin: 'dm-serif-display-latin-400-italic.woff2', ext: 'dm-serif-display-latin-ext-400-italic.woff2' },
+      { weight: '400', latin: 'dm-serif-display-latin-400-normal.woff2', ext: 'dm-serif-display-latin-ext-400-normal.woff2', cyr: 'prata-cyrillic-400-normal.woff2' },
+      { weight: '400', style: 'italic', latin: 'dm-serif-display-latin-400-italic.woff2', ext: 'dm-serif-display-latin-ext-400-italic.woff2', cyr: 'prata-cyrillic-400-normal.woff2' },
     ],
     heading: { weight: 400, tracking: '0', scale: 1 },
   },
@@ -23,63 +25,63 @@ export const FONTS = {
     label: 'Nunito Sans (čista, prijazna)',
     family: 'Nunito Sans Variable',
     fallback: "system-ui, -apple-system, 'Segoe UI', sans-serif",
-    faces: [{ weight: '200 1000', latin: 'nunito-sans-latin-wght-normal.woff2', ext: 'nunito-sans-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '200 1000', latin: 'nunito-sans-latin-wght-normal.woff2', ext: 'nunito-sans-latin-ext-wght-normal.woff2', cyr: 'nunito-sans-cyrillic-wght-normal.woff2' }],
     heading: { weight: 800, tracking: '-0.01em', scale: 0.9 },
   },
   caveat: {
     label: 'Caveat (ročna pisava)',
     family: 'Caveat',
     fallback: "'Segoe Print', 'Bradley Hand', cursive",
-    faces: [{ weight: '700', latin: 'caveat-latin-700-normal.woff2', ext: 'caveat-latin-ext-700-normal.woff2' }],
+    faces: [{ weight: '700', latin: 'caveat-latin-700-normal.woff2', ext: 'caveat-latin-ext-700-normal.woff2', cyr: 'caveat-cyrillic-700-normal.woff2' }],
     heading: { weight: 700, tracking: '0', scale: 1.15 },
   },
   fraunces: {
     label: 'Fraunces (mehka serifna)',
     family: 'Fraunces Variable',
     fallback: 'Georgia, serif',
-    faces: [{ weight: '100 900', latin: 'fraunces-latin-wght-normal.woff2', ext: 'fraunces-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '100 900', latin: 'fraunces-latin-wght-normal.woff2', ext: 'fraunces-latin-ext-wght-normal.woff2', cyr: 'lora-cyrillic-wght-normal.woff2' }],
     heading: { weight: 560, tracking: '-0.01em', scale: 0.95 },
   },
   baloo: {
     label: 'Baloo 2 (okrogla, igriva)',
     family: 'Baloo 2 Variable',
     fallback: '"Arial Rounded MT Bold", system-ui, sans-serif',
-    faces: [{ weight: '400 800', latin: 'baloo-2-latin-wght-normal.woff2', ext: 'baloo-2-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '400 800', latin: 'baloo-2-latin-wght-normal.woff2', ext: 'baloo-2-latin-ext-wght-normal.woff2', cyr: 'nunito-cyrillic-wght-normal.woff2' }],
     heading: { weight: 700, tracking: '0', scale: 0.95 },
   },
   grandstander: {
     label: 'Grandstander (otroško živahna)',
     family: 'Grandstander Variable',
     fallback: '"Comic Sans MS", system-ui, sans-serif',
-    faces: [{ weight: '100 900', latin: 'grandstander-latin-wght-normal.woff2', ext: 'grandstander-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '100 900', latin: 'grandstander-latin-wght-normal.woff2', ext: 'grandstander-latin-ext-wght-normal.woff2', cyr: 'nunito-cyrillic-wght-normal.woff2' }],
     heading: { weight: 800, tracking: '-0.01em', scale: 0.85 },
   },
   comfortaa: {
     label: 'Comfortaa (mehka, zaobljena)',
     family: 'Comfortaa Variable',
     fallback: 'system-ui, sans-serif',
-    faces: [{ weight: '300 700', latin: 'comfortaa-latin-wght-normal.woff2', ext: 'comfortaa-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '300 700', latin: 'comfortaa-latin-wght-normal.woff2', ext: 'comfortaa-latin-ext-wght-normal.woff2', cyr: 'comfortaa-cyrillic-wght-normal.woff2' }],
     heading: { weight: 700, tracking: '-0.01em', scale: 0.85 },
   },
   quicksand: {
     label: 'Quicksand (lahkotna)',
     family: 'Quicksand Variable',
     fallback: 'system-ui, sans-serif',
-    faces: [{ weight: '300 700', latin: 'quicksand-latin-wght-normal.woff2', ext: 'quicksand-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '300 700', latin: 'quicksand-latin-wght-normal.woff2', ext: 'quicksand-latin-ext-wght-normal.woff2', cyr: 'comfortaa-cyrillic-wght-normal.woff2' }],
     heading: { weight: 700, tracking: '-0.01em', scale: 0.9 },
   },
   'patrick-hand': {
     label: 'Patrick Hand (ročna pisava)',
     family: 'Patrick Hand',
     fallback: '"Comic Sans MS", cursive',
-    faces: [{ weight: '400', latin: 'patrick-hand-latin-400-normal.woff2', ext: 'patrick-hand-latin-ext-400-normal.woff2' }],
+    faces: [{ weight: '400', latin: 'patrick-hand-latin-400-normal.woff2', ext: 'patrick-hand-latin-ext-400-normal.woff2', cyr: 'caveat-cyrillic-700-normal.woff2' }],
     heading: { weight: 400, tracking: '0.01em', scale: 1.05 },
   },
   nunito: {
     label: 'Nunito (zaobljena, berljiva)',
     family: 'Nunito Variable',
     fallback: 'system-ui, sans-serif',
-    faces: [{ weight: '200 1000', latin: 'nunito-latin-wght-normal.woff2', ext: 'nunito-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '200 1000', latin: 'nunito-latin-wght-normal.woff2', ext: 'nunito-latin-ext-wght-normal.woff2', cyr: 'nunito-cyrillic-wght-normal.woff2' }],
     heading: { weight: 800, tracking: '-0.01em', scale: 0.9 },
   },
   atkinson: {
@@ -87,8 +89,8 @@ export const FONTS = {
     family: 'Atkinson Hyperlegible',
     fallback: 'system-ui, sans-serif',
     faces: [
-      { weight: '400', latin: 'atkinson-hyperlegible-latin-400-normal.woff2', ext: 'atkinson-hyperlegible-latin-ext-400-normal.woff2' },
-      { weight: '700', latin: 'atkinson-hyperlegible-latin-700-normal.woff2', ext: 'atkinson-hyperlegible-latin-ext-700-normal.woff2' },
+      { weight: '400', latin: 'atkinson-hyperlegible-latin-400-normal.woff2', ext: 'atkinson-hyperlegible-latin-ext-400-normal.woff2', cyr: 'nunito-sans-cyrillic-wght-normal.woff2' },
+      { weight: '700', latin: 'atkinson-hyperlegible-latin-700-normal.woff2', ext: 'atkinson-hyperlegible-latin-ext-700-normal.woff2', cyr: 'nunito-sans-cyrillic-wght-normal.woff2' },
     ],
     heading: { weight: 700, tracking: '-0.01em', scale: 0.9 },
   },
@@ -96,14 +98,14 @@ export const FONTS = {
     label: 'Jost (geometrijska)',
     family: 'Jost Variable',
     fallback: 'Futura, "Trebuchet MS", system-ui, sans-serif',
-    faces: [{ weight: '100 900', latin: 'jost-latin-wght-normal.woff2', ext: 'jost-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '100 900', latin: 'jost-latin-wght-normal.woff2', ext: 'jost-latin-ext-wght-normal.woff2', cyr: 'jost-cyrillic-wght-normal.woff2' }],
     heading: { weight: 600, tracking: '0', scale: 0.95 },
   },
   inter: {
     label: 'Inter (čista, sodobna)',
     family: 'Inter Variable',
     fallback: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-    faces: [{ weight: '100 900', latin: 'inter-latin-wght-normal.woff2', ext: 'inter-latin-ext-wght-normal.woff2' }],
+    faces: [{ weight: '100 900', latin: 'inter-latin-wght-normal.woff2', ext: 'inter-latin-ext-wght-normal.woff2', cyr: 'inter-cyrillic-wght-normal.woff2' }],
     heading: { weight: 700, tracking: '-0.02em', scale: 0.9 },
   },
   system: {
@@ -122,6 +124,7 @@ export const HAND_FONT = 'caveat';
 
 const UNICODE_LATIN =
   'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+const UNICODE_CYRILLIC = 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116';
 const UNICODE_LATIN_EXT =
   'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF';
 
@@ -393,9 +396,11 @@ export function fontFaces(fontId, fontBase = '/assets/fonts/') {
   return font.faces
     .map((face) =>
       [
+        ['cyr', UNICODE_CYRILLIC],
         ['ext', UNICODE_LATIN_EXT],
         ['latin', UNICODE_LATIN],
       ]
+        .filter(([key]) => face[key])
         .map(
           ([key, range]) => `@font-face {
   font-family: '${font.family}';
@@ -416,10 +421,13 @@ export function fontStack(fontId) {
   return font.family ? `'${font.family}', ${font.fallback}` : font.fallback;
 }
 
-/** The font file to <link rel="preload"> for headings, so the invitation renders without a font swap flash. */
-export function preloadFont(fontId) {
+/**
+ * The font file to <link rel="preload"> for headings, so the invitation renders without a font swap flash.
+ * `subset`: 'cyrillic' on the Serbian pages, 'latin' everywhere else.
+ */
+export function preloadFont(fontId, subset = 'latin') {
   const face = FONTS[fontId]?.faces?.[0];
-  return face ? face.latin : '';
+  return face ? (subset === 'cyrillic' ? face.cyr : face.latin) ?? '' : '';
 }
 
 /**

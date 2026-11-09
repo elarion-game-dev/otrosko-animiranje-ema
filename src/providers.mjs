@@ -23,7 +23,7 @@ export const PROVIDERS = {
     short: 'Formspree',
     site: 'https://formspree.io',
     privacyUrl: 'https://formspree.io/legal/privacy-policy',
-    region: { sl: 'ZDA', en: 'United States', sh: 'SAD' },
+    region: { sl: 'ZDA', en: 'United States', hr: 'SAD', sr: 'SAD' },
     fields: [
       {
         key: 'formId',

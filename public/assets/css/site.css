@@ -179,7 +179,12 @@ main > .band:last-child::after { display: none; }
 .garland { display: block; width: 100%; height: clamp(64px, 7vw, 100px); overflow: visible; }
 .garland .string { fill: none; stroke: var(--ink-2); stroke-width: 2; opacity: .5; }
 .pennant { animation: drop .6s var(--ease) both; animation-delay: calc(var(--o) * 28ms); }
-.pennant path { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out both; animation-delay: calc(.5s + var(--o) * 28ms); }
+/* After the drop-in sway, each pennant keeps fluttering a little, as if in a light breeze. Odd durations keep them
+   out of step, and the delay sends the movement along the string. */
+.pennant path { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out both, flutter 3.6s ease-in-out infinite; animation-delay: calc(.5s + var(--o) * 28ms), calc(3.1s + var(--o) * 170ms); }
+.pennant:nth-child(2n) path { animation-duration: 2.6s, 4.3s; }
+.pennant:nth-child(3n) path { animation-duration: 2.6s, 3.1s; }
+@keyframes flutter { 0%, 100% { transform: rotate(0) skewX(0); } 22% { transform: rotate(2.6deg) skewX(-2deg); } 48% { transform: rotate(-1.4deg) skewX(1.5deg) scaleY(.97); } 74% { transform: rotate(1.8deg) skewX(-1deg); } }
 .f-coral { fill: var(--coral); } .f-gold { fill: var(--gold); } .f-sage { fill: var(--sage); } .f-sky { fill: var(--sky); } .f-lilac { fill: var(--lilac); }
 .o0 { --o: 0; } .o1 { --o: 1; } .o2 { --o: 2; } .o3 { --o: 3; } .o4 { --o: 4; } .o5 { --o: 5; } .o6 { --o: 6; }
 .o7 { --o: 7; } .o8 { --o: 8; } .o9 { --o: 9; } .o10 { --o: 10; } .o11 { --o: 11; } .o12 { --o: 12; } .o13 { --o: 13; }
@@ -453,13 +458,16 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 /* Footer */
 .site-footer { --focus: var(--on-footer); position: relative; background: var(--footer); color: var(--on-footer); }
 .site-footer::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: var(--scallop); background: radial-gradient(circle at 50% 100%, var(--footer) calc(var(--scallop) / 2), transparent calc(var(--scallop) / 2 + .5px)) 0 0 / var(--scallop) var(--scallop) repeat-x; }
-.foot { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 32px; padding-block: 52px 36px; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 48px; padding-block: 40px 26px; }
+.foot-brand { flex: 0 1 auto; min-width: 0; }
 .logo-foot { color: var(--on-footer); }
 .logo-foot .logo-name.is-split small { color: var(--on-footer-2); }
-.foot p { color: var(--on-footer-2); max-width: 34ch; margin-top: 12px; }
-.foot h2 { font: 800 .8rem/1.2 var(--font-body); letter-spacing: .24em; text-transform: uppercase; color: var(--on-footer-2); margin-bottom: 12px; }
-.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.foot a, .foot-line { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 7px 0; font-weight: 700; color: var(--on-footer); }
+.foot p { color: var(--on-footer-2); max-width: 34ch; margin-top: 8px; }
+.foot-rows { flex: 1 1 420px; min-width: 0; display: grid; gap: 4px; justify-items: end; }
+.foot ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 22px; }
+.foot-pages ul { gap: 0 26px; }
+.foot-contact a, .foot-contact .foot-line, .foot-social a { font-weight: 600; }
+.foot a, .foot-line { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 6px 0; font-weight: 700; color: var(--on-footer); }
 .foot-line { color: var(--on-footer-2); }
 .foot a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .foot-base { border-top: 1px solid color-mix(in srgb, var(--on-footer) 16%, transparent); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 24px; padding-block: 22px calc(26px + env(safe-area-inset-bottom, 0px)); color: var(--on-footer-2); font-size: .9rem; font-weight: 700; }
@@ -559,7 +567,6 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
   .hero .polaroid { width: 150px; }
   .hero .pl-left { left: -6px; top: 40px; }
   .hero .pl-right { right: -6px; top: 250px; }
-  .foot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .packs.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 72.01em) {
@@ -616,7 +623,9 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
   .quick small { display: none; }
   .form, .group { grid-template-columns: minmax(0, 1fr); }
   .form .btn-submit { justify-self: stretch; }
-  .foot { grid-template-columns: minmax(0, 1fr); }
+  .foot { padding-block: 32px 18px; }
+  .foot-rows { flex-basis: 100%; justify-items: start; }
+  .foot ul, .foot-pages ul { justify-content: flex-start; gap: 0 18px; }
   .envelope::before { display: none; }
   .mbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; gap: 8px; padding: 10px max(12px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); background: var(--paper); border-top: 1px solid var(--rule); transform: translateY(110%); transition: transform .45s var(--ease); }
   .mbar.show, [data-preview] .mbar { transform: none; }

@@ -1,7 +1,7 @@
 # Otroško animiranje Ema – spletna stran
 
-Spletna stran za otroške zabave, športne urice in animacijo na dogodkih, v slovenščini, angleščini in
-srbohrvaščini, z urejevalnikom, v katerem lastnica sama ureja vsebino in videz.
+Spletna stran za otroške zabave, športne urice in animacijo na dogodkih, v slovenščini, angleščini,
+hrvaščini in srbščini (cirilica), z urejevalnikom, v katerem lastnica sama ureja vsebino in videz.
 
 - **Stran:** https://elarion-game-dev.github.io/otrosko-animiranje-ema/
 - **Urejevalnik:** https://elarion-game-dev.github.io/otrosko-animiranje-ema/admin/
@@ -11,12 +11,12 @@ shrani vsako spremembo kot commit v ta repozitorij, GitHub Actions pa stran zgra
 
 ## Kaj je na strani
 
-| Pot (SL / EN / SH)                          | Kaj                                                                                   |
+| Pot (SL / EN / HR / SR)                     | Kaj                                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `/` · `/en/` · `/sh/`                       | domača stran: vabilo (vrh), program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
-| `/zasebnost/` · `/en/privacy/` · `/sh/privatnost/` | politika zasebnosti, sestavljena iz nastavitev                                  |
-| `/pogoji/` · `/en/terms/` · `/sh/uvjeti/`   | pogoji poslovanja (neobvezno, privzeto izklopljeno; osnutek se vstavi v urejevalniku) |
-| `/hvala/` · `/en/thank-you/` · `/sh/hvala/` | zahvala po povpraševanju (za storitve, ki preusmerijo)                                 |
+| `/` · `/en/` · `/hr/` · `/sr/`              | domača stran: vabilo (vrh), program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
+| `/zasebnost/` · `/en/privacy/` · `/hr/privatnost/` · `/sr/privatnost/` | politika zasebnosti, sestavljena iz nastavitev                                  |
+| `/pogoji/` · `/en/terms/` · `/hr/uvjeti/` · `/sr/uslovi/` | pogoji poslovanja (neobvezno, privzeto izklopljeno; osnutek se vstavi v urejevalniku) |
+| `/hvala/` · `/en/thank-you/` · `/hr/hvala/` · `/sr/hvala/` | zahvala po povpraševanju (za storitve, ki preusmerijo)                                 |
 | `/404.html`                                 | stran ne obstaja, v vseh jezikih                                                       |
 | `/admin/`                                   | urejevalnik                                                                            |
 
@@ -31,15 +31,20 @@ vstopnica z odtrgljivim delom, mnenja zahvalne kartice, obrazec pa kartica »Pro
 Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko razdelke poljubno premikate.
 
 - **Pisave:** DM Serif Display (naslovi, tudi ležeča), Nunito Sans (besedilo), Caveat (pripisi in podpis).
-  Vse so na tej strani, z vsemi šumniki. Naslovno in besedilno pisavo lahko zamenjate v urejevalniku.
+  Vse so na tej strani, z vsemi šumniki, in imajo cirilične datoteke za srbske strani (kjer pisava cirilice nima,
+  podobna: Prata za DM Serif Display, Lora za Fraunces, Nunito za zaobljene). Te se prenesejo samo za cirilico. Naslovno in besedilno pisavo lahko zamenjate v urejevalniku.
 - **Barve:** osem barv strani in pet barv mavrice; svetlejši odtenki (ozadja kartic), temnejši (besedilo v barvi)
   in obrobe polj se izračunajo sami, tako da ostanejo berljivi (WCAG AA). Šest barvnih različic, ena temna.
+- **Srbščina v cirilici:** srbska besedila lahko lastnica piše v latinici, stran jih pokaže v cirilici (imena
+  znamk, povezave in ime strani ostanejo v latinici). Neprevedeno srbsko besedilo pokaže hrvaško v cirilici.
+  Starejše nastavitve z jezikom `sh` se ob branju samodejno preselijo v hrvaščino.
 - **Zastavice ob jezikih:** okrogle zastavice (circle-flags, licenca MIT) v izbirniku jezika, meniju na telefonu
-  in nogi. Za srbohrvaščino lastnica izbere eno do tri (privzeto hrvaška in srbska, ena čez drugo).
-- **Animacije:** zastavice padejo in zanihajo, vabilo se poravna, mavrica se nariše, besede naslova se dvignejo,
+  in nogi. Za hrvaščino lastnica izbere eno do tri (hrvaška, bosanska,
+  črnogorska); srbščina ima srbsko.
+- **Animacije:** zastavice padejo, zanihajo in nato rahlo plapolajo v vetru, vabilo se poravna, mavrica se nariše, besede naslova se dvignejo,
   razdelki se ob pomikanju pokažejo (značke se »odtisnejo«, polaroidke se pripnejo, zahvalne kartice pridrsajo),
   paketi se nagnejo proti miški, polaroidke na vrhu se ob pomikanju premikajo (kjer brskalnik to podpira),
-  po pošiljanju obrazca poletijo konfeti. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
+  ob izbiri paketa po strani zadežujejo rojstnodnevni konfeti, po pošiljanju obrazca poletijo še enkrat. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
   obiskovalec v sistemu vklopljeno zmanjšano gibanje ali če lastnica animacije izklopi; v predogledu urejevalnika
   so izklopljene, da ne motijo med tipkanjem.
 - **Brez JavaScripta** stran deluje enako: meni na telefonu se odpre s `:target`, jeziki in vprašanja so
@@ -64,7 +69,7 @@ V slogu urejevalnikov Elarion in Urban & Monika: meni na levi, nastavitve na sre
 (na telefonu gumb *Predogled*). Svetla tema je topla, papirnata (Urban & Monika), temna je Elarionova.
 
 - Vse besedilo, slike, cene, termini, vprašanja, kontakt, obrazec, barve, pisave, zastavice jezikov in okraski.
-- **Jezik urejanja** (SL / EN / SH) zgoraj: polja pokažejo izbrani jezik, pod vsakim je slovenski izvirnik.
+- **Jezik urejanja** (SL / EN / HR / SR) zgoraj: polja pokažejo izbrani jezik, pod vsakim je slovenski izvirnik.
   Številka pri jeziku pove, koliko besedil še ni prevedenih; seznam je pod *Jeziki in prevodi*. Neprevedeno
   besedilo se na tisti jezikovni različici pokaže v slovenščini.
 - Klik na besedilo v predogledu odpre njegovo polje.

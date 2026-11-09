@@ -9,6 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { drawnIcons, renderSite } from '../src/render.mjs';
 import { normalizeSettings } from '../src/settings.mjs';
 import { ICON_SIZES, iconPng } from './icon-png.mjs';
+import { findRenditions } from './images.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
@@ -55,7 +56,7 @@ export async function build({ log = console.log } = {}) {
   await writeFile(adminPage, admin.replace('href="admin.css"', `href="${stamp('admin.css')}"`).replace('src="admin.js"', `src="${stamp('admin.js')}"`));
   await writeFile(path.join(dist, 'assets', 'lib', 'deploy.mjs'), `export const DEPLOY = ${JSON.stringify(repo)};\nexport const VERSION = '${version}';\n`);
 
-  const files = renderSite(settings, { version });
+  const files = renderSite(settings, { version, images: await findRenditions(dist) });
   for (const [file, contents] of Object.entries(files)) {
     const target = path.join(dist, file);
     await mkdir(path.dirname(target), { recursive: true });

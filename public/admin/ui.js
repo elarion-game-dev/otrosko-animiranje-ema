@@ -1,7 +1,7 @@
 // DOM helpers and form controls for the admin page. Everything is built with createElement and
 // textContent; innerHTML is only used for the static icon strings below.
 //
-// Translatable texts are stored as { sl, en, sh }. A control created with `i18n: true` edits the language
+// Translatable texts are stored as { sl, en, hr, sr }. A control created with `i18n: true` edits the language
 // chosen in the top bar (app.lang) and shows the Slovenian original under the field while translating.
 
 import { SERVICE_ICONS } from '../assets/lib/icons.mjs';
@@ -89,7 +89,7 @@ function append(el, children) {
 let uid = 0;
 export const nextId = (prefix = 'f') => `${prefix}-${++uid}`;
 
-export const LANG_CODES = { sl: 'SL', en: 'EN', sh: 'SH' };
+export const LANG_CODES = { sl: 'SL', en: 'EN', hr: 'HR', sr: 'SR' };
 
 // --- layout pieces ------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ function withRevert(app, path, el) {
 }
 
 /**
- * Text input or textarea. With `i18n`, `path` points at a { sl, en, sh } object and the field edits the
+ * Text input or textarea. With `i18n`, `path` points at a { sl, en, hr, sr } object and the field edits the
  * current editing language.
  */
 export function text(app, path, { label, help, placeholder, maxlength, type = 'text', multiline = false, rows = 3, validate, counter, rerender, mono, onInput, i18n = false } = {}) {
@@ -183,7 +183,8 @@ export function text(app, path, { label, help, placeholder, maxlength, type = 't
     class: `input${mono ? ' mono' : ''}`,
     'aria-describedby': help ? `${id}-help` : null,
     spellcheck: type === 'text' && !mono ? 'true' : 'false',
-    lang: i18n ? (app.lang === 'sh' ? 'hr' : app.lang) : null,
+    // Serbian is usually typed in Latin here; the site shows it in Cyrillic.
+    lang: i18n ? (app.lang === 'sr' ? 'sr-Latn' : app.lang) : null,
     dataset: { path },
   };
   const input = multiline ? h('textarea', { ...attrs, rows, value }) : h('input', { ...attrs, type, value, autocomplete: 'off' });

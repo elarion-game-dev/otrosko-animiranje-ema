@@ -2,22 +2,26 @@
 // admin edits it and when the build renders it. Unknown keys are dropped, strings are length-limited,
 // enums/colours/URLs are validated, so a broken or tampered site.json can never produce unsafe output.
 //
-// Texts visitors read are stored in all three languages: { sl, en, sh }. Slovenian is the original.
+// Texts visitors read are stored in all four languages: { sl, en, hr, sr }. Slovenian is the original.
+// Serbian may be stored in Latin or Cyrillic; the site shows it in Cyrillic.
 // The default texts follow the "Vabilo" design and speak as Ema (first person). They contain no invented
 // facts: no prices, schedules, credentials or reviews. Photos marked as samples (SAMPLE_PREFIX) are free stock
 // photos that stand in until the owner uploads her own; the admin keeps reminding her to replace them.
 
-import { SH_FLAG_CHOICES } from './flags.mjs';
+import { HR_FLAG_CHOICES } from './flags.mjs';
 import { BRAND_ICONS, SERVICE_ICONS } from './icons.mjs';
 import { formspreeId, PROVIDER_IDS, resolveProvider } from './providers.mjs';
 import { DEFAULT_TEXT_STYLE, FONT_IDS, PRESETS, TEXT_CASES, TEXT_COLORS, TEXT_ROLES, TEXT_SHADOWS } from './themes.mjs';
 import { clamp, i18nFields, isEmail, isHexColor, isPhone, isPlainObject, LANGS, safeAssetPath, safeUrl } from './util.mjs';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
-/** Shorthand for a text in all three languages. */
-export const t3 = (sl, en = '', sh = '') => ({ sl, en, sh });
-const EMPTY = () => t3('', '', '');
+/** Languages besides Slovenian, in the order the site lists them. */
+export const OTHER_LANGS = ['en', 'hr', 'sr'];
+
+/** Shorthand for a text in all four languages. */
+export const tx = (sl, en = '', hr = '', sr = '') => ({ sl, en, hr, sr });
+const EMPTY = () => tx('');
 
 export const SECTION_IDS = ['steps', 'packages', 'schedule', 'events', 'about', 'gallery', 'testimonials', 'faq', 'contact', 'services'];
 export const SECTION_LABELS = {
@@ -82,12 +86,13 @@ export const DEFAULT_SETTINGS = {
   },
   languages: {
     en: { enabled: true, label: 'English', short: 'EN' },
-    sh: { enabled: true, label: 'Hrvatski / Srpski', short: 'HR/SR', flags: ['hr', 'rs'] },
+    hr: { enabled: true, label: 'Hrvatski', short: 'HR', flags: ['hr'] },
+    sr: { enabled: true, label: 'Српски', short: 'SR' },
   },
   announcement: {
     enabled: false,
-    text: t3('Termini za praznične zabave se hitro polnijo!', 'Holiday party dates are filling up fast!', 'Termini za blagdanske zabave brzo se popunjavaju!'),
-    linkLabel: t3('Preverite prost termin', 'Check a date', 'Provjerite termin'),
+    text: tx('Termini za praznične zabave se hitro polnijo!', 'Holiday party dates are filling up fast!', 'Termini za blagdanske zabave brzo se popunjavaju!', 'Termini za praznične zabave brzo se popunjavaju!'),
+    linkLabel: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin'),
     target: 'contact',
     url: '',
     style: 'gold',
@@ -97,36 +102,37 @@ export const DEFAULT_SETTINGS = {
     logoHeight: 44,
     showName: true,
     sticky: true,
-    cta: { enabled: true, label: t3('Preverite prost termin', 'Check a date', 'Provjerite termin'), target: 'contact', url: '' },
+    cta: { enabled: true, label: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin'), target: 'contact', url: '' },
   },
   hero: {
-    badge: t3('Vabilo', 'An invitation', 'Pozivnica'),
-    title: t3('na najlepšo zabavo *leta*', 'to the best party of *the year*', 'na najbolju zabavu *godine*'),
-    text: t3(
+    badge: tx('Vabilo', 'An invitation', 'Pozivnica', 'Pozivnica'),
+    title: tx('na najlepšo zabavo *leta*', 'to the best party of *the year*', 'na najbolju zabavu *godine*', 'na najbolju zabavu *godine*'),
+    text: tx(
       'Rojstnodnevne zabave za otroke, polne iger, gibanja in smeha. Vodi jih vzgojiteljica Ema.',
       'Birthday parties for children, full of games, movement and laughter. Led by Ema, a kindergarten teacher.',
-      'Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema.'
+      'Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema.',
+      'Rođendanske zabave za decu, pune igara, kretanja i smeha. Vodi ih vaspitačica Ema.'
     ),
     details: [
-      { term: t3('Za koga', 'Who for', 'Za koga'), value: t3('Slavljenec in prijatelji', 'The birthday child and friends', 'Slavljenik i prijatelji') },
-      { term: t3('Kje', 'Where', 'Gdje'), value: t3('Doma ali v najetem prostoru', 'At home or in a rented venue', 'Kod kuće ili u iznajmljenom prostoru') },
-      { term: t3('Kaj', 'What', 'Što'), value: t3('Igre, gibanje in smeh', 'Games, movement and laughter', 'Igre, kretanje i smijeh') },
-      { term: t3('Cena', 'Price', 'Cijena'), value: t3('Znana vnaprej', 'Agreed in advance', 'Poznata unaprijed') },
-      { term: t3('Kdo vodi', 'Led by', 'Tko vodi'), value: t3('Ema, vzgojiteljica', 'Ema, a kindergarten teacher', 'Ema, odgojiteljica') },
+      { term: tx('Za koga', 'Who for', 'Za koga', 'Za koga'), value: tx('Slavljenec in prijatelji', 'The birthday child and friends', 'Slavljenik i prijatelji', 'Slavljenik i prijatelji') },
+      { term: tx('Kje', 'Where', 'Gdje', 'Gde'), value: tx('Doma ali v najetem prostoru', 'At home or in a rented venue', 'Kod kuće ili u iznajmljenom prostoru', 'Kod kuće ili u iznajmljenom prostoru') },
+      { term: tx('Kaj', 'What', 'Što', 'Šta'), value: tx('Igre, gibanje in smeh', 'Games, movement and laughter', 'Igre, kretanje i smijeh', 'Igre, kretanje i smeh') },
+      { term: tx('Cena', 'Price', 'Cijena', 'Cena'), value: tx('Znana vnaprej', 'Agreed in advance', 'Poznata unaprijed', 'Poznata unapred') },
+      { term: tx('Kdo vodi', 'Led by', 'Tko vodi', 'Ko vodi'), value: tx('Ema, vzgojiteljica', 'Ema, a kindergarten teacher', 'Ema, odgojiteljica', 'Ema, vaspitačica') },
     ],
     showDate: true,
-    primary: { label: t3('Preverite prost termin', 'Check a date', 'Provjerite termin'), target: 'contact', url: '' },
-    secondary: { label: t3('Poglejte program', 'See the programme', 'Pogledajte program'), target: 'steps', url: '' },
+    primary: { label: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin'), target: 'contact', url: '' },
+    secondary: { label: tx('Poglejte program', 'See the programme', 'Pogledajte program', 'Pogledajte program'), target: 'steps', url: '' },
     photos: [
       {
         src: sample('hero-party.webp'),
-        alt: t3('Otroci ležijo na odeji in lovijo konfete', 'Children lying on a blanket, catching confetti', 'Djeca leže na dekici i hvataju konfete'),
-        caption: t3('Rojstni dan!', 'Birthday time!', 'Rođendan!'),
+        alt: tx('Otroci ležijo na odeji in lovijo konfete', 'Children lying on a blanket, catching confetti', 'Djeca leže na dekici i hvataju konfete', 'Deca leže na dekici i hvataju konfete'),
+        caption: tx('Rojstni dan!', 'Birthday time!', 'Rođendan!', 'Rođendan!'),
       },
       {
         src: sample('hero-play.webp'),
-        alt: t3('Otroci s klobučki plešejo v krogu', 'Children in party hats dancing in a circle', 'Djeca sa šeširićima plešu u krugu'),
-        caption: t3('Igre in smeh', 'Games and giggles', 'Igre i smijeh'),
+        alt: tx('Otroci s klobučki plešejo v krogu', 'Children in party hats dancing in a circle', 'Djeca sa šeširićima plešu u krugu', 'Deca sa šeširićima plešu u krugu'),
+        caption: tx('Igre in smeh', 'Games and giggles', 'Igre i smijeh', 'Igre i smeh'),
       },
     ],
   },
@@ -135,86 +141,91 @@ export const DEFAULT_SETTINGS = {
       'steps',
       true,
       true,
-      t3('Program zabave', 'The party programme', 'Program zabave'),
-      t3('Program', 'Programme', 'Program'),
-      t3(
+      tx('Program zabave', 'The party programme', 'Program zabave', 'Program zabave'),
+      tx('Program', 'Programme', 'Program', 'Program'),
+      tx(
         'Primer za dve uri. Igre prilagodim starosti in željam slavljenca, tempo pa otrokom.',
         "An example for two hours. I adapt the games to the birthday child's age and wishes, and the pace to the children.",
-        'Primjer za dva sata. Igre prilagodim dobi i željama slavljenika, a tempo djeci.'
+        'Primjer za dva sata. Igre prilagodim dobi i željama slavljenika, a tempo djeci.',
+        'Primer za dva sata. Igre prilagodim uzrastu i željama slavljenika, a tempo deci.'
       ),
-      t3('Program', 'Programme', 'Program')
+      tx('Program', 'Programme', 'Program', 'Program')
     ),
     section(
       'packages',
       true,
       true,
-      t3('Izberite svojo zabavo', 'Choose your party', 'Odaberite svoju zabavu'),
-      t3('Paketi', 'Packages', 'Paketi'),
-      t3(
+      tx('Izberite svojo zabavo', 'Choose your party', 'Odaberite svoju zabavu', 'Izaberite svoju zabavu'),
+      tx('Paketi', 'Packages', 'Paketi', 'Paketi'),
+      tx(
         'Točno ceno vam povem vnaprej. Odvisna je od števila otrok in kraja, skritih stroškov ni.',
         'I tell you the exact price in advance. It depends on the number of children and the place, with no hidden costs.',
-        'Točnu cijenu kažem vam unaprijed. Ovisi o broju djece i mjestu, skrivenih troškova nema.'
+        'Točnu cijenu kažem vam unaprijed. Ovisi o broju djece i mjestu, skrivenih troškova nema.',
+        'Tačnu cenu kažem vam unapred. Zavisi od broja dece i mesta, skrivenih troškova nema.'
       ),
-      t3('Paketi', 'Packages', 'Paketi')
+      tx('Paketi', 'Packages', 'Paketi', 'Paketi')
     ),
     section(
       'schedule',
       true,
       true,
-      t3('Športne urice', 'Sports classes', 'Sportske aktivnosti'),
-      t3('Športne urice', 'Sports classes', 'Sport'),
-      t3(
+      tx('Športne urice', 'Sports classes', 'Sportske aktivnosti', 'Sportske aktivnosti'),
+      tx('Športne urice', 'Sports classes', 'Sport', 'Sport'),
+      tx(
         'Tedenska vadba skozi igro v majhni skupini. Otroci razvijajo ravnotežje, koordinacijo in samozavest, predvsem pa se radi gibljejo.',
         'Weekly exercise through play in a small group. Children build balance, coordination and confidence, and above all they learn to love moving.',
-        'Tjedno vježbanje kroz igru u maloj grupi. Djeca razvijaju ravnotežu, koordinaciju i samopouzdanje, a prije svega zavole kretanje.'
+        'Tjedno vježbanje kroz igru u maloj grupi. Djeca razvijaju ravnotežu, koordinaciju i samopouzdanje, a prije svega zavole kretanje.',
+        'Nedeljno vežbanje kroz igru u maloj grupi. Deca razvijaju ravnotežu, koordinaciju i samopouzdanje, a pre svega zavole kretanje.'
       ),
-      t3('Tudi med tednom', 'During the week too', 'I tijekom tjedna')
+      tx('Tudi med tednom', 'During the week too', 'I tijekom tjedna', 'I tokom nedelje')
     ),
     section(
       'events',
       true,
       false,
-      t3('Animacija na dogodkih', 'Entertainment at events', 'Animacija na događajima'),
-      t3('Dogodki', 'Events', 'Događaji'),
-      t3(
+      tx('Animacija na dogodkih', 'Entertainment at events', 'Animacija na događajima', 'Animacija na događajima'),
+      tx('Dogodki', 'Events', 'Događaji', 'Događaji'),
+      tx(
         'Poroka, krst, piknik podjetja ali družinsko praznovanje: otroke zaposlim z igrami, vi pa se v miru posvetite gostom.',
         'A wedding, a christening, a company picnic or a family celebration: I keep the children busy with games while you take time for your guests.',
-        'Vjenčanje, krštenje, piknik tvrtke ili obiteljska proslava: djecu zaposlim igrama, a vi se u miru posvetite gostima.'
+        'Vjenčanje, krštenje, piknik tvrtke ili obiteljska proslava: djecu zaposlim igrama, a vi se u miru posvetite gostima.',
+        'Venčanje, krštenje, piknik firme ili porodična proslava: decu zaposlim igrama, a vi se u miru posvetite gostima.'
       )
     ),
-    section('about', true, true, t3('Sem Ema, vzgojiteljica', "I'm Ema, a kindergarten teacher", 'Ja sam Ema, odgojiteljica'), t3('O meni', 'About me', 'O meni'), EMPTY(), t3('O meni', 'About me', 'O meni')),
-    section('gallery', true, false, t3('Igra, gibanje in smeh', 'Play, movement and laughter', 'Igra, kretanje i smijeh'), t3('Utrinki', 'Gallery', 'Galerija'), EMPTY(), t3('Utrinki', 'Snapshots', 'Trenuci')),
-    section('testimonials', true, false, t3('Kaj pravijo starši', 'What parents say', 'Što kažu roditelji'), t3('Mnenja', 'Reviews', 'Utisci'), EMPTY(), t3('Mnenja', 'Reviews', 'Utisci')),
+    section('about', true, true, tx('Sem Ema, vzgojiteljica', "I'm Ema, a kindergarten teacher", 'Ja sam Ema, odgojiteljica', 'Ja sam Ema, vaspitačica'), tx('O meni', 'About me', 'O meni', 'O meni'), EMPTY(), tx('O meni', 'About me', 'O meni', 'O meni')),
+    section('gallery', true, false, tx('Igra, gibanje in smeh', 'Play, movement and laughter', 'Igra, kretanje i smijeh', 'Igra, kretanje i smeh'), tx('Utrinki', 'Gallery', 'Galerija', 'Galerija'), EMPTY(), tx('Utrinki', 'Snapshots', 'Trenuci', 'Trenuci')),
+    section('testimonials', true, false, tx('Kaj pravijo starši', 'What parents say', 'Što kažu roditelji', 'Šta kažu roditelji'), tx('Mnenja', 'Reviews', 'Dojmovi', 'Utisci'), EMPTY(), tx('Mnenja', 'Reviews', 'Dojmovi', 'Utisci')),
     section(
       'faq',
       true,
       true,
-      t3('Pogosta vprašanja', 'Questions parents ask', 'Česta pitanja'),
-      t3('Vprašanja', 'FAQ', 'Pitanja'),
-      t3('Niste našli odgovora? Pokličite me na {phone}.', "Didn't find your answer? Call me on {phone}.", 'Niste pronašli odgovor? Nazovite me na {phone}.'),
-      t3('Vprašanja', 'Questions', 'Pitanja')
+      tx('Pogosta vprašanja', 'Questions parents ask', 'Česta pitanja', 'Česta pitanja'),
+      tx('Vprašanja', 'FAQ', 'Pitanja', 'Pitanja'),
+      tx('Niste našli odgovora? Pokličite me na {phone}.', "Didn't find your answer? Call me on {phone}.", 'Niste pronašli odgovor? Nazovite me na {phone}.', 'Niste pronašli odgovor? Pozovite me na {phone}.'),
+      tx('Vprašanja', 'Questions', 'Pitanja', 'Pitanja')
     ),
     section(
       'contact',
       true,
       false,
-      t3('Preverite prost termin', 'Check if your date is free', 'Provjerite je li termin slobodan'),
-      t3('Rezervacija', 'Booking', 'Rezervacija'),
-      t3(
+      tx('Preverite prost termin', 'Check if your date is free', 'Provjerite je li termin slobodan', 'Proverite da li je termin slobodan'),
+      tx('Rezervacija', 'Booking', 'Rezervacija', 'Rezervacija'),
+      tx(
         'Pošljite datum in nekaj podatkov o zabavi. Odgovorim čim prej, po telefonu ali s sporočilom, kakor vam ustreza.',
         "Send me the date and a few details about the party. I'll reply as soon as I can, by phone or by message, whichever suits you.",
-        'Pošaljite datum i nekoliko podataka o zabavi. Odgovorit ću što prije, telefonom ili porukom, kako vam odgovara.'
+        'Pošaljite datum i nekoliko podataka o zabavi. Odgovorit ću što prije, telefonom ili porukom, kako vam odgovara.',
+        'Pošaljite datum i nekoliko podataka o zabavi. Odgovoriću što pre, telefonom ili porukom, kako vam odgovara.'
       ),
-      t3('Prosim za odgovor', 'Kindly reply', 'Molim za odgovor')
+      tx('Prosim za odgovor', 'Kindly reply', 'Molim za odgovor', 'Molim za odgovor')
     ),
     section(
       'services',
       false,
       false,
-      t3('Kaj še ponujam', 'What else I offer', 'Što još nudim'),
-      t3('Ponudba', 'Services', 'Ponuda'),
-      t3('Program vedno prilagodim starosti otrok, prostoru in vašim željam.', "I always adapt the programme to the children's ages, the space and your wishes.", 'Program uvijek prilagodim dobi djece, prostoru i vašim željama.'),
-      t3('Ponudba', 'Services', 'Ponuda')
+      tx('Kaj še ponujam', 'What else I offer', 'Što još nudim', 'Šta još nudim'),
+      tx('Ponudba', 'Services', 'Ponuda', 'Ponuda'),
+      tx('Program vedno prilagodim starosti otrok, prostoru in vašim željam.', "I always adapt the programme to the children's ages, the space and your wishes.", 'Program uvijek prilagodim dobi djece, prostoru i vašim željama.', 'Program uvek prilagodim uzrastu dece, prostoru i vašim željama.'),
+      tx('Ponudba', 'Services', 'Ponuda', 'Ponuda')
     ),
   ],
   services: {
@@ -223,127 +234,131 @@ export const DEFAULT_SETTINGS = {
       {
         icon: 'cake',
         image: '',
-        title: t3('Rojstnodnevne zabave', 'Birthday parties', 'Rođendanske zabave'),
-        text: t3('Igre, gibanje in smeh za slavljenca in prijatelje, doma ali v najetem prostoru.', 'Games, movement and laughter for the birthday child and friends, at home or in a rented venue.', 'Igre, kretanje i smijeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru.'),
+        title: tx('Rojstnodnevne zabave', 'Birthday parties', 'Rođendanske zabave', 'Rođendanske zabave'),
+        text: tx('Igre, gibanje in smeh za slavljenca in prijatelje, doma ali v najetem prostoru.', 'Games, movement and laughter for the birthday child and friends, at home or in a rented venue.', 'Igre, kretanje i smijeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru.', 'Igre, kretanje i smeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru.'),
       },
       {
         icon: 'ball',
         image: '',
-        title: t3('Športne urice', 'Sports classes', 'Sportske aktivnosti'),
-        text: t3('Gibalne igre, poligoni in štafete, ki otroke spodbujajo k gibanju in sodelovanju.', 'Movement games, obstacle courses and relays that get children moving and playing together.', 'Igre kretanja, poligoni i štafete koji djecu potiču na kretanje i zajedničku igru.'),
+        title: tx('Športne urice', 'Sports classes', 'Sportske aktivnosti', 'Sportske aktivnosti'),
+        text: tx('Gibalne igre, poligoni in štafete, ki otroke spodbujajo k gibanju in sodelovanju.', 'Movement games, obstacle courses and relays that get children moving and playing together.', 'Igre kretanja, poligoni i štafete koji djecu potiču na kretanje i zajedničku igru.', 'Igre kretanja, poligoni i štafete koji decu potiču na kretanje i zajedničku igru.'),
       },
       {
         icon: 'party',
         image: '',
-        title: t3('Animacija na dogodkih', 'Entertainment at events', 'Animacija na događajima'),
-        text: t3('Poroke, krsti in druženja: otroci se zabavajo, odrasli se sprostijo.', 'Weddings, christenings and get-togethers: the children have fun and the adults can relax.', 'Vjenčanja, krštenja i druženja: djeca se zabavljaju, a odrasli se opuštaju.'),
+        title: tx('Animacija na dogodkih', 'Entertainment at events', 'Animacija na događajima', 'Animacija na događajima'),
+        text: tx('Poroke, krsti in druženja: otroci se zabavajo, odrasli se sprostijo.', 'Weddings, christenings and get-togethers: the children have fun and the adults can relax.', 'Vjenčanja, krštenja i druženja: djeca se zabavljaju, a odrasli se opuštaju.', 'Venčanja, krštenja i druženja: deca se zabavljaju, a odrasli se opuštaju.'),
       },
     ],
   },
   steps: {
     items: [
-      { icon: 'wave', time: '0:00', title: t3('Pozdrav in igre za spoznavanje', 'Hello and getting-to-know-you games', 'Pozdrav i igre upoznavanja'), text: t3('Da se tudi sramežljivi hitro vključijo', 'So even shy children join in quickly', 'Da se i sramežljivi brzo uključe') },
-      { icon: 'run', time: '0:15', title: t3('Poligon in gibalne igre', 'Obstacle course and movement games', 'Poligon i igre kretanja'), text: t3('Plazenje, skakanje, ravnotežje', 'Crawling, jumping, balancing', 'Puzanje, skakanje, ravnoteža') },
-      { icon: 'ball', time: '0:45', title: t3('Igre z žogo v ekipah', 'Team ball games', 'Igre s loptom u timovima'), text: t3('Vsak pride na vrsto', 'Everyone gets a turn', 'Svi dođu na red') },
-      { icon: 'cake', time: '1:15', title: t3('Torta in pesem za slavljenca', 'Cake and a song for the birthday child', 'Torta i pjesma za slavljenika'), text: t3('Odmor za torto, sok in čestitke', 'A break for cake, juice and wishes', 'Pauza za tortu, sok i čestitke') },
-      { icon: 'camera', time: '1:45', title: t3('Zaključna igra in skupinska fotografija', 'A last game and a group photo', 'Završna igra i zajednička fotografija'), text: t3('Za lep spomin na zabavo', 'Something to remember the party by', 'Za lijepu uspomenu na zabavu') },
+      { icon: 'wave', time: '0:00', title: tx('Pozdrav in igre za spoznavanje', 'Hello and getting-to-know-you games', 'Pozdrav i igre upoznavanja', 'Pozdrav i igre upoznavanja'), text: tx('Da se tudi sramežljivi hitro vključijo', 'So even shy children join in quickly', 'Da se i sramežljivi brzo uključe', 'Da se i stidljivi brzo uključe') },
+      { icon: 'run', time: '0:15', title: tx('Poligon in gibalne igre', 'Obstacle course and movement games', 'Poligon i igre kretanja', 'Poligon i igre kretanja'), text: tx('Plazenje, skakanje, ravnotežje', 'Crawling, jumping, balancing', 'Puzanje, skakanje, ravnoteža', 'Puzanje, skakanje, ravnoteža') },
+      { icon: 'ball', time: '0:45', title: tx('Igre z žogo v ekipah', 'Team ball games', 'Igre s loptom u timovima', 'Igre sa loptom u timovima'), text: tx('Vsak pride na vrsto', 'Everyone gets a turn', 'Svi dođu na red', 'Svi dođu na red') },
+      { icon: 'cake', time: '1:15', title: tx('Torta in pesem za slavljenca', 'Cake and a song for the birthday child', 'Torta i pjesma za slavljenika', 'Torta i pesma za slavljenika'), text: tx('Odmor za torto, sok in čestitke', 'A break for cake, juice and wishes', 'Pauza za tortu, sok i čestitke', 'Pauza za tortu, sok i čestitke') },
+      { icon: 'camera', time: '1:45', title: tx('Zaključna igra in skupinska fotografija', 'A last game and a group photo', 'Završna igra i zajednička fotografija', 'Završna igra i zajednička fotografija'), text: tx('Za lep spomin na zabavo', 'Something to remember the party by', 'Za lijepu uspomenu na zabavu', 'Za lepu uspomenu na zabavu') },
     ],
   },
   packages: {
-    buttonLabel: t3('Izberite', 'Choose', 'Odaberite'),
-    note: t3(
+    buttonLabel: tx('Izberite', 'Choose', 'Odaberite', 'Izaberite'),
+    note: tx(
       '**Vi pripravite:** prostor, torto in pijačo\n**Jaz prinesem:** vse pripomočke za igre',
       '**You provide:** the space, cake and drinks\n**I bring:** everything for the games',
+      '**Vi pripremite:** prostor, tortu i piće\n**Ja donosim:** sav pribor za igre',
       '**Vi pripremite:** prostor, tortu i piće\n**Ja donosim:** sav pribor za igre'
     ),
     items: [
       {
-        name: t3('Mali paket', 'Small package', 'Mali paket'),
+        name: tx('Mali paket', 'Small package', 'Mali paket', 'Mali paket'),
         price: EMPTY(),
-        duration: t3('do 10 otrok · 1,5 ure', 'up to 10 children · 1.5 hours', 'do 10 djece · 1,5 sat'),
-        features: t3(
+        duration: tx('do 10 otrok · 1,5 ure', 'up to 10 children · 1.5 hours', 'do 10 djece · 1,5 sat', 'do 10 dece · 1,5 sat'),
+        features: tx(
           'Program, prilagojen starosti\nGibalne igre in poligon\nIgre z žogo\nVodenje celotne zabave',
           'A programme suited to their age\nMovement games and an obstacle course\nBall games\nI run the whole party',
-          'Program prilagođen dobi djece\nIgre kretanja i poligon\nIgre s loptom\nVodim cijelu zabavu'
+          'Program prilagođen dobi djece\nIgre kretanja i poligon\nIgre s loptom\nVodim cijelu zabavu',
+          'Program prilagođen uzrastu dece\nIgre kretanja i poligon\nIgre sa loptom\nVodim celu zabavu'
         ),
         highlight: false,
         badge: EMPTY(),
-        button: t3('Izberite mali paket', 'Choose the small package', 'Odaberite mali paket'),
+        button: tx('Izberite mali paket', 'Choose the small package', 'Odaberite mali paket', 'Izaberite mali paket'),
       },
       {
-        name: t3('Veliki paket', 'Big package', 'Veliki paket'),
+        name: tx('Veliki paket', 'Big package', 'Veliki paket', 'Veliki paket'),
         price: EMPTY(),
-        duration: t3('do 20 otrok · 2 uri', 'up to 20 children · 2 hours', 'do 20 djece · 2 sata'),
-        features: t3(
+        duration: tx('do 20 otrok · 2 uri', 'up to 20 children · 2 hours', 'do 20 djece · 2 sata', 'do 20 dece · 2 sata'),
+        features: tx(
           'Vse iz malega paketa\nDaljši program z več postajami\nSkupinska fotografija za spomin',
           'Everything in the small package\nA longer programme with more stations\nA group photo to remember the day',
-          'Sve iz malog paketa\nDulji program s više postaja\nZajednička fotografija za uspomenu'
+          'Sve iz malog paketa\nDulji program s više postaja\nZajednička fotografija za uspomenu',
+          'Sve iz malog paketa\nDulji program sa više stanica\nZajednička fotografija za uspomenu'
         ),
         highlight: true,
         badge: EMPTY(),
-        button: t3('Izberite veliki paket', 'Choose the big package', 'Odaberite veliki paket'),
+        button: tx('Izberite veliki paket', 'Choose the big package', 'Odaberite veliki paket', 'Izaberite veliki paket'),
       },
     ],
   },
   schedule: {
     photo: sample('sport.webp'),
-    photoAlt: t3('Deklice skačejo čez kolebnico v telovadnici', 'Girls skipping rope in a school gym', 'Djevojčice preskaču konop u dvorani'),
+    photoAlt: tx('Deklice skačejo čez kolebnico v telovadnici', 'Girls skipping rope in a school gym', 'Djevojčice preskaču konop u dvorani', 'Devojčice preskaču konopac u sali'),
     facts: [
-      { icon: 'users', text: t3('Majhna skupina', 'Small groups', 'Mala grupa') },
-      { icon: 'run', text: t3('Gibanje skozi igro', 'Movement through play', 'Kretanje kroz igru') },
-      { icon: 'calendar', text: t3('Enkrat na teden', 'Once a week', 'Jednom tjedno') },
+      { icon: 'users', text: tx('Majhna skupina', 'Small groups', 'Mala grupa', 'Mala grupa') },
+      { icon: 'run', text: tx('Gibanje skozi igro', 'Movement through play', 'Kretanje kroz igru', 'Kretanje kroz igru') },
+      { icon: 'calendar', text: tx('Enkrat na teden', 'Once a week', 'Jednom tjedno', 'Jednom nedeljno') },
     ],
     note: EMPTY(),
-    stubLabel: t3('Vsak teden', 'Every week', 'Svaki tjedan'),
-    buttonLabel: t3('Prijava', 'Sign up', 'Prijava'),
+    stubLabel: tx('Vsak teden', 'Every week', 'Svaki tjedan', 'Svake nedelje'),
+    buttonLabel: tx('Prijava', 'Sign up', 'Prijava', 'Prijava'),
     items: [],
   },
   events: {
-    buttonLabel: t3('Pišite mi', 'Get in touch', 'Javite mi se'),
+    buttonLabel: tx('Pišite mi', 'Get in touch', 'Javite mi se', 'Javite mi se'),
   },
   about: {
-    text: t3(
+    text: tx(
       'Z otroki delam vsak dan v vrtcu. Vem, kako otroke navdušiti in umiriti, kako v igro povabiti tudi bolj sramežljive in kako poskrbeti, da so vsi varni.',
       'I work with children every day at kindergarten. I know how to get them excited and how to calm them down, how to bring shyer children into the game, and how to keep everyone safe.',
-      'S djecom radim svaki dan u vrtiću. Znam kako djecu oduševiti i smiriti, kako u igru uključiti i one sramežljivije i kako se pobrinuti da svi budu sigurni.'
+      'S djecom radim svaki dan u vrtiću. Znam kako djecu oduševiti i smiriti, kako u igru uključiti i one sramežljivije i kako se pobrinuti da svi budu sigurni.',
+      'Sa decom radim svaki dan u vrtiću. Znam kako da decu oduševim i smirim, kako da u igru uključim i one stidljivije i kako da se pobrinem da svi budu bezbedni.'
     ),
     photo: '',
     photoAlt: EMPTY(),
     badges: [],
-    signature: t3('Se vidimo na zabavi! Ema', 'See you at the party! Ema', 'Vidimo se na zabavi! Ema'),
+    signature: tx('Se vidimo na zabavi! Ema', 'See you at the party! Ema', 'Vidimo se na zabavi! Ema', 'Vidimo se na zabavi! Ema'),
   },
   gallery: {
-    note: t3('Fotografije otrok objavljam samo s pisnim soglasjem staršev.', "I only publish photos of children with their parents' written consent.", 'Fotografije djece objavljujem samo uz pisani pristanak roditelja.'),
+    note: tx('Fotografije otrok objavljam samo s pisnim soglasjem staršev.', "I only publish photos of children with their parents' written consent.", 'Fotografije djece objavljujem samo uz pisani pristanak roditelja.', 'Fotografije dece objavljujem samo uz pisani pristanak roditelja.'),
     images: [
-      { src: sample('gallery-balloons.webp'), alt: t3('Otroci na kavču pod šopkom balonov', 'Children on a sofa under a bunch of balloons', 'Djeca na kauču ispod hrpe balona'), caption: t3('Baloni!', 'Balloons!', 'Baloni!') },
-      { src: sample('gallery-cake.webp'), alt: t3('Otroci upihujejo svečke na torti', 'Children blowing out the candles on a cake', 'Djeca pušu svjećice na torti'), caption: t3('Torta!', 'Cake time!', 'Torta!') },
-      { src: sample('gallery-ball.webp'), alt: t3('Otroci se igrajo z žogo v parku', 'Children playing ball in a park', 'Djeca se igraju loptom u parku'), caption: t3('Igre z žogo', 'Ball games', 'Igre s loptom') },
-      { src: sample('gallery-hats.webp'), alt: t3('Otroci s klobučki se objemajo', 'Children in party hats hugging', 'Djeca sa šeširićima se grle'), caption: t3('Zabava s klobučki', 'Party hats on', 'Zabava sa šeširićima') },
-      { src: sample('gallery-group.webp'), alt: t3('Poslikani otroci pod mavričnim padalom', 'Children with painted faces under a rainbow parachute', 'Djeca oslikanih lica ispod šarenog padobrana'), caption: t3('Skupaj je lepše', 'Better together', 'Zajedno je ljepše') },
+      { src: sample('gallery-balloons.webp'), alt: tx('Otroci na kavču pod šopkom balonov', 'Children on a sofa under a bunch of balloons', 'Djeca na kauču ispod hrpe balona', 'Deca na kauču ispod gomile balona'), caption: tx('Baloni!', 'Balloons!', 'Baloni!', 'Baloni!') },
+      { src: sample('gallery-cake.webp'), alt: tx('Otroci upihujejo svečke na torti', 'Children blowing out the candles on a cake', 'Djeca pušu svjećice na torti', 'Deca pušu svećice na torti'), caption: tx('Torta!', 'Cake time!', 'Torta!', 'Torta!') },
+      { src: sample('gallery-ball.webp'), alt: tx('Otroci se igrajo z žogo v parku', 'Children playing ball in a park', 'Djeca se igraju loptom u parku', 'Deca se igraju loptom u parku'), caption: tx('Igre z žogo', 'Ball games', 'Igre s loptom', 'Igre sa loptom') },
+      { src: sample('gallery-hats.webp'), alt: tx('Otroci s klobučki se objemajo', 'Children in party hats hugging', 'Djeca sa šeširićima se grle', 'Deca sa šeširićima se grle'), caption: tx('Zabava s klobučki', 'Party hats on', 'Zabava sa šeširićima', 'Zabava sa šeširićima') },
+      { src: sample('gallery-group.webp'), alt: tx('Poslikani otroci pod mavričnim padalom', 'Children with painted faces under a rainbow parachute', 'Djeca oslikanih lica ispod šarenog padobrana', 'Deca oslikanih lica ispod šarenog padobrana'), caption: tx('Skupaj je lepše', 'Better together', 'Zajedno je ljepše', 'Zajedno je lepše') },
     ],
   },
   testimonials: { showStars: false, ratingNote: EMPTY(), ratingUrl: '', items: [] },
   faq: {
     items: [
       {
-        q: t3('Kaj moramo pripraviti starši?', 'What do we need to prepare?', 'Što trebamo pripremiti mi roditelji?'),
-        a: t3('Prostor, torto in pijačo. Za igre in vse pripomočke poskrbim jaz.', 'The space, cake and drinks. I take care of the games and bring everything for them.', 'Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja.'),
+        q: tx('Kaj moramo pripraviti starši?', 'What do we need to prepare?', 'Što trebamo pripremiti mi roditelji?', 'Šta treba da pripremimo mi roditelji?'),
+        a: tx('Prostor, torto in pijačo. Za igre in vse pripomočke poskrbim jaz.', 'The space, cake and drinks. I take care of the games and bring everything for them.', 'Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja.', 'Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja.'),
       },
       {
-        q: t3('Ali pridete tudi na dom?', 'Do you come to our home?', 'Dolazite li i kući?'),
-        a: t3('Da. Za igre potrebujemo dovolj prostora, na primer večjo dnevno sobo ali vrt.', 'Yes. For the games we need enough room, such as a larger living room or a garden.', 'Da. Za igre trebamo dovoljno prostora, na primjer veći dnevni boravak ili vrt.'),
+        q: tx('Ali pridete tudi na dom?', 'Do you come to our home?', 'Dolazite li i kući?', 'Dolazite li i kući?'),
+        a: tx('Da. Za igre potrebujemo dovolj prostora, na primer večjo dnevno sobo ali vrt.', 'Yes. For the games we need enough room, such as a larger living room or a garden.', 'Da. Za igre trebamo dovoljno prostora, na primjer veći dnevni boravak ili vrt.', 'Da. Za igre nam treba dovoljno prostora, na primer veća dnevna soba ili dvorište.'),
       },
       {
-        q: t3('Koliko vnaprej rezerviram termin?', 'How far ahead should I book?', 'Koliko unaprijed trebam rezervirati?'),
-        a: t3('Čim prej, saj se sobote hitro zapolnijo. Pišite mi in preverim, ali je vaš datum še prost.', 'As early as you can, because Saturdays fill up quickly. Write to me and I will check whether your date is free.', 'Što prije, jer se subote brzo popune. Pišite mi i provjerit ću je li vaš datum slobodan.'),
+        q: tx('Koliko vnaprej rezerviram termin?', 'How far ahead should I book?', 'Koliko unaprijed trebam rezervirati?', 'Koliko unapred treba da rezervišem?'),
+        a: tx('Čim prej, saj se sobote hitro zapolnijo. Pišite mi in preverim, ali je vaš datum še prost.', 'As early as you can, because Saturdays fill up quickly. Write to me and I will check whether your date is free.', 'Što prije, jer se subote brzo popune. Pišite mi i provjerit ću je li vaš datum slobodan.', 'Što pre, jer se subote brzo popune. Pišite mi i proveriću da li je vaš datum slobodan.'),
       },
       {
-        q: t3('Kaj, če slavljenec zboli?', 'What if the birthday child gets ill?', 'Što ako se slavljenik razboli?'),
-        a: t3('Sporočite mi čim prej in skupaj poiščeva nov termin.', 'Let me know as soon as you can and we will find a new date together.', 'Javite mi što prije pa ćemo zajedno pronaći novi termin.'),
+        q: tx('Kaj, če slavljenec zboli?', 'What if the birthday child gets ill?', 'Što ako se slavljenik razboli?', 'Šta ako se slavljenik razboli?'),
+        a: tx('Sporočite mi čim prej in skupaj poiščeva nov termin.', 'Let me know as soon as you can and we will find a new date together.', 'Javite mi što prije pa ćemo zajedno pronaći novi termin.', 'Javite mi što pre pa ćemo zajedno pronaći novi termin.'),
       },
       {
-        q: t3('Lahko pridejo otroci različnih starosti?', 'Can children of different ages come?', 'Mogu li doći djeca različite dobi?'),
-        a: t3('Da. Igre zastavim tako, da se vključijo mlajši in starejši.', 'Yes. I set up the games so that younger and older children can all join in.', 'Da. Igre postavim tako da se uključe i mlađi i stariji.'),
+        q: tx('Lahko pridejo otroci različnih starosti?', 'Can children of different ages come?', 'Mogu li doći djeca različite dobi?', 'Mogu li da dođu deca različitog uzrasta?'),
+        a: tx('Da. Igre zastavim tako, da se vključijo mlajši in starejši.', 'Yes. I set up the games so that younger and older children can all join in.', 'Da. Igre postavim tako da se uključe i mlađi i stariji.', 'Da. Igre postavim tako da se uključe i mlađi i stariji.'),
       },
     ],
   },
@@ -363,22 +378,23 @@ export const DEFAULT_SETTINGS = {
     custom: { action: '', providerName: '', privacyUrl: '', extraName: '', extraValue: '', mode: 'json' },
     topics: { party: true, sport: true, event: true },
     ask: { time: true, where: true, town: true, reply: true },
-    buttonLabel: t3('Pošljite povpraševanje', 'Send your enquiry', 'Pošaljite upit'),
-    privacyNote: t3(
+    buttonLabel: tx('Pošljite povpraševanje', 'Send your enquiry', 'Pošaljite upit', 'Pošaljite upit'),
+    privacyNote: tx(
       'Podatke uporabim samo za odgovor na vaše povpraševanje. Več v {privacy}.',
       'I only use your details to reply to your enquiry. More in the {privacy}.',
+      'Vaše podatke koristim samo za odgovor na upit. Više u {privacy}.',
       'Vaše podatke koristim samo za odgovor na upit. Više u {privacy}.'
     ),
-    successTitle: t3('Hvala! Povpraševanje sem prejela.', "Thank you! I've received your enquiry.", 'Hvala! Primila sam vaš upit.'),
-    successBody: t3('Odgovorim čim prej. Če se vam mudi, me pokličite.', "I'll reply as soon as I can. If it's urgent, give me a call.", 'Odgovorit ću što prije. Ako vam se žuri, nazovite me.'),
+    successTitle: tx('Hvala! Povpraševanje sem prejela.', "Thank you! I've received your enquiry.", 'Hvala! Primila sam vaš upit.', 'Hvala! Primila sam vaš upit.'),
+    successBody: tx('Odgovorim čim prej. Če se vam mudi, me pokličite.', "I'll reply as soon as I can. If it's urgent, give me a call.", 'Odgovorit ću što prije. Ako vam se žuri, nazovite me.', 'Odgovoriću što pre. Ako vam se žuri, pozovite me.'),
   },
   thanks: {
-    title: t3('Hvala za povpraševanje!', 'Thank you for your enquiry!', 'Hvala na upitu!'),
-    body: t3('Sporočilo sem prejela in vam odgovorim čim prej.', "I've received your message and will reply as soon as I can.", 'Primila sam vašu poruku i odgovorit ću vam što prije.'),
+    title: tx('Hvala za povpraševanje!', 'Thank you for your enquiry!', 'Hvala na upitu!', 'Hvala na upitu!'),
+    body: tx('Sporočilo sem prejela in vam odgovorim čim prej.', "I've received your message and will reply as soon as I can.", 'Primila sam vašu poruku i odgovorit ću vam što prije.', 'Primila sam vašu poruku i odgovoriću vam što pre.'),
   },
-  floating: { enabled: true, label: t3('Preverite prost termin', 'Check a date', 'Provjerite termin') },
+  floating: { enabled: true, label: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin') },
   footer: {
-    text: t3('Rojstnodnevne zabave in športne urice za otroke.', 'Birthday parties and sports classes for children.', 'Rođendanske zabave i sportske aktivnosti za djecu.'),
+    text: tx('Rojstnodnevne zabave in športne urice za otroke.', 'Birthday parties and sports classes for children.', 'Rođendanske zabave i sportske aktivnosti za djecu.', 'Rođendanske zabave i sportske aktivnosti za decu.'),
     showContact: true,
     showSocials: true,
     showBusiness: true,
@@ -403,24 +419,26 @@ export const DEFAULT_SETTINGS = {
     retentionMonths: 12,
     photos: true,
     // Change when the site moves to another host.
-    hosting: t3('GitHub Pages (GitHub, Inc., ZDA)', 'GitHub Pages (GitHub, Inc., United States)', 'GitHub Pages (GitHub, Inc., SAD)'),
+    hosting: tx('GitHub Pages (GitHub, Inc., ZDA)', 'GitHub Pages (GitHub, Inc., United States)', 'GitHub Pages (GitHub, Inc., SAD)', 'GitHub Pages (GitHub, Inc., SAD)'),
     outsideEu: true,
     extra: EMPTY(),
   },
-  terms: { enabled: false, title: t3('Pogoji poslovanja', 'Terms and conditions', 'Uvjeti poslovanja'), body: EMPTY() },
+  terms: { enabled: false, title: tx('Pogoji poslovanja', 'Terms and conditions', 'Uvjeti poslovanja', 'Uslovi poslovanja'), body: EMPTY() },
   seo: {
-    title: t3(
+    title: tx(
       'Otroško animiranje Ema | Rojstnodnevne zabave in športne urice za otroke',
       "Otroško animiranje Ema | Children's birthday parties and sports classes",
-      'Otroško animiranje Ema | Dječje rođendanske zabave i sportske aktivnosti'
+      'Otroško animiranje Ema | Dječje rođendanske zabave i sportske aktivnosti',
+      'Otroško animiranje Ema | Dečje rođendanske zabave i sportske aktivnosti'
     ),
-    description: t3(
+    description: tx(
       'Rojstnodnevne zabave za otroke, tedenske športne urice in animacija na dogodkih. Vodi jih vzgojiteljica Ema. Preverite prost termin.',
       "Children's birthday parties, weekly sports classes and entertainment at events, led by Ema, a kindergarten teacher. Check if your date is free.",
-      'Rođendanske zabave za djecu, tjedne sportske aktivnosti i animacija na događajima. Vodi ih odgojiteljica Ema. Provjerite slobodan termin.'
+      'Rođendanske zabave za djecu, tjedne sportske aktivnosti i animacija na događajima. Vodi ih odgojiteljica Ema. Provjerite slobodan termin.',
+      'Rođendanske zabave za decu, nedeljne sportske aktivnosti i animacija na događajima. Vodi ih vaspitačica Ema. Proverite slobodan termin.'
     ),
     ogImage: sample('share.jpg'),
-    ogImageAlt: t3('Otroci skačejo na kavču med baloni', 'Children jumping on a sofa among balloons', 'Djeca skaču na kauču među balonima'),
+    ogImageAlt: tx('Otroci skačejo na kavču med baloni', 'Children jumping on a sofa among balloons', 'Djeca skaču na kauču među balonima', 'Deca skaču na kauču među balonima'),
     // Off until the owner says the site is ready, so search engines don't index the sample texts.
     indexable: false,
     areaServed: '',
@@ -506,10 +524,35 @@ function sections(value) {
 /** A short line with an icon, shown as a stamp (facts about the sports classes, badges in "About me"). */
 const stamp = (raw) => ({ icon: icon(obj(raw).icon, 'check'), text: i18nLine(obj(raw).text, 60, EMPTY()) });
 
-/** Flags shown for the third language: one to three of the offered countries, in the chosen order. */
-function shFlags(value, fallback) {
-  const chosen = Array.isArray(value) ? [...new Set(value.filter((c) => SH_FLAG_CHOICES.includes(c)))].slice(0, 3) : [];
+/** Flags shown for Croatian: one to three of the offered countries, in the chosen order. */
+function hrFlags(value, fallback) {
+  const chosen = Array.isArray(value) ? [...new Set(value.filter((c) => HR_FLAG_CHOICES.includes(c)))].slice(0, 3) : [];
   return chosen.length ? chosen : [...fallback];
+}
+
+/**
+ * Files from before schema 3 had one Serbo-Croatian language, "sh" (Latin, ijekavian). Its texts are Croatian, so they
+ * move to "hr"; Serbian starts empty and shows the Croatian text in Cyrillic until it is translated.
+ */
+function migrate(input) {
+  if (Number(input.schemaVersion) >= 3) return input;
+  const walk = (value) => {
+    if (Array.isArray(value)) return value.map(walk);
+    if (!isPlainObject(value)) return value;
+    const text = 'sl' in value && 'sh' in value;
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [text && k === 'sh' ? 'hr' : k, walk(v)]));
+  };
+  const out = walk(input);
+  const languages = { ...obj(out.languages) };
+  const sh = obj(languages.sh);
+  if (languages.sh) {
+    delete languages.sh;
+    // The old label ("Hrvatski / Srpski", "HR/SR") named both languages, so the new ones start from their defaults.
+    languages.hr = { enabled: sh.enabled, flags: Array.isArray(sh.flags) ? sh.flags.filter((c) => c !== 'rs') : undefined };
+    languages.sr = { enabled: sh.enabled };
+    out.languages = languages;
+  }
+  return out;
 }
 
 /**
@@ -517,7 +560,7 @@ function shFlags(value, fallback) {
  * sense; lists (services, photos, questions…) keep exactly what the owner entered.
  */
 export function normalizeSettings(input) {
-  const raw = obj(input);
+  const raw = migrate(obj(input));
   const d = DEFAULT_SETTINGS;
   const site = obj(raw.site);
   const langs = obj(raw.languages);
@@ -563,10 +606,15 @@ export function normalizeSettings(input) {
         const dl = d.languages.en;
         return { enabled: bool(l.enabled, dl.enabled), label: required(l.label, 30, dl.label), short: required(l.short, 6, dl.short) };
       })(),
-      sh: (() => {
-        const l = obj(langs.sh);
-        const dl = d.languages.sh;
-        return { enabled: bool(l.enabled, dl.enabled), label: required(l.label, 30, dl.label), short: required(l.short, 6, dl.short), flags: shFlags(l.flags, dl.flags) };
+      hr: (() => {
+        const l = obj(langs.hr);
+        const dl = d.languages.hr;
+        return { enabled: bool(l.enabled, dl.enabled), label: required(l.label, 30, dl.label), short: required(l.short, 6, dl.short), flags: hrFlags(l.flags, dl.flags) };
+      })(),
+      sr: (() => {
+        const l = obj(langs.sr);
+        const dl = d.languages.sr;
+        return { enabled: bool(l.enabled, dl.enabled), label: required(l.label, 30, dl.label), short: required(l.short, 6, dl.short) };
       })(),
     },
     announcement: {
@@ -777,7 +825,7 @@ export function normalizeSettings(input) {
 
 /** Languages shown on the live site, Slovenian first. */
 export function enabledLangs(settings) {
-  return ['sl', ...['en', 'sh'].filter((l) => settings.languages[l].enabled)];
+  return ['sl', ...OTHER_LANGS.filter((l) => settings.languages[l].enabled)];
 }
 
 /** Whether a home page section is switched on. */
@@ -841,7 +889,7 @@ export function missingTranslations(settings, lang) {
 export function setupChecklist(settings) {
   const s = settings;
   const provider = resolveProvider(s.form, s.contact.email);
-  const missing = ['en', 'sh'].filter((l) => s.languages[l].enabled).map((l) => [l, missingTranslations(s, l).length]);
+  const missing = OTHER_LANGS.filter((l) => s.languages[l].enabled).map((l) => [l, missingTranslations(s, l).length]);
   const untranslated = missing.reduce((sum, [, n]) => sum + n, 0);
   const samples = samplePhotosInUse(s).length;
   return [
@@ -989,7 +1037,7 @@ const TERMS_EN = `## Booking
 
 Write to me or call. I reply as soon as I can.`;
 
-const TERMS_SH = `## Rezervacija
+const TERMS_HR = `## Rezervacija
 
 - Termin je rezerviran kada ga pisano potvrdim e-poštom ili porukom.
 - Prilikom potvrde plaćate kaparu u iznosu od [iznos] €, koja se uračunava u konačno plaćanje.
@@ -1025,7 +1073,43 @@ const TERMS_SH = `## Rezervacija
 
 Pišite mi ili me nazovite. Odgovaram što prije.`;
 
-export const TERMS_DRAFT = { sl: TERMS_SL, en: TERMS_EN, sh: TERMS_SH };
+const TERMS_SR = `## Rezervacija
+
+- Termin je rezervisan kada ga pismeno potvrdim imejlom ili porukom.
+- Prilikom potvrde plaćate kaparu u iznosu od [iznos] €, koja se uračunava u konačnu uplatu.
+
+## Plaćanje
+
+- Ostatak plaćate [na dan proslave, gotovinom ili uplatom na račun].
+- Za uplatu dobijate račun.
+
+## Otkazivanje i promena termina
+
+- Ako termin otkažete najmanje [broj] dana ranije, kaparu vam vraćam ili je prenosim na novi termin.
+- Kod kasnijeg otkazivanja kapara se ne vraća.
+- Ako se razbolim ili iz drugog hitnog razloga ne mogu da održim zabavu, odmah vam javljam. Dogovaramo novi termin ili vam vraćam sve što ste uplatili.
+
+## Tokom zabave
+
+- Vodim program, igre i animaciju. Roditelji odnosno staratelji ostaju dostupni i odgovorni su za svoju decu.
+- O alergijama, zdravstvenim posebnostima i posebnim potrebama dece obavestite me unapred.
+- Za hranu, piće i tortu pobrinite se sami.
+- Za igre u zatvorenom prostoru potrebno mi je najmanje [veličina] m² praznog prostora.
+
+## Fotografije
+
+- Fotografišem samo ako se sa tim slažete. Fotografiju objavljujem samo uz pismeni pristanak roditelja sve dece na njoj.
+
+## Sportske aktivnosti
+
+- Upis važi za [mesec ili sezonu], plaćanje [mesečno unapred].
+- Termine koji otpadnu zbog mog odsustva nadoknađujem.
+
+## Pitanja i pritužbe
+
+Pišite mi ili me pozovite. Odgovaram što pre.`;
+
+export const TERMS_DRAFT = { sl: TERMS_SL, en: TERMS_EN, hr: TERMS_HR, sr: TERMS_SR };
 
 /** Placeholders left in a text: "[like this]", but not markdown links "[text](https://…)". */
 export const placeholders = (text) => String(text ?? '').match(/\[[^\]\n]+\](?!\()/g) ?? [];

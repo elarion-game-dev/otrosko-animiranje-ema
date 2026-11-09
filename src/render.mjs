@@ -6,7 +6,7 @@
 // form an RSVP card. Cream bands with scalloped edges alternate with white paper; each band draws its own
 // edges, so sections can be switched off and reordered freely.
 //
-// Every page exists once per language. Slovenian lives at the site root, the others under /en/ and /sh/.
+// Every page exists once per language. Slovenian lives at the site root, the others under /en/, /hr/ and /sr/ (Serbian in Cyrillic).
 // All links start with the site's base path ("/otrosko-animiranje-ema" on GitHub Pages, "" on a domain).
 // No inline styles anywhere (the Content Security Policy forbids them): variants are classes in site.css.
 
@@ -34,9 +34,9 @@ export function typo(text) {
 }
 
 /** A text in the page's language, typeset for reading. */
-const T = (ctx, field) => typo(tr(field, ctx.lang));
+const T = (ctx, field) => typo(tr(field, ctx.lang, ctx.keep));
 /** The same text as typed, for values sent with the form. */
-const raw = (ctx, field) => tr(field, ctx.lang).trim();
+const raw = (ctx, field) => tr(field, ctx.lang, ctx.keep).trim();
 const cap = (s) => (s ? s[0].toLocaleUpperCase() + s.slice(1) : s);
 
 /**
@@ -125,9 +125,27 @@ function stamps(ctx, items, path, cls = 'stamps') {
     .join('')}</ul>`;
 }
 
+// The width each kind of photo is shown at (site.css: the frame minus its white border), so the browser can pick
+// the smallest rendition that is still sharp. Keep these in step with the CSS when a frame changes size.
+const SIZES = {
+  hero: '(max-width: 32em) calc(40vw - 36px), (max-width: 54em) 170px, (max-width: 72em) 130px, 206px',
+  print: '(max-width: 40em) 216px, (max-width: 67em) calc(33vw - 38px), 316px',
+  wall: '(max-width: 47.5em) calc(58vw - 20px), 200px',
+  service: '(max-width: 34em) calc(100vw - 40px), (max-width: 47.5em) calc(50vw - 30px), 370px',
+};
+
+/**
+ * A photo's <img>. With renditions the browser downloads the one that fits `sizes`. Photos on the first screen load
+ * right away at the normal priority, so the fonts and styles that the first paint needs still come first.
+ */
+function img(ctx, src, alt, { sizes, eager = false }) {
+  const set = ctx.srcset(src);
+  return `<img src="${esc(ctx.img(src))}" alt="${esc(alt)}"${set ? ` srcset="${esc(set)}" sizes="${sizes}"` : ''}${eager ? '' : ' loading="lazy"'} decoding="async">`;
+}
+
 /** A photo, or a soft illustration with a "Photo" tag (the tag only in the admin preview) until one is uploaded. */
-function photo(ctx, src, alt, { ill = 'balloons', tone = 'coral', eager = false, mono = '' } = {}) {
-  if (src) return `<div class="ph"><img src="${esc(ctx.img(src))}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"></div>`;
+function photo(ctx, src, alt, { ill = 'balloons', tone = 'coral', eager = false, mono = '', sizes = SIZES.print } = {}) {
+  if (src) return `<div class="ph">${img(ctx, src, alt, { sizes, eager })}</div>`;
   const art = mono ? `<span class="mono" aria-hidden="true">${esc(mono)}</span>` : illustration(ill);
   return `<div class="ph ph--empty ph--${tone}">${art}${ctx.preview ? `<span class="tag">${uiIcon('camera', 'i')}${esc(ui('photo', ctx.lang))}</span>` : ''}</div>`;
 }
@@ -144,7 +162,7 @@ export function pageInfo(settings, id, lang) {
   if (id === 'notfound') return { id, path: '/404.html', file: '404.html', title: ui('notFoundTitle', 'sl'), noindex: true };
   if (!PAGE_IDS.includes(id)) return null;
   const path = pagePath(id, lang);
-  const titles = { privacy: ui('privacyPolicy', lang), terms: tr(settings.terms.title, lang), thanks: tr(settings.thanks.title, lang) };
+  const titles = { privacy: ui('privacyPolicy', lang), terms: tr(settings.terms.title, lang, [settings.site.name]), thanks: tr(settings.thanks.title, lang, [settings.site.name]) };
   return { id, path, file: `${path.slice(1)}index.html`, title: titles[id] ?? '', noindex: id === 'thanks' };
 }
 
@@ -204,7 +222,7 @@ function brand(settings, ctx, cls = 'logo') {
   return `<a class="${cls}" href="${esc(ctx.url(pagePath('home', ctx.lang)))}">${mark}${name}<span class="sr-only">, ${esc(ui('home', ctx.lang))}</span></a>`;
 }
 
-const langFlags = (settings, l) => (l === 'sh' ? settings.languages.sh.flags : LANG_INFO[l].flags);
+const langFlags = (settings, l) => (l === 'hr' ? settings.languages.hr.flags : LANG_INFO[l].flags);
 const langName = (settings, l) => (l === 'sl' ? LANG_INFO.sl.name : settings.languages[l].label);
 const langShort = (settings, l) => (l === 'sl' ? LANG_INFO.sl.short : settings.languages[l].short);
 
@@ -341,15 +359,20 @@ function footer(settings, ctx) {
       .map(({ l, href }) => `<a href="${esc(href)}" hreflang="${l}" lang="${l}">${flagIcons(langFlags(settings, l))}${esc(langName(settings, l))}</a>`),
   ].filter(Boolean);
   const business = businessLine(settings, ctx);
+  // One compact band: the brand on the left, the pages, contact and social links as horizontal rows beside it.
+  const row = (cls, title, items, label = title) =>
+    items.length ? `<div class="foot-row ${cls}"><h2 class="sr-only">${esc(title)}</h2><ul aria-label="${esc(label)}">${items.join('')}</ul></div>` : '';
   return `<footer class="site-footer">
   <div class="wrap foot">
     <div class="foot-brand">
       ${brand(settings, ctx, 'logo logo-foot')}
       ${text ? `<p${ed(ctx, 'footer.text', f.text)}>${esc(text)}</p>` : ''}
     </div>
-    ${contactRows.length ? `<div><h2>${esc(ui('footContact', ctx.lang))}</h2><ul>${contactRows.join('')}</ul></div>` : ''}
-    ${pages.length ? `<div><h2>${esc(ui('footPages', ctx.lang))}</h2><ul>${pages.join('')}</ul></div>` : ''}
-    ${socials.length ? `<div><h2>${esc(ui('footFollow', ctx.lang))}</h2><ul aria-label="${esc(ui('social', ctx.lang))}">${socials.join('')}</ul></div>` : ''}
+    <div class="foot-rows">
+      ${row('foot-pages', ui('footPages', ctx.lang), pages)}
+      ${row('foot-contact', ui('footContact', ctx.lang), contactRows)}
+      ${row('foot-social', ui('footFollow', ctx.lang), socials, ui('social', ctx.lang))}
+    </div>
   </div>
   <div class="wrap foot-base">
     <p>© ${ctx.year} ${esc(s.business.name || s.site.name)}${business && business !== esc(s.business.name) ? `<span class="foot-business"> · ${business.replace(`${esc(s.business.name)} · `, '')}</span>` : ''}</p>
@@ -383,7 +406,7 @@ function jsonLd(settings, ctx) {
     name: s.site.name,
     ...(s.business.name && s.business.name !== s.site.name ? { legalName: s.business.name } : {}),
     url: s.site.url + pagePath('home', ctx.lang),
-    description: tr(s.seo.description, ctx.lang),
+    description: tr(s.seo.description, ctx.lang, ctx.keep),
     ...(c.phone ? { telephone: `+${phoneDigits(c.phone)}` } : {}),
     ...(c.email ? { email: c.email } : {}),
     ...(s.seo.ogImage ? { image: s.site.url + s.seo.ogImage } : s.header.logo ? { image: s.site.url + s.header.logo } : {}),
@@ -403,8 +426,8 @@ function layout(settings, ctx, info, main) {
   const t = s.theme;
   const lang = ctx.lang;
   const home = info.id === 'home';
-  const title = home ? tr(s.seo.title, lang) : `${info.title} | ${s.site.name}`;
-  const description = tr(s.seo.description, lang);
+  const title = home ? tr(s.seo.title, lang, ctx.keep) : `${info.title} | ${s.site.name}`;
+  const description = tr(s.seo.description, lang, ctx.keep);
   const noindex = !s.seo.indexable || info.noindex;
   const canonical = s.site.url + info.path;
   const ogImage = s.seo.ogImage ? s.site.url + s.seo.ogImage : '';
@@ -412,7 +435,7 @@ function layout(settings, ctx, info, main) {
   const favicon = t.favicon ? ctx.img(t.favicon) : ctx.url(`/assets/img/favicon.svg${v}`);
   // iOS ignores SVG icons for "Add to Home Screen": an uploaded PNG icon, or the PNG the build draws.
   const touchIcon = drawnIcons(s) ? ctx.url(`/assets/img/icon-180.png${v}`) : /\.png$/i.test(t.favicon) ? ctx.img(t.favicon) : '';
-  const font = ctx.preview ? '' : preloadFont(t.headingFont);
+  const font = ctx.preview ? '' : preloadFont(t.headingFont, lang === 'sr' ? 'cyrillic' : 'latin');
   const alternates =
     info.id === 'notfound' || ctx.langs.length < 2
       ? ''
@@ -439,7 +462,7 @@ ${info.id === 'notfound' ? '' : `<link rel="canonical" href="${esc(canonical)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(canonical)}">
-${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">\n<meta property="og:image:alt" content="${esc(tr(s.seo.ogImageAlt, lang))}">\n<meta name="twitter:card" content="summary_large_image">\n` : ''}<link rel="icon" href="${esc(favicon)}">
+${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">\n<meta property="og:image:alt" content="${esc(tr(s.seo.ogImageAlt, lang, ctx.keep))}">\n<meta name="twitter:card" content="summary_large_image">\n` : ''}<link rel="icon" href="${esc(favicon)}">
 ${touchIcon ? `<link rel="apple-touch-icon" href="${esc(touchIcon)}">\n` : ''}<link rel="manifest" href="${esc(ctx.url('/site.webmanifest'))}">
 ${font ? `<link rel="preload" href="${esc(ctx.url(`/assets/fonts/${font}`))}" as="font" type="font/woff2" crossorigin>\n` : ''}<link rel="stylesheet" href="${esc(ctx.themeHref ?? ctx.url(`/assets/css/theme.css${v}`))}">
 <link rel="stylesheet" href="${esc(ctx.url(`/assets/css/site.css${v}`))}">
@@ -507,7 +530,7 @@ function heroSection(settings, ctx) {
   const pics = photos
     .map(([p, i], n) => {
       const caption = T(ctx, p.caption);
-      return `<figure class="polaroid ${n === 0 ? 'pl-left' : 'pl-right'}"${editImage(ctx, `hero.photos.${i}.src`)}>${photo(ctx, p.src, T(ctx, p.alt), { ill: n === 0 ? 'balloons' : 'ball', tone: n === 0 ? 'coral' : 'sky', eager: true })}${
+      return `<figure class="polaroid ${n === 0 ? 'pl-left' : 'pl-right'}"${editImage(ctx, `hero.photos.${i}.src`)}>${photo(ctx, p.src, T(ctx, p.alt), { ill: n === 0 ? 'balloons' : 'ball', tone: n === 0 ? 'coral' : 'sky', eager: true, sizes: SIZES.hero })}${
         caption ? `<figcaption${ed(ctx, `hero.photos.${i}.caption`, p.caption)}>${esc(caption)}</figcaption>` : ''
       }</figure>`;
     })
@@ -683,7 +706,7 @@ function galleryContent(settings, ctx, s, index) {
   const items = images.map(([x, i], n) => {
     const alt = T(ctx, x.alt);
     const caption = T(ctx, x.caption);
-    return `<li class="r${(n % 5) + 1}"><a class="polaroid" href="${esc(ctx.img(x.src))}" data-lightbox${caption ? ` data-caption="${esc(caption)}"` : ''} aria-label="${esc(ui('enlarge', ctx.lang))}${alt ? `: ${esc(alt)}` : ''}"${editImage(ctx, `gallery.images.${i}.src`)}><span class="ph"><img src="${esc(ctx.img(x.src))}" alt="${esc(alt)}" loading="lazy" decoding="async"></span>${
+    return `<li class="r${(n % 5) + 1}"><a class="polaroid" href="${esc(ctx.img(x.src))}" data-lightbox${caption ? ` data-caption="${esc(caption)}"` : ''} aria-label="${esc(ui('enlarge', ctx.lang))}${alt ? `: ${esc(alt)}` : ''}"${editImage(ctx, `gallery.images.${i}.src`)}><span class="ph">${img(ctx, x.src, alt, { sizes: SIZES.wall })}</span>${
       caption ? `<span class="cap"${ed(ctx, `gallery.images.${i}.caption`, x.caption)}>${esc(caption)}</span>` : ''
     }</a></li>`;
   });
@@ -921,7 +944,7 @@ function servicesContent(settings, ctx, s, index) {
   const cards = items.map(([x, i], n) => {
     const p = `services.items.${i}`;
     const media = x.image
-      ? `<div class="service-media"><img src="${esc(ctx.img(x.image))}" alt="" loading="lazy" decoding="async"></div>`
+      ? `<div class="service-media">${img(ctx, x.image, '', { sizes: SIZES.service })}</div>`
       : x.icon
         ? `<span class="ic">${serviceIcon(x.icon, 'i')}</span>`
         : '';
@@ -1040,11 +1063,15 @@ function context(settings, page, lang, opts) {
     base,
     url: (path) => base + path,
     img: opts.resolveImage ?? ((src) => base + src),
+    // Smaller copies of a photo that the build found next to it (scripts/images.mjs), as a srcset value.
+    srcset: (src) => (opts.images && Object.hasOwn(opts.images, src) ? opts.images[src].map(([file, w]) => `${base + file} ${w}w`).join(', ') : ''),
     preview: Boolean(opts.preview),
     previewSuccess: Boolean(opts.previewSuccess),
     provider: resolveProvider(settings.form, settings.contact.email),
     // The preview offers every language so the owner can translate before switching one on.
-    langs: opts.preview ? ['sl', 'en', 'sh'] : enabledLangs(settings),
+    langs: opts.preview ? [...LANGS] : enabledLangs(settings),
+    // Names that stay in Latin on the Serbian (Cyrillic) pages.
+    keep: [settings.site.name, settings.business.name],
     version: opts.version ?? '',
     themeHref: opts.themeHref,
     year: now.getUTCFullYear(),

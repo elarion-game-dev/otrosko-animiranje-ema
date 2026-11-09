@@ -2,14 +2,17 @@
 // Feeds hostile values into every kind of setting and asserts nothing unsafe reaches the output.
 
 import assert from 'node:assert/strict';
-import { access, readFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { markdown } from '../src/markdown.mjs';
 import { resolveProvider } from '../src/providers.mjs';
 import { renderPage, renderSite, typo } from '../src/render.mjs';
 import { DEFAULT_SETTINGS, isSample, missingTranslations, normalizeSettings, placeholders, samplePhotosInUse, setupChecklist, TERMS_DRAFT } from '../src/settings.mjs';
-import { contrast, contrastReport, PRESETS, themeColors } from '../src/themes.mjs';
+import { contrast, contrastReport, PRESETS, themeColors, themeCss } from '../src/themes.mjs';
 import { ICON_SIZES, iconPng } from './icon-png.mjs';
-import { basePath, i18nFields, phoneDigits, safeAssetPath, safeUrl } from '../src/util.mjs';
+import { findRenditions, imageWidth } from './images.mjs';
+import { basePath, i18nFields, LANGS, phoneDigits, renditionPath, renditionWidths, safeAssetPath, safeUrl, toCyrillic } from '../src/util.mjs';
 
 let passed = 0;
 async function test(name, fn) {
@@ -24,7 +27,7 @@ async function test(name, fn) {
 
 const XSS = '<script>alert(1)</script><img src=x onerror=alert(1)>"\'><svg onload=alert(1)>';
 const EVIL_URL = 'javascript:alert(document.cookie)';
-const X3 = { sl: XSS, en: XSS, sh: XSS };
+const X3 = { sl: XSS, en: XSS, hr: XSS, sr: XSS };
 // Real (unescaped) markup only: escaped text like "&lt;img onerror=…" is harmless and must not match.
 const INJECTED_TAG = /<(script(?! type="(module|application\/ld\+json)")|img src=x|svg onload|iframe|object|embed)\b/i;
 const EVENT_ATTR = /<[a-z][^>]*\son[a-z]+\s*=/i;
@@ -40,7 +43,8 @@ function hostileSettings() {
   s.site.name = XSS;
   s.site.url = EVIL_URL;
   s.languages.en.label = XSS;
-  s.languages.sh = { enabled: true, label: XSS, short: XSS, flags: ['"><script>', 'hr', 'hr', 'xx'] };
+  s.languages.hr = { enabled: true, label: XSS, short: XSS, flags: ['"><script>', 'hr', 'hr', 'xx', 'rs'] };
+  s.languages.sr = { enabled: true, label: XSS, short: XSS };
   s.announcement = { enabled: true, text: X3, linkLabel: X3, target: 'url', url: EVIL_URL, style: '"><script>' };
   s.header = { logo: 'https://evil.example/logo.png', logoHeight: '1px; background:url(javascript:alert(1))', showName: true, sticky: true, cta: { enabled: true, label: X3, target: 'url', url: EVIL_URL } };
   s.hero = {
@@ -61,10 +65,10 @@ function hostileSettings() {
   s.sections.push({ id: '"><script>', enabled: true, heading: X3 });
   s.services.items = [{ icon: '"><script>', image: 'data:image/svg+xml,<svg onload=alert(1)>', title: X3, text: X3 }];
   s.steps.items = [{ icon: 'nope', time: XSS, title: X3, text: X3 }];
-  s.packages = { buttonLabel: X3, note: { sl: `${XSS}\n**${XSS}** [x](${EVIL_URL})`, en: XSS, sh: XSS }, items: [{ name: X3, price: X3, duration: X3, features: X3, highlight: true, badge: X3, button: X3 }] };
+  s.packages = { buttonLabel: X3, note: { sl: `${XSS}\n**${XSS}** [x](${EVIL_URL})`, en: XSS, hr: XSS, sr: XSS }, items: [{ name: X3, price: X3, duration: X3, features: X3, highlight: true, badge: X3, button: X3 }] };
   s.schedule = { photo: 'https://evil.example/s.jpg', photoAlt: X3, facts: [{ icon: '"><x', text: X3 }], note: X3, stubLabel: X3, buttonLabel: X3, items: [{ title: X3, day: '"><script>', when: X3, time: XSS, place: X3, note: X3 }] };
   s.events = { buttonLabel: X3 };
-  s.about = { text: { sl: `${XSS}\n\n[klik](${EVIL_URL}) [ok](https://example.com)`, en: XSS, sh: XSS }, photo: 'https://evil.example/a.jpg', photoAlt: X3, badges: [{ icon: '"><x', text: X3 }], signature: X3 };
+  s.about = { text: { sl: `${XSS}\n\n[klik](${EVIL_URL}) [ok](https://example.com)`, en: XSS, hr: XSS, sr: XSS }, photo: 'https://evil.example/a.jpg', photoAlt: X3, badges: [{ icon: '"><x', text: X3 }], signature: X3 };
   s.gallery = { note: X3, images: [{ src: '/assets/uploads/ok.webp', alt: X3, caption: X3 }, { src: 'https://evil.example/b.jpg', alt: X3, caption: X3 }] };
   s.testimonials = { showStars: true, ratingNote: X3, ratingUrl: EVIL_URL, items: [{ quote: X3, name: XSS, detail: X3, rating: '5"><x' }] };
   s.faq.items = [{ q: X3, a: X3 }];
@@ -76,7 +80,7 @@ function hostileSettings() {
     topics: { party: 'yes', sport: true, event: '"><x' },
     ask: { time: 'x', where: true, town: true, reply: true },
     buttonLabel: X3,
-    privacyNote: { sl: `${XSS} {privacy}`, en: XSS, sh: XSS },
+    privacyNote: { sl: `${XSS} {privacy}`, en: XSS, hr: XSS, sr: XSS },
     successTitle: X3,
     successBody: X3,
   };
@@ -184,7 +188,7 @@ await test('Hostile settings normalise to safe values', () => {
   assert.equal(s.contact.mapUrl, '');
   assert.equal(s.socials[0].url, '', 'javascript: URL is dropped');
   assert.equal(s.socials[1].platform, 'website');
-  assert.deepEqual(s.languages.sh.flags, ['hr'], 'unknown and repeated flags are dropped');
+  assert.deepEqual(s.languages.hr.flags, ['hr'], 'unknown, repeated and Serbian flags are dropped');
   assert.equal(s.sections.length, DEFAULT_SETTINGS.sections.length, 'unknown section ids are dropped');
   assert.equal(s.form.custom.action, '');
   assert.deepEqual(s.form.topics, { party: true, sport: true, event: true }, 'non-boolean toggles fall back to the default');
@@ -225,37 +229,43 @@ await test('Nothing made up goes live: no reviews, prices, credentials or schedu
 
 await test('Every language gets its pages, with the right lang, alternates and switch', () => {
   const files = site(DEFAULT_SETTINGS);
-  for (const f of ['index.html', 'zasebnost/index.html', 'hvala/index.html', 'en/index.html', 'en/privacy/index.html', 'en/thank-you/index.html', 'sh/index.html', 'sh/privatnost/index.html', 'sh/hvala/index.html', '404.html']) {
+  for (const f of ['index.html', 'zasebnost/index.html', 'hvala/index.html', 'en/index.html', 'en/privacy/index.html', 'en/thank-you/index.html', 'hr/index.html', 'hr/privatnost/index.html', 'hr/hvala/index.html', 'sr/index.html', 'sr/privatnost/index.html', 'sr/hvala/index.html', '404.html']) {
     assert.ok(files[f], `missing ${f}`);
   }
   assert.match(files['en/index.html'], /<html lang="en"/);
-  assert.match(files['sh/index.html'], /<html lang="sh"/);
+  assert.match(files['hr/index.html'], /<html lang="hr"/);
+  assert.match(files['sr/index.html'], /<html lang="sr"/);
   assert.match(files['index.html'], /hreflang="en" href="https:\/\/elarion-game-dev\.github\.io\/otrosko-animiranje-ema\/en\/"/);
-  assert.match(files['index.html'], /hreflang="hr" href="[^"]+\/sh\/"/);
+  assert.match(files['index.html'], /hreflang="hr" href="[^"]+\/hr\/"/);
+  assert.match(files['index.html'], /hreflang="sr" href="[^"]+\/sr\/"/);
   assert.match(files['index.html'], /hreflang="x-default" href="https:\/\/elarion-game-dev\.github\.io\/otrosko-animiranje-ema\/"/);
   assert.match(files['en/privacy/index.html'], new RegExp(`<a href="${BASE}/zasebnost/" hreflang="sl"`));
   assert.ok(files['en/index.html'].includes('Birthday parties for children, full of games'));
-  assert.ok(files['sh/index.html'].includes('Rođendanske zabave za djecu, pune igara'));
+  assert.ok(files['hr/index.html'].includes('Rođendanske zabave za djecu, pune igara'));
+  assert.ok(files['sr/index.html'].includes('Рођенданске забаве за децу, пуне игара'), 'Serbian is shown in Cyrillic');
   assert.ok(files['en/index.html'].includes('id="booking"') && files['index.html'].includes('id="rezervacija"'), 'section anchors are in the page language');
 });
 
-await test('Languages carry their flags; the third language shows the chosen ones', () => {
+await test('Languages carry their flags; Croatian shows the chosen ones', () => {
   const html = site(DEFAULT_SETTINGS)['index.html'];
   for (const code of ['si', 'gb', 'hr', 'rs']) assert.ok(html.includes(`<symbol id="flag-${code}"`), `flag ${code} in the sprite`);
   assert.ok(html.includes('<use href="#flag-si"/>') && html.includes('<use href="#flag-gb"/>'));
-  assert.match(html, /class="flags is-multi"[^>]*><span class="flag"><svg[^>]*><use href="#flag-hr"\/><\/svg><\/span><span class="flag"><svg[^>]*><use href="#flag-rs"\/>/);
+  assert.ok(html.includes('<use href="#flag-hr"/>') && html.includes('<use href="#flag-rs"/>'));
   const s = structuredClone(DEFAULT_SETTINGS);
-  s.languages.sh.flags = ['ba'];
+  s.languages.hr.flags = ['hr', 'ba'];
+  assert.match(site(s)['index.html'], /class="flags is-multi"[^>]*><span class="flag"><svg[^>]*><use href="#flag-hr"\/><\/svg><\/span><span class="flag"><svg[^>]*><use href="#flag-ba"\/>/);
+  s.languages.hr.flags = ['ba'];
   const one = site(s)['index.html'];
   assert.ok(one.includes('<symbol id="flag-ba"') && !one.includes('<symbol id="flag-hr"'));
 });
 
 await test('A switched-off language has no pages, flags or switch', () => {
   const s = structuredClone(DEFAULT_SETTINGS);
-  s.languages.sh.enabled = false;
+  s.languages.hr.enabled = false;
   const files = site(s);
-  assert.ok(!Object.keys(files).some((f) => f.startsWith('sh/')));
+  assert.ok(!Object.keys(files).some((f) => f.startsWith('hr/')));
   assert.ok(!files['index.html'].includes('hreflang="hr"') && !files['index.html'].includes('flag-hr'));
+  s.languages.sr.enabled = false;
   s.languages.en.enabled = false;
   const html = site(s)['index.html'];
   assert.ok(!html.includes('lang-switch') && !html.includes('class="sprite"'), 'no switch and no flags with one language');
@@ -264,13 +274,14 @@ await test('A switched-off language has no pages, flags or switch', () => {
 await test('Untranslated texts fall back to Slovenian and are counted', () => {
   const s = structuredClone(DEFAULT_SETTINGS);
   s.hero.title.en = '';
-  s.faq.items[0].a.sh = '';
+  s.faq.items[0].a.hr = '';
   const n = normalizeSettings(s);
   assert.ok(site(s)['en/index.html'].includes('najlepšo'));
   assert.deepEqual(missingTranslations(n, 'en').map((m) => m.path), ['hero.title']);
-  assert.deepEqual(missingTranslations(n, 'sh').map((m) => m.path), ['faq.items.0.a']);
+  assert.deepEqual(missingTranslations(n, 'hr').map((m) => m.path), ['faq.items.0.a']);
   assert.deepEqual(missingTranslations(normalizeSettings(DEFAULT_SETTINGS), 'en'), [], 'defaults are fully translated');
-  assert.deepEqual(missingTranslations(normalizeSettings(DEFAULT_SETTINGS), 'sh'), []);
+  assert.deepEqual(missingTranslations(normalizeSettings(DEFAULT_SETTINGS), 'hr'), []);
+  assert.deepEqual(missingTranslations(normalizeSettings(DEFAULT_SETTINGS), 'sr'), []);
   assert.ok(i18nFields(n).length > 100);
 });
 
@@ -339,7 +350,7 @@ await test('Booking form: topics, optional questions, required fields and a hone
   assert.ok(!site(noClasses)['index.html'].includes('data-for="sport"'), 'sports classes need their section');
 
   const slots = withContact(structuredClone(DEFAULT_SETTINGS), { email: 'ema@example.com' });
-  slots.schedule.items = [{ title: { sl: '4–6 let', en: '', sh: '' }, day: 'tue', when: { sl: '', en: '', sh: '' }, time: '17.00', place: { sl: '', en: '', sh: '' }, note: { sl: '', en: '', sh: '' } }];
+  slots.schedule.items = [{ title: { sl: '4–6 let', en: '', hr: '', sr: '' }, day: 'tue', when: { sl: '', en: '', hr: '', sr: '' }, time: '17.00', place: { sl: '', en: '', hr: '', sr: '' }, note: { sl: '', en: '', hr: '', sr: '' } }];
   const withSlots = site(slots)['index.html'];
   assert.match(withSlots, /<option value="Ob torkih ob 17\.00 · 4–6 let">/);
   assert.match(withSlots, /<span class="day">Ob torkih<\/span><span class="time">17\.00<\/span>/);
@@ -375,7 +386,7 @@ await test('Sections: switched-off and empty ones leave the page and the menu', 
   const preview = renderPage(normalizeSettings(s), 'home', 'sl', { preview: true });
   assert.ok(preview.includes('class="preview-empty"'), 'the preview explains empty sections');
   sectionOf(s, 'faq').enabled = false;
-  s.gallery.images = [{ src: '/assets/uploads/a.webp', alt: { sl: 'Balon', en: '', sh: '' }, caption: { sl: 'Baloni!', en: '', sh: '' } }];
+  s.gallery.images = [{ src: '/assets/uploads/a.webp', alt: { sl: 'Balon', en: '', hr: '', sr: '' }, caption: { sl: 'Baloni!', en: '', hr: '', sr: '' } }];
   const after = site(s)['index.html'];
   assert.ok(!after.includes('id="vprasanja"') && !after.includes('href="#vprasanja"'));
   assert.ok(after.includes(`<img src="${BASE}/assets/uploads/a.webp" alt="Balon"`));
@@ -398,7 +409,7 @@ await test('Privacy policy names the business, the form service and the supervis
   const s = withContact(withForm(DEFAULT_SETTINGS, { provider: 'formspree', formspree: { formId: 'abcd1234' } }), { email: 'ema@example.com' });
   s.business = { name: 'Ema Novak s.p.', address: 'Ulica 1, 1000 Ljubljana', registration: '1234567000', taxNumber: '12345678', vatId: '' };
   const files = site(s);
-  for (const f of ['zasebnost/index.html', 'en/privacy/index.html', 'sh/privatnost/index.html']) {
+  for (const f of ['zasebnost/index.html', 'en/privacy/index.html', 'hr/privatnost/index.html', 'sr/privatnost/index.html']) {
     assert.ok(files[f].includes('Ema Novak s.p.') && files[f].includes('Formspree') && files[f].includes('ip-rs.si'), f);
   }
   assert.match(files['index.html'], /Matična številka: 1234567000/);
@@ -450,7 +461,7 @@ await test('Click-to-edit markers only in the preview', () => {
 await test('Privacy policy never names an empty form service', () => {
   const check = (s, label) => {
     const files = site(s);
-    for (const file of ['zasebnost/index.html', 'en/privacy/index.html', 'sh/privatnost/index.html']) {
+    for (const file of ['zasebnost/index.html', 'en/privacy/index.html', 'hr/privatnost/index.html', 'sr/privatnost/index.html']) {
       assert.doesNotMatch(files[file], /(storitvi|to|servisu) ,|<p>\s*<\/p>/, `${label}: ${file}`);
     }
   };
@@ -494,27 +505,65 @@ await test('Phones get PNG home-screen icons; an uploaded icon replaces them', (
   assert.equal(JSON.parse(withIcon['site.webmanifest']).icons.length, 1);
 });
 
+await test('Serbian: Cyrillic on the page, Latin where it belongs', () => {
+  assert.equal(toCyrillic('Ljubljana, NJIVA, džep, Šta ćete?'), 'Љубљана, ЊИВА, џеп, Шта ћете?');
+  assert.equal(toCyrillic('Pišite na Viber ili WhatsApp. Više u {privacy}.'), 'Пишите на Viber или WhatsApp. Више у {privacy}.');
+  assert.equal(toCyrillic('[link](https://example.com/a-b) <a href="https://x.si">x</a> ema@example.com'), '[линк](https://example.com/a-b) <a href="https://x.si">x</a> ema@example.com');
+  assert.equal(toCyrillic('Већ ћирилица'), 'Већ ћирилица');
+  assert.equal(toCyrillic('Otroško animiranje Ema | Dečje zabave', ['Otroško animiranje Ema']), 'Otroško animiranje Ema | Дечје забаве');
+  const files = site(DEFAULT_SETTINGS);
+  const sr = files['sr/index.html'];
+  assert.ok(sr.includes('Otroško animiranje Ema'), 'the site name stays in Latin');
+  assert.ok(!/>[^<]*(Proverite|Rođendan|zabav)[^<]*</.test(sr), 'no Latin Serbian text left on the page');
+  assert.ok(files['sr/privatnost/index.html'].includes('Ваша права'));
+  assert.match(sr, /<link rel="preload" href="[^"]+prata-cyrillic-400-normal\.woff2"/, 'the Serbian page preloads the Cyrillic heading font');
+  assert.match(files['hr/index.html'], /<link rel="preload" href="[^"]+dm-serif-display-latin-400-normal\.woff2"/);
+  // An untranslated Serbian text shows the Croatian one, in Cyrillic.
+  const s = structuredClone(DEFAULT_SETTINGS);
+  s.hero.text.sr = '';
+  assert.ok(site(s)['sr/index.html'].includes('Рођенданске забаве за дјецу'));
+  // Cyrillic font files only for Cyrillic letters, so other pages never download them.
+  const css = themeCss(normalizeSettings(DEFAULT_SETTINGS).theme);
+  assert.match(css, /src: url\('\/assets\/fonts\/prata-cyrillic-400-normal\.woff2'\) format\('woff2'\);\n  unicode-range: U\+0301,U\+0400-045F/);
+});
+
+await test('Settings from before Croatian and Serbian were split move to Croatian', () => {
+  const old = structuredClone(DEFAULT_SETTINGS);
+  old.schemaVersion = 2;
+  old.languages = { en: old.languages.en, sh: { enabled: false, label: 'Hrvatski / Srpski', short: 'HR/SR', flags: ['hr', 'rs', 'ba'] } };
+  old.hero.text = { sl: 'Zabave', en: 'Parties', sh: 'Zabave za djecu' };
+  old.faq.items[0].q = { sl: 'Vprašanje?', en: 'Question?', sh: 'Pitanje?' };
+  const n = normalizeSettings(old);
+  assert.equal(n.schemaVersion, 3);
+  assert.deepEqual(n.languages.hr, { enabled: false, label: 'Hrvatski', short: 'HR', flags: ['hr', 'ba'] });
+  assert.equal(n.languages.sr.enabled, false);
+  assert.deepEqual(n.hero.text, { sl: 'Zabave', en: 'Parties', hr: 'Zabave za djecu', sr: '' });
+  assert.equal(n.faq.items[0].q.hr, 'Pitanje?');
+  assert.ok(!JSON.stringify(n).includes('"sh"'));
+});
+
 await test('Terms draft: never published by itself, placeholders flagged until filled in', () => {
   assert.equal(DEFAULT_SETTINGS.terms.enabled, false);
   assert.equal(Object.keys(site(DEFAULT_SETTINGS)).some((f) => /pogoji|terms|uvjeti/.test(f)), false);
-  for (const lang of ['sl', 'en', 'sh']) assert.ok(placeholders(TERMS_DRAFT[lang]).length >= 5, lang);
+  for (const lang of LANGS) assert.ok(placeholders(TERMS_DRAFT[lang]).length >= 5, lang);
   assert.deepEqual(placeholders('[povezava](https://ema.si) in [znesek] €'), ['[znesek]']);
   const s = structuredClone(DEFAULT_SETTINGS);
   s.terms = { ...s.terms, enabled: true, body: structuredClone(TERMS_DRAFT) };
   const files = site(s);
   assert.match(files['pogoji/index.html'], /<h3>Odpoved in sprememba termina<\/h3>/);
   assert.match(files['en/terms/index.html'], /<li>Food, drinks and the cake are up to you\.<\/li>/);
+  assert.match(files['sr/uslovi/index.html'], /<li>За храну, пиће и торту побрините се сами\.<\/li>/);
   assert.match(files['index.html'], new RegExp(`href="${BASE}/pogoji/"`));
   const item = (x) => setupChecklist(normalizeSettings(x)).find((i) => i.id === 'terms');
   assert.equal(item(s).done, false);
-  for (const lang of ['sl', 'en', 'sh']) s.terms.body[lang] = s.terms.body[lang].replace(/\[[^\]\n]+\](?!\()/g, '7');
+  for (const lang of LANGS) s.terms.body[lang] = s.terms.body[lang].replace(/\[[^\]\n]+\](?!\()/g, '7');
   assert.equal(item(s).done, true);
 
   // A switched-off language does not hold the checklist back.
   const off = structuredClone(s);
-  off.terms.body.sh = TERMS_DRAFT.sh;
+  off.terms.body.hr = TERMS_DRAFT.hr;
   assert.equal(item(off).done, false);
-  off.languages.sh.enabled = false;
+  off.languages.hr.enabled = false;
   assert.equal(item(off).done, true);
 
   // Switched on but empty: no page, no footer link, not done.
@@ -532,6 +581,52 @@ await test('Form messages keep the number and date for the browser to fill in', 
   assert.match(files['index.html'], /data-msg-added="Datum \{d\} je dodan/);
   assert.match(files['en/index.html'], /data-msg-added="The date \{d\} has been added/);
   assert.doesNotMatch(files['index.html'], /\{(name|phone|privacy)\}/);
+});
+
+await test('Photos come in sizes that fit their frames; the lightbox still opens the full photo', async () => {
+  assert.equal(renditionPath('/assets/uploads/a-k3j.webp', 480), '/assets/uploads/a-k3j-480w.webp');
+  assert.deepEqual(renditionWidths(1800), [320, 480, 800]);
+  assert.deepEqual(renditionWidths(900), [320, 480], 'no copy within 15% of the photo itself');
+  assert.deepEqual(renditionWidths(360), []);
+
+  const sample = (file) => readFile(new URL(`../public/assets/img/sample/${file}`, import.meta.url));
+  assert.equal(imageWidth(await sample('hero-party.webp')), 600);
+  assert.equal(imageWidth(await sample('share.jpg')), 1200);
+  assert.equal(imageWidth(iconPng(DEFAULT_SETTINGS.theme.colors, 180)), 180);
+  assert.equal(imageWidth(Buffer.from('not an image, only some text that is long enough')), 0);
+
+  // The build finds the copies next to a photo: smallest first, the photo itself last.
+  const dir = await mkdtemp(path.join(tmpdir(), 'renditions-'));
+  try {
+    await mkdir(path.join(dir, 'assets', 'uploads'), { recursive: true });
+    await writeFile(path.join(dir, 'assets', 'uploads', 'a.webp'), await sample('gallery-cake.webp'));
+    await writeFile(path.join(dir, 'assets', 'uploads', 'a-480w.webp'), await sample('gallery-cake-480w.webp'));
+    await writeFile(path.join(dir, 'assets', 'uploads', 'b.webp'), await sample('gallery-cake.webp'));
+    assert.deepEqual(await findRenditions(dir), { '/assets/uploads/a.webp': [['/assets/uploads/a-480w.webp', 480], ['/assets/uploads/a.webp', 900]] });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+
+  // The sample photos ship with their copies, so the default site gets them too.
+  const photos = [...new Set(samplePhotosInUse(normalizeSettings(DEFAULT_SETTINGS)))].filter((p) => p.endsWith('.webp'));
+  assert.ok(photos.length >= 8);
+  for (const p of photos) {
+    const width = imageWidth(await readFile(new URL(`../public${p}`, import.meta.url)));
+    for (const w of renditionWidths(width)) await access(new URL(`../public${renditionPath(p, w)}`, import.meta.url));
+  }
+
+  const s = structuredClone(DEFAULT_SETTINGS);
+  s.gallery.images = [{ src: '/assets/uploads/a.webp', alt: { sl: 'Torta', en: '', hr: '', sr: '' }, caption: { sl: '', en: '', hr: '', sr: '' } }];
+  const images = { '/assets/uploads/a.webp': [['/assets/uploads/a-480w.webp', 480], ['/assets/uploads/a.webp', 900]] };
+  const html = renderSite(normalizeSettings(s), { version: 'v', images })['index.html'];
+  const u = `${BASE}/assets/uploads`;
+  assert.ok(html.includes(`<a class="polaroid" href="${u}/a.webp"`), 'the lightbox opens the full photo');
+  assert.ok(html.includes(`<img src="${u}/a.webp" alt="Torta" srcset="${u}/a-480w.webp 480w, ${u}/a.webp 900w" sizes="(max-width: 47.5em) calc(58vw - 20px), 200px" loading="lazy"`));
+  assert.ok(!site(s)['index.html'].includes('srcset='), 'a photo without copies is a plain <img>');
+  // Photos on the first screen load right away, without jumping ahead of the styles and fonts.
+  const hero = html.match(/<section class="hero[\s\S]*?<\/section>/)[0];
+  assert.match(hero, /<img [^>]*decoding="async">/);
+  assert.doesNotMatch(hero, /loading="lazy"|fetchpriority/);
 });
 
 await test('content/site.json renders', async () => {

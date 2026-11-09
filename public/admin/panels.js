@@ -1,7 +1,7 @@
 // The editor's panels. Each panel returns DOM nodes bound to paths in the settings draft.
 // `page` is the preview page a panel switches to when it is opened, `anchor` the home page section it scrolls to.
 
-import { FLAGS, SH_FLAG_CHOICES } from '../assets/lib/flags.mjs';
+import { FLAGS, HR_FLAG_CHOICES } from '../assets/lib/flags.mjs';
 import { LANG_INFO, pagePath } from '../assets/lib/i18n.mjs';
 import { PROVIDERS, resolveProvider } from '../assets/lib/providers.mjs';
 import {
@@ -17,9 +17,10 @@ import {
   enabledLangs,
   isSample,
   missingTranslations,
+  OTHER_LANGS,
   termsBlanks,
   setupChecklist,
-  t3,
+  tx,
 } from '../assets/lib/settings.mjs';
 import {
   COLOR_KEYS,
@@ -88,7 +89,7 @@ function buttonFields(app, p, { title, allowNone = false } = {}) {
   ];
 }
 
-/** Shortest readable name of a { sl, en, sh } text, for list titles. */
+/** Shortest readable name of a { sl, en, hr, sr } text, for list titles. */
 const name = (app, value, fallback = '') => (value?.[app.lang] || value?.sl || fallback).slice(0, 70);
 
 // --- overview -------------------------------------------------------------------------
@@ -170,9 +171,9 @@ function flagIcon(code) {
   return svg;
 }
 
-/** Which flags stand next to the third language: one to three, in a fixed order. */
+/** Which flags stand next to Croatian: one to three, in a fixed order. */
 function flagPicker(app) {
-  const path = 'languages.sh.flags';
+  const path = 'languages.hr.flags';
   const current = app.get(path) ?? [];
   const choice = (code) =>
     h(
@@ -187,7 +188,7 @@ function flagPicker(app) {
             event.target.checked = !event.target.checked;
             return;
           }
-          app.set(path, SH_FLAG_CHOICES.filter((c) => next.includes(c)));
+          app.set(path, HR_FLAG_CHOICES.filter((c) => next.includes(c)));
           app.rerender();
         },
       }),
@@ -198,8 +199,8 @@ function flagPicker(app) {
     'div',
     { class: 'field', dataset: { path } },
     h('span', { class: 'field-label' }, 'Zastavice v izbirniku jezika'),
-    h('div', { class: 'flag-choices' }, SH_FLAG_CHOICES.map(choice)),
-    h('p', { class: 'field-help' }, 'Ena do tri. Več zastavic se prikaže ena čez drugo. Slovenščina ima slovensko, angleščina britansko zastavico.')
+    h('div', { class: 'flag-choices' }, HR_FLAG_CHOICES.map(choice)),
+    h('p', { class: 'field-help' }, 'Ena do tri. Več zastavic se prikaže ena čez drugo. Slovenščina ima slovensko, angleščina britansko, srbščina srbsko zastavico.')
   );
 }
 
@@ -212,7 +213,7 @@ function placeOf(app, path) {
 function languages(app) {
   const s = app.normalized();
   const total = i18nFields(s).filter(({ value }) => value.sl.trim()).length;
-  const progress = ['en', 'sh'].map((lang) => {
+  const progress = OTHER_LANGS.map((lang) => {
     const missing = missingTranslations(s, lang);
     const done = total - missing.length;
     const bar = h('div', { class: 'progress' }, h('span', {}));
@@ -263,16 +264,17 @@ function languages(app) {
         'div',
         { class: 'grid-2' },
         text(app, `languages.${id}.label`, { label: 'Ime jezika (v izbirniku)', maxlength: 30 }),
-        text(app, `languages.${id}.short`, { label: 'Kratica na gumbu', maxlength: 6, help: id === 'sh' ? 'Npr. SH, BHS ali HR/SR.' : null })
+        text(app, `languages.${id}.short`, { label: 'Kratica na gumbu', maxlength: 6, help: id === 'hr' ? 'Npr. HR ali BHS.' : null })
       ),
-      id === 'sh' ? flagPicker(app) : null,
+      id === 'hr' ? flagPicker(app) : null,
+      id === 'sr' ? note('Srbska besedila lahko pišete v latinici (npr. »Proverite termin«): na strani se samodejno prikažejo v cirilici. Kar še ni prevedeno v srbščino, se pokaže hrvaško besedilo v cirilici.', 'info') : null,
       h('p', { class: 'field-help' }, `Naslov: ${app.siteRoot}${pagePath('home', id)}`)
     );
 
   return [
-    head('Jeziki in prevodi', 'Stran je v slovenščini, z angleško in srbohrvaško različico. Obiskovalci jezik zamenjajo z gumbi v glavi strani.'),
-    note('Za prevajanje zgoraj izberite EN ali SH. Pod vsakim poljem vidite slovensko besedilo, ki ga prevajate. Kar ostane neprevedeno, se v tem jeziku pokaže v slovenščini.', 'info'),
-    card('Jeziki na spletni strani', 'Slovenščina je vedno vklopljena. Druge jezike lahko izklopite, dokler prevodi niso pripravljeni.', h('div', { class: 'menu-rows' }, langCard('en'), langCard('sh'))),
+    head('Jeziki in prevodi', 'Stran je v slovenščini, z angleško, hrvaško in srbsko (cirilica) različico. Obiskovalci jezik zamenjajo z gumbi v glavi strani.'),
+    note('Za prevajanje zgoraj izberite EN, HR ali SR. Pod vsakim poljem vidite slovensko besedilo, ki ga prevajate. Kar ostane neprevedeno, se pokaže v sorodnem jeziku (hrvaško ↔ srbsko) ali v slovenščini.', 'info'),
+    card('Jeziki na spletni strani', 'Slovenščina je vedno vklopljena. Druge jezike lahko izklopite, dokler prevodi niso pripravljeni.', h('div', { class: 'menu-rows' }, ...OTHER_LANGS.map(langCard))),
     card('Napredek prevodov', 'Klik na besedilo odpre njegovo polje v izbranem jeziku.', progress),
   ];
 }
@@ -298,7 +300,7 @@ function hero(app) {
         addLabel: 'Dodaj vrstico',
         empty: 'Ni podrobnosti.',
         itemTitle: (x) => `${name(app, x.term, '…')}: ${name(app, x.value)}`,
-        newItem: () => ({ term: t3('', '', ''), value: t3('', '', '') }),
+        newItem: () => ({ term: tx(''), value: tx('') }),
         fields: (p) => [h('div', { class: 'grid-2' }, tx(app, `${p}.term`, { label: 'Kaj', maxlength: 30, placeholder: 'npr. Kje' }), tx(app, `${p}.value`, { label: 'Besedilo', maxlength: 80, placeholder: 'npr. Doma ali v najetem prostoru' }))],
       }),
       toggle(app, 'hero.showDate', { label: 'Vrstica »Kdaj« z izbiro datuma', help: 'Izbrani datum se prenese v obrazec. Prikaže se, ko obrazec deluje; na telefonu je skrita.' })
@@ -314,7 +316,7 @@ function hero(app) {
         empty: 'Ni fotografij. Vabilo je na sredini, brez polaroidk.',
         itemTitle: (x, i) => `${i === 0 ? 'Leva' : 'Desna'}: ${name(app, x.caption, 'brez pripisa')}${isSample(x.src) ? ' · vzorčna' : ''}`,
         onOpen: () => app.previewAnchor('hero'),
-        newItem: () => ({ src: '', alt: t3('', '', ''), caption: t3('', '', '') }),
+        newItem: () => ({ src: '', alt: tx(''), caption: tx('') }),
         fields: (p) => [
           image(app, `${p}.src`, { label: 'Fotografija', help: 'Pokončna je najboljša (4 : 5). Objavite le fotografije otrok, za katere imate soglasje staršev.', upload: { maxWidth: 900, maxHeight: 1200, name: 'vabilo' } }),
           tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi', maxlength: 40, placeholder: 'npr. Rojstni dan!' }),
@@ -333,7 +335,7 @@ function stampList(app, path, { max, empty, placeholder, onOpen }) {
     empty,
     itemTitle: (x) => name(app, x.text, 'Nova značka'),
     onOpen,
-    newItem: () => ({ icon: 'check', text: t3('', '', '') }),
+    newItem: () => ({ icon: 'check', text: tx('') }),
     fields: (p) => [tx(app, `${p}.text`, { label: 'Besedilo', maxlength: 60, placeholder }), iconPicker(app, `${p}.icon`)],
   });
 }
@@ -389,7 +391,7 @@ function program(app) {
         addLabel: 'Dodaj točko',
         itemTitle: (s) => `${s.time ? `${s.time} · ` : ''}${name(app, s.title, 'Nova točka')}`,
         onOpen: () => app.previewAnchor('steps'),
-        newItem: () => ({ icon: 'star', time: '', title: t3('Nova točka', '', ''), text: t3('', '', '') }),
+        newItem: () => ({ icon: 'star', time: '', title: tx('Nova točka'), text: tx('') }),
         fields: (p) => [
           h('div', { class: 'grid-2' }, tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }), text(app, `${p}.time`, { label: 'Ura', maxlength: 12, placeholder: '0:15' })),
           tx(app, `${p}.text`, { label: 'Kratek opis', maxlength: 300 }),
@@ -414,7 +416,7 @@ function services(app) {
         empty: 'Ni še storitev.',
         itemTitle: (s) => name(app, s.title, 'Nova storitev'),
         onOpen: () => app.previewAnchor('services'),
-        newItem: () => ({ icon: 'star', image: '', title: t3('Nova storitev', '', ''), text: t3('', '', '') }),
+        newItem: () => ({ icon: 'star', image: '', title: tx('Nova storitev'), text: tx('') }),
         fields: (p) => [
           tx(app, `${p}.title`, { label: 'Naslov', maxlength: 80 }),
           tx(app, `${p}.text`, { label: 'Kratek opis', multiline: true, rows: 3, maxlength: 600 }),
@@ -438,7 +440,7 @@ function packages(app) {
         addLabel: 'Dodaj paket',
         itemTitle: (p) => `${name(app, p.name, 'Nov paket')}${p.price?.sl ? ` · ${p.price.sl}` : ''}${p.highlight ? ' ★' : ''}`,
         onOpen: () => app.previewAnchor('packages'),
-        newItem: () => ({ name: t3('Nov paket', '', ''), price: t3('', '', ''), duration: t3('', '', ''), features: t3('', '', ''), highlight: false, badge: t3('', '', ''), button: t3('', '', '') }),
+        newItem: () => ({ name: tx('Nov paket'), price: tx(''), duration: tx(''), features: tx(''), highlight: false, badge: tx(''), button: tx('') }),
         fields: (p) => [
           tx(app, `${p}.name`, { label: 'Ime paketa', maxlength: 60 }),
           h('div', { class: 'grid-2' }, tx(app, `${p}.duration`, { label: 'Za koga in koliko časa', maxlength: 60, placeholder: 'npr. do 10 otrok · 1,5 ure' }), tx(app, `${p}.price`, { label: 'Cena', maxlength: 40, placeholder: 'npr. od 150 €', help: '»od« na začetku je izpisan manjše.' })),
@@ -476,7 +478,7 @@ function schedule(app) {
         empty: 'Ni terminov.',
         itemTitle: (s) => `${s.day === 'custom' ? s.when?.sl || '…' : DAY_OPTIONS[s.day]} ${s.time}${s.title?.sl ? ` · ${name(app, s.title)}` : ''}`,
         onOpen: () => app.previewAnchor('schedule'),
-        newItem: () => ({ title: t3('', '', ''), day: 'tue', when: t3('', '', ''), time: '17.00', place: t3('', '', ''), note: t3('', '', '') }),
+        newItem: () => ({ title: tx(''), day: 'tue', when: tx(''), time: '17.00', place: tx(''), note: tx('') }),
         fields: (p) => [
           h('div', { class: 'grid-2' }, select(app, `${p}.day`, { label: 'Dan', options: DAY_OPTIONS, rerender: true }), text(app, `${p}.time`, { label: 'Ura', maxlength: 30, placeholder: '17.00' })),
           app.get(`${p}.day`) === 'custom' ? tx(app, `${p}.when`, { label: 'Kdaj', maxlength: 60, placeholder: 'npr. Vsako drugo soboto' }) : null,
@@ -527,7 +529,7 @@ function gallery(app) {
     for (const file of chosen.slice(0, room)) {
       status.textContent = `Obdelujem ${++n} od ${Math.min(chosen.length, room)} …`;
       try {
-        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: t3('', '', ''), caption: t3('', '', '') });
+        list.push({ src: await app.upload(file, { maxWidth: 1800, maxHeight: 1800, name: 'galerija' }), alt: tx(''), caption: tx('') });
       } catch (error) {
         status.textContent = error.message;
       }
@@ -551,7 +553,7 @@ function gallery(app) {
         empty: 'Galerija je prazna, zato se na spletu ne prikaže.',
         itemTitle: (x, i) => `${name(app, x.caption, '') || name(app, x.alt, `Slika ${i + 1}`)}${isSample(x.src) ? ' · vzorčna' : ''}`,
         onOpen: () => app.previewAnchor('gallery'),
-        newItem: () => ({ src: '', alt: t3('', '', ''), caption: t3('', '', '') }),
+        newItem: () => ({ src: '', alt: tx(''), caption: tx('') }),
         fields: (p) => [
           image(app, `${p}.src`, { label: 'Slika', upload: { maxWidth: 1800, maxHeight: 1800, name: 'galerija' } }),
           tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi (neobvezno)', maxlength: 40, placeholder: 'npr. Torta!' }),
@@ -584,7 +586,7 @@ function reviews(app) {
         empty: 'Ni še mnenj.',
         itemTitle: (x) => [x.name, name(app, x.quote).slice(0, 40)].filter(Boolean).join(' · ') || 'Novo mnenje',
         onOpen: () => app.previewAnchor('testimonials'),
-        newItem: () => ({ quote: t3('', '', ''), name: '', detail: t3('', '', ''), rating: 5 }),
+        newItem: () => ({ quote: tx(''), name: '', detail: tx(''), rating: 5 }),
         fields: (p) => [
           tx(app, `${p}.quote`, { label: 'Mnenje', multiline: true, rows: 4, maxlength: 800 }),
           h('div', { class: 'grid-2' }, text(app, `${p}.name`, { label: 'Ime', maxlength: 60, placeholder: 'npr. Maja' }), tx(app, `${p}.detail`, { label: 'Pripis (neobvezno)', maxlength: 80, placeholder: 'npr. mama 6-letne Zale' })),
@@ -607,7 +609,7 @@ function faq(app) {
         addLabel: 'Dodaj vprašanje',
         itemTitle: (x) => name(app, x.q, 'Novo vprašanje'),
         onOpen: () => app.previewAnchor('faq'),
-        newItem: () => ({ q: t3('Novo vprašanje?', '', ''), a: t3('', '', '') }),
+        newItem: () => ({ q: tx('Novo vprašanje?'), a: tx('') }),
         fields: (p) => [tx(app, `${p}.q`, { label: 'Vprašanje', maxlength: 200 }), tx(app, `${p}.a`, { label: 'Odgovor', multiline: true, rows: 4, maxlength: 2000, help: MARKDOWN_HELP })],
       })
     ),

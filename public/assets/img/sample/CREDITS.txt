@@ -7,7 +7,8 @@ your own photos, published with the parents' consent.
 
 All were uploaded in 2020-2021 by the photographers below, before photorealistic AI images existed, and
 were checked for brand logos, readable text and recognisable adults. Cropped and resized for this site;
-all metadata removed.
+all metadata removed. Files ending in -320w / -480w are smaller copies of the photo with the same name,
+which the pages offer to small screens (srcset); they are covered by the same credit.
 
 Pexels License (https://www.pexels.com/license/): free for commercial use, no attribution required.
 Unsplash License (https://unsplash.com/license): free for commercial use, no attribution required.

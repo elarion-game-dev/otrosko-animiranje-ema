@@ -311,6 +311,57 @@ function confetti(target) {
   }
 }
 
+/** Birthday confetti raining over the whole screen: paper squares, dots and streamers that tumble as they fall. */
+function confettiRain() {
+  if (reduce || typeof Element.prototype.animate !== 'function') return;
+  const w = innerWidth;
+  const h = innerHeight;
+  const style = getComputedStyle(root);
+  const colors = ['--coral', '--gold', '--sage', '--sky', '--lilac', '--accent'].map((v) => style.getPropertyValue(v).trim()).filter(Boolean);
+  const count = Math.round(Math.min(120, 46 + w / 11));
+  for (let i = 0; i < count; i++) {
+    const piece = d.createElement('span');
+    piece.className = 'confetti-burst';
+    piece.setAttribute('aria-hidden', 'true');
+    piece.style.background = colors[i % colors.length];
+    const kind = i % 4;
+    if (kind === 0) piece.style.borderRadius = '50%';
+    if (kind === 1) {
+      piece.style.width = '5px';
+      piece.style.height = '20px';
+    }
+    d.body.append(piece);
+    const x = Math.random() * w;
+    const y = -30 - Math.random() * 60;
+    const drift = (Math.random() - 0.5) * 220;
+    const sway = 18 + Math.random() * 34;
+    const spin = (Math.random() < 0.5 ? -1 : 1) * (360 + Math.random() * 720);
+    const flip = 360 + Math.random() * 900;
+    const fall = h + 80;
+    const frames = [0, 0.25, 0.5, 0.75, 1].map((t) => ({
+      transform: `translate(${x + drift * t + Math.sin(t * Math.PI * 3) * sway}px, ${y + fall * t}px) rotate(${spin * t}deg) rotateX(${flip * t}deg)`,
+      opacity: t < 0.85 ? 1 : 0,
+    }));
+    const animation = piece.animate(frames, { duration: 2600 + Math.random() * 1800, delay: Math.random() * 700, easing: 'cubic-bezier(.25, .4, .55, 1)', fill: 'backwards' });
+    animation.onfinish = () => piece.remove();
+  }
+}
+
+/** Runs `fn` once the page has stopped scrolling (or straight away when the click didn't scroll at all). */
+function whenScrollStops(fn) {
+  let timer;
+  const done = () => {
+    removeEventListener('scroll', onScroll);
+    fn();
+  };
+  const onScroll = () => {
+    clearTimeout(timer);
+    timer = setTimeout(done, 160);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  timer = setTimeout(done, 450);
+}
+
 // --- booking form -------------------------------------------------------------------------------------
 
 const MIN_FILL_MS = 2500; // people take longer than this to fill in a form
@@ -325,7 +376,7 @@ const today = () => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
-const locale = { sl: 'sl-SI', en: 'en-GB', sh: 'hr' }[root.lang] ?? 'sl-SI';
+const locale = { sl: 'sl-SI', en: 'en-GB', hr: 'hr-HR', sr: 'sr-Cyrl-RS' }[root.lang] ?? 'sl-SI';
 const longDate = (iso) => {
   try {
     return new Date(`${iso}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
@@ -615,6 +666,14 @@ d.addEventListener('click', (event) => {
   if (bookings.map((b) => b.preset(link)).some(Boolean)) event.preventDefault();
 });
 
+// Picking a party package: birthday confetti once the page has arrived at the booking section.
+d.addEventListener('click', (event) => {
+  const link = event.target.closest('a[data-paket]');
+  if (!link) return;
+  const url = new URL(link.href, location.href);
+  if (url.pathname === location.pathname && url.hash) whenScrollStops(confettiRain);
+});
+
 // --- gallery lightbox -----------------------------------------------------------------------------------
 
 const ICONS = {
@@ -625,7 +684,8 @@ const ICONS = {
 const LABELS = {
   sl: { close: 'Zapri', prev: 'Prejšnja slika', next: 'Naslednja slika' },
   en: { close: 'Close', prev: 'Previous photo', next: 'Next photo' },
-  sh: { close: 'Zatvori', prev: 'Prethodna slika', next: 'Sljedeća slika' },
+  hr: { close: 'Zatvori', prev: 'Prethodna slika', next: 'Sljedeća slika' },
+  sr: { close: 'Затвори', prev: 'Претходна слика', next: 'Следећа слика' },
 };
 
 function svgIcon(name) {

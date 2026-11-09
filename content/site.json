@@ -25,12 +25,14 @@
     "text": {
       "sl": "Termini za praznične zabave se hitro polnijo!",
       "en": "Holiday party dates are filling up fast!",
-      "sh": "Termini za blagdanske zabave brzo se popunjavaju!"
+      "hr": "Termini za blagdanske zabave brzo se popunjavaju!",
+      "sr": "Termini za praznične zabave brzo se popunjavaju!"
     },
     "linkLabel": {
       "sl": "Preverite prost termin",
       "en": "Check a date",
-      "sh": "Provjerite termin"
+      "hr": "Provjerite termin",
+      "sr": "Proverite termin"
     },
     "target": "contact",
     "url": "",
@@ -46,7 +48,8 @@
       "label": {
         "sl": "Preverite prost termin",
         "en": "Check a date",
-        "sh": "Provjerite termin"
+        "hr": "Provjerite termin",
+        "sr": "Proverite termin"
       },
       "target": "contact",
       "url": ""
@@ -56,77 +59,90 @@
     "badge": {
       "sl": "Vabilo",
       "en": "An invitation",
-      "sh": "Pozivnica"
+      "hr": "Pozivnica",
+      "sr": "Pozivnica"
     },
     "title": {
       "sl": "na najlepšo zabavo *leta*",
       "en": "to the best party of *the year*",
-      "sh": "na najbolju zabavu *godine*"
+      "hr": "na najbolju zabavu *godine*",
+      "sr": "na najbolju zabavu *godine*"
     },
     "text": {
       "sl": "Rojstnodnevne zabave za otroke, polne iger, gibanja in smeha. Vodi jih vzgojiteljica Ema.",
       "en": "Birthday parties for children, full of games, movement and laughter. Led by Ema, a kindergarten teacher.",
-      "sh": "Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema."
+      "hr": "Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema.",
+      "sr": "Rođendanske zabave za decu, pune igara, kretanja i smeha. Vodi ih vaspitačica Ema."
     },
     "details": [
       {
         "term": {
           "sl": "Za koga",
           "en": "Who for",
-          "sh": "Za koga"
+          "hr": "Za koga",
+          "sr": "Za koga"
         },
         "value": {
           "sl": "Slavljenec in prijatelji",
           "en": "The birthday child and friends",
-          "sh": "Slavljenik i prijatelji"
+          "hr": "Slavljenik i prijatelji",
+          "sr": "Slavljenik i prijatelji"
         }
       },
       {
         "term": {
           "sl": "Kje",
           "en": "Where",
-          "sh": "Gdje"
+          "hr": "Gdje",
+          "sr": "Gde"
         },
         "value": {
           "sl": "Doma ali v najetem prostoru",
           "en": "At home or in a rented venue",
-          "sh": "Kod kuće ili u iznajmljenom prostoru"
+          "hr": "Kod kuće ili u iznajmljenom prostoru",
+          "sr": "Kod kuće ili u iznajmljenom prostoru"
         }
       },
       {
         "term": {
           "sl": "Kaj",
           "en": "What",
-          "sh": "Što"
+          "hr": "Što",
+          "sr": "Šta"
         },
         "value": {
           "sl": "Igre, gibanje in smeh",
           "en": "Games, movement and laughter",
-          "sh": "Igre, kretanje i smijeh"
+          "hr": "Igre, kretanje i smijeh",
+          "sr": "Igre, kretanje i smeh"
         }
       },
       {
         "term": {
           "sl": "Cena",
           "en": "Price",
-          "sh": "Cijena"
+          "hr": "Cijena",
+          "sr": "Cena"
         },
         "value": {
           "sl": "Znana vnaprej",
           "en": "Agreed in advance",
-          "sh": "Poznata unaprijed"
+          "hr": "Poznata unaprijed",
+          "sr": "Poznata unapred"
         }
       },
       {
         "term": {
           "sl": "Kdo vodi",
           "en": "Led by",
-          "sh": "Tko vodi"
+          "hr": "Tko vodi",
+          "sr": "Ko vodi"
         },
         "value": {
           "sl": "Ema, vzgojiteljica",
           "en": "Ema, a kindergarten teacher",
-          "sh": "Ema, odgojiteljica"
+          "hr": "Ema, odgojiteljica",
+          "sr": "Ema, vaspitačica"
         }
       }
     ],
@@ -135,7 +151,8 @@
       "label": {
         "sl": "Preverite prost termin",
         "en": "Check a date",
-        "sh": "Provjerite termin"
+        "hr": "Provjerite termin",
+        "sr": "Proverite termin"
       },
       "target": "contact",
       "url": ""
@@ -144,7 +161,8 @@
       "label": {
         "sl": "Poglejte program",
         "en": "See the programme",
-        "sh": "Pogledajte program"
+        "hr": "Pogledajte program",
+        "sr": "Pogledajte program"
       },
       "target": "steps",
       "url": ""
@@ -155,12 +173,14 @@
         "alt": {
           "sl": "Otroci ležijo na odeji in lovijo konfete",
           "en": "Children lying on a blanket, catching confetti",
-          "sh": "Djeca leže na dekici i hvataju konfete"
+          "hr": "Djeca leže na dekici i hvataju konfete",
+          "sr": "Deca leže na dekici i hvataju konfete"
         },
         "caption": {
           "sl": "Rojstni dan!",
           "en": "Birthday time!",
-          "sh": "Rođendan!"
+          "hr": "Rođendan!",
+          "sr": "Rođendan!"
         }
       },
       {
@@ -168,12 +188,14 @@
         "alt": {
           "sl": "Otroci s klobučki plešejo v krogu",
           "en": "Children in party hats dancing in a circle",
-          "sh": "Djeca sa šeširićima plešu u krugu"
+          "hr": "Djeca sa šeširićima plešu u krugu",
+          "sr": "Deca sa šeširićima plešu u krugu"
         },
         "caption": {
           "sl": "Igre in smeh",
           "en": "Games and giggles",
-          "sh": "Igre i smijeh"
+          "hr": "Igre i smijeh",
+          "sr": "Igre i smeh"
         }
       }
     ]
@@ -186,22 +208,26 @@
       "kicker": {
         "sl": "Program",
         "en": "Programme",
-        "sh": "Program"
+        "hr": "Program",
+        "sr": "Program"
       },
       "heading": {
         "sl": "Program zabave",
         "en": "The party programme",
-        "sh": "Program zabave"
+        "hr": "Program zabave",
+        "sr": "Program zabave"
       },
       "menuLabel": {
         "sl": "Program",
         "en": "Programme",
-        "sh": "Program"
+        "hr": "Program",
+        "sr": "Program"
       },
       "intro": {
         "sl": "Primer za dve uri. Igre prilagodim starosti in željam slavljenca, tempo pa otrokom.",
         "en": "An example for two hours. I adapt the games to the birthday child's age and wishes, and the pace to the children.",
-        "sh": "Primjer za dva sata. Igre prilagodim dobi i željama slavljenika, a tempo djeci."
+        "hr": "Primjer za dva sata. Igre prilagodim dobi i željama slavljenika, a tempo djeci.",
+        "sr": "Primer za dva sata. Igre prilagodim uzrastu i željama slavljenika, a tempo deci."
       }
     },
     {
@@ -211,22 +237,26 @@
       "kicker": {
         "sl": "Paketi",
         "en": "Packages",
-        "sh": "Paketi"
+        "hr": "Paketi",
+        "sr": "Paketi"
       },
       "heading": {
         "sl": "Izberite svojo zabavo",
         "en": "Choose your party",
-        "sh": "Odaberite svoju zabavu"
+        "hr": "Odaberite svoju zabavu",
+        "sr": "Izaberite svoju zabavu"
       },
       "menuLabel": {
         "sl": "Paketi",
         "en": "Packages",
-        "sh": "Paketi"
+        "hr": "Paketi",
+        "sr": "Paketi"
       },
       "intro": {
         "sl": "Točno ceno vam povem vnaprej. Odvisna je od števila otrok in kraja, skritih stroškov ni.",
         "en": "I tell you the exact price in advance. It depends on the number of children and the place, with no hidden costs.",
-        "sh": "Točnu cijenu kažem vam unaprijed. Ovisi o broju djece i mjestu, skrivenih troškova nema."
+        "hr": "Točnu cijenu kažem vam unaprijed. Ovisi o broju djece i mjestu, skrivenih troškova nema.",
+        "sr": "Tačnu cenu kažem vam unapred. Zavisi od broja dece i mesta, skrivenih troškova nema."
       }
     },
     {
@@ -236,22 +266,26 @@
       "kicker": {
         "sl": "Tudi med tednom",
         "en": "During the week too",
-        "sh": "I tijekom tjedna"
+        "hr": "I tijekom tjedna",
+        "sr": "I tokom nedelje"
       },
       "heading": {
         "sl": "Športne urice",
         "en": "Sports classes",
-        "sh": "Sportske aktivnosti"
+        "hr": "Sportske aktivnosti",
+        "sr": "Sportske aktivnosti"
       },
       "menuLabel": {
         "sl": "Športne urice",
         "en": "Sports classes",
-        "sh": "Sport"
+        "hr": "Sport",
+        "sr": "Sport"
       },
       "intro": {
         "sl": "Tedenska vadba skozi igro v majhni skupini. Otroci razvijajo ravnotežje, koordinacijo in samozavest, predvsem pa se radi gibljejo.",
         "en": "Weekly exercise through play in a small group. Children build balance, coordination and confidence, and above all they learn to love moving.",
-        "sh": "Tjedno vježbanje kroz igru u maloj grupi. Djeca razvijaju ravnotežu, koordinaciju i samopouzdanje, a prije svega zavole kretanje."
+        "hr": "Tjedno vježbanje kroz igru u maloj grupi. Djeca razvijaju ravnotežu, koordinaciju i samopouzdanje, a prije svega zavole kretanje.",
+        "sr": "Nedeljno vežbanje kroz igru u maloj grupi. Deca razvijaju ravnotežu, koordinaciju i samopouzdanje, a pre svega zavole kretanje."
       }
     },
     {
@@ -261,22 +295,26 @@
       "kicker": {
         "sl": "",
         "en": "",
-        "sh": ""
+        "hr": "",
+        "sr": ""
       },
       "heading": {
         "sl": "Animacija na dogodkih",
         "en": "Entertainment at events",
-        "sh": "Animacija na događajima"
+        "hr": "Animacija na događajima",
+        "sr": "Animacija na događajima"
       },
       "menuLabel": {
         "sl": "Dogodki",
         "en": "Events",
-        "sh": "Događaji"
+        "hr": "Događaji",
+        "sr": "Događaji"
       },
       "intro": {
         "sl": "Poroka, krst, piknik podjetja ali družinsko praznovanje: otroke zaposlim z igrami, vi pa se v miru posvetite gostom.",
         "en": "A wedding, a christening, a company picnic or a family celebration: I keep the children busy with games while you take time for your guests.",
-        "sh": "Vjenčanje, krštenje, piknik tvrtke ili obiteljska proslava: djecu zaposlim igrama, a vi se u miru posvetite gostima."
+        "hr": "Vjenčanje, krštenje, piknik tvrtke ili obiteljska proslava: djecu zaposlim igrama, a vi se u miru posvetite gostima.",
+        "sr": "Venčanje, krštenje, piknik firme ili porodična proslava: decu zaposlim igrama, a vi se u miru posvetite gostima."
       }
     },
     {
@@ -286,22 +324,26 @@
       "kicker": {
         "sl": "O meni",
         "en": "About me",
-        "sh": "O meni"
+        "hr": "O meni",
+        "sr": "O meni"
       },
       "heading": {
         "sl": "Sem Ema, vzgojiteljica",
         "en": "I'm Ema, a kindergarten teacher",
-        "sh": "Ja sam Ema, odgojiteljica"
+        "hr": "Ja sam Ema, odgojiteljica",
+        "sr": "Ja sam Ema, vaspitačica"
       },
       "menuLabel": {
         "sl": "O meni",
         "en": "About me",
-        "sh": "O meni"
+        "hr": "O meni",
+        "sr": "O meni"
       },
       "intro": {
         "sl": "",
         "en": "",
-        "sh": ""
+        "hr": "",
+        "sr": ""
       }
     },
     {
@@ -311,22 +353,26 @@
       "kicker": {
         "sl": "Utrinki",
         "en": "Snapshots",
-        "sh": "Trenuci"
+        "hr": "Trenuci",
+        "sr": "Trenuci"
       },
       "heading": {
         "sl": "Igra, gibanje in smeh",
         "en": "Play, movement and laughter",
-        "sh": "Igra, kretanje i smijeh"
+        "hr": "Igra, kretanje i smijeh",
+        "sr": "Igra, kretanje i smeh"
       },
       "menuLabel": {
         "sl": "Utrinki",
         "en": "Gallery",
-        "sh": "Galerija"
+        "hr": "Galerija",
+        "sr": "Galerija"
       },
       "intro": {
         "sl": "",
         "en": "",
-        "sh": ""
+        "hr": "",
+        "sr": ""
       }
     },
     {
@@ -336,22 +382,26 @@
       "kicker": {
         "sl": "Mnenja",
         "en": "Reviews",
-        "sh": "Utisci"
+        "hr": "Dojmovi",
+        "sr": "Utisci"
       },
       "heading": {
         "sl": "Kaj pravijo starši",
         "en": "What parents say",
-        "sh": "Što kažu roditelji"
+        "hr": "Što kažu roditelji",
+        "sr": "Šta kažu roditelji"
       },
       "menuLabel": {
         "sl": "Mnenja",
         "en": "Reviews",
-        "sh": "Utisci"
+        "hr": "Dojmovi",
+        "sr": "Utisci"
       },
       "intro": {
         "sl": "",
         "en": "",
-        "sh": ""
+        "hr": "",
+        "sr": ""
       }
     },
     {
@@ -361,22 +411,26 @@
       "kicker": {
         "sl": "Vprašanja",
         "en": "Questions",
-        "sh": "Pitanja"
+        "hr": "Pitanja",
+        "sr": "Pitanja"
       },
       "heading": {
         "sl": "Pogosta vprašanja",
         "en": "Questions parents ask",
-        "sh": "Česta pitanja"
+        "hr": "Česta pitanja",
+        "sr": "Česta pitanja"
       },
       "menuLabel": {
         "sl": "Vprašanja",
         "en": "FAQ",
-        "sh": "Pitanja"
+        "hr": "Pitanja",
+        "sr": "Pitanja"
       },
       "intro": {
         "sl": "Niste našli odgovora? Pokličite me na {phone}.",
         "en": "Didn't find your answer? Call me on {phone}.",
-        "sh": "Niste pronašli odgovor? Nazovite me na {phone}."
+        "hr": "Niste pronašli odgovor? Nazovite me na {phone}.",
+        "sr": "Niste pronašli odgovor? Pozovite me na {phone}."
       }
     },
     {
@@ -386,22 +440,26 @@
       "kicker": {
         "sl": "Prosim za odgovor",
         "en": "Kindly reply",
-        "sh": "Molim za odgovor"
+        "hr": "Molim za odgovor",
+        "sr": "Molim za odgovor"
       },
       "heading": {
         "sl": "Preverite prost termin",
         "en": "Check if your date is free",
-        "sh": "Provjerite je li termin slobodan"
+        "hr": "Provjerite je li termin slobodan",
+        "sr": "Proverite da li je termin slobodan"
       },
       "menuLabel": {
         "sl": "Rezervacija",
         "en": "Booking",
-        "sh": "Rezervacija"
+        "hr": "Rezervacija",
+        "sr": "Rezervacija"
       },
       "intro": {
         "sl": "Pošljite datum in nekaj podatkov o zabavi. Odgovorim čim prej, po telefonu ali s sporočilom, kakor vam ustreza.",
         "en": "Send me the date and a few details about the party. I'll reply as soon as I can, by phone or by message, whichever suits you.",
-        "sh": "Pošaljite datum i nekoliko podataka o zabavi. Odgovorit ću što prije, telefonom ili porukom, kako vam odgovara."
+        "hr": "Pošaljite datum i nekoliko podataka o zabavi. Odgovorit ću što prije, telefonom ili porukom, kako vam odgovara.",
+        "sr": "Pošaljite datum i nekoliko podataka o zabavi. Odgovoriću što pre, telefonom ili porukom, kako vam odgovara."
       }
     },
     {
@@ -411,22 +469,26 @@
       "kicker": {
         "sl": "Ponudba",
         "en": "Services",
-        "sh": "Ponuda"
+        "hr": "Ponuda",
+        "sr": "Ponuda"
       },
       "heading": {
         "sl": "Kaj še ponujam",
         "en": "What else I offer",
-        "sh": "Što još nudim"
+        "hr": "Što još nudim",
+        "sr": "Šta još nudim"
       },
       "menuLabel": {
         "sl": "Ponudba",
         "en": "Services",
-        "sh": "Ponuda"
+        "hr": "Ponuda",
+        "sr": "Ponuda"
       },
       "intro": {
         "sl": "Program vedno prilagodim starosti otrok, prostoru in vašim željam.",
         "en": "I always adapt the programme to the children's ages, the space and your wishes.",
-        "sh": "Program uvijek prilagodim dobi djece, prostoru i vašim željama."
+        "hr": "Program uvijek prilagodim dobi djece, prostoru i vašim željama.",
+        "sr": "Program uvek prilagodim uzrastu dece, prostoru i vašim željama."
       }
     }
   ],
@@ -439,12 +501,14 @@
         "title": {
           "sl": "Rojstnodnevne zabave",
           "en": "Birthday parties",
-          "sh": "Rođendanske zabave"
+          "hr": "Rođendanske zabave",
+          "sr": "Rođendanske zabave"
         },
         "text": {
           "sl": "Igre, gibanje in smeh za slavljenca in prijatelje, doma ali v najetem prostoru.",
           "en": "Games, movement and laughter for the birthday child and friends, at home or in a rented venue.",
-          "sh": "Igre, kretanje i smijeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru."
+          "hr": "Igre, kretanje i smijeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru.",
+          "sr": "Igre, kretanje i smeh za slavljenika i prijatelje, kod kuće ili u iznajmljenom prostoru."
         }
       },
       {
@@ -453,12 +517,14 @@
         "title": {
           "sl": "Športne urice",
           "en": "Sports classes",
-          "sh": "Sportske aktivnosti"
+          "hr": "Sportske aktivnosti",
+          "sr": "Sportske aktivnosti"
         },
         "text": {
           "sl": "Gibalne igre, poligoni in štafete, ki otroke spodbujajo k gibanju in sodelovanju.",
           "en": "Movement games, obstacle courses and relays that get children moving and playing together.",
-          "sh": "Igre kretanja, poligoni i štafete koji djecu potiču na kretanje i zajedničku igru."
+          "hr": "Igre kretanja, poligoni i štafete koji djecu potiču na kretanje i zajedničku igru.",
+          "sr": "Igre kretanja, poligoni i štafete koji decu potiču na kretanje i zajedničku igru."
         }
       },
       {
@@ -467,12 +533,14 @@
         "title": {
           "sl": "Animacija na dogodkih",
           "en": "Entertainment at events",
-          "sh": "Animacija na događajima"
+          "hr": "Animacija na događajima",
+          "sr": "Animacija na događajima"
         },
         "text": {
           "sl": "Poroke, krsti in druženja: otroci se zabavajo, odrasli se sprostijo.",
           "en": "Weddings, christenings and get-togethers: the children have fun and the adults can relax.",
-          "sh": "Vjenčanja, krštenja i druženja: djeca se zabavljaju, a odrasli se opuštaju."
+          "hr": "Vjenčanja, krštenja i druženja: djeca se zabavljaju, a odrasli se opuštaju.",
+          "sr": "Venčanja, krštenja i druženja: deca se zabavljaju, a odrasli se opuštaju."
         }
       }
     ]
@@ -485,12 +553,14 @@
         "title": {
           "sl": "Pozdrav in igre za spoznavanje",
           "en": "Hello and getting-to-know-you games",
-          "sh": "Pozdrav i igre upoznavanja"
+          "hr": "Pozdrav i igre upoznavanja",
+          "sr": "Pozdrav i igre upoznavanja"
         },
         "text": {
           "sl": "Da se tudi sramežljivi hitro vključijo",
           "en": "So even shy children join in quickly",
-          "sh": "Da se i sramežljivi brzo uključe"
+          "hr": "Da se i sramežljivi brzo uključe",
+          "sr": "Da se i stidljivi brzo uključe"
         }
       },
       {
@@ -499,12 +569,14 @@
         "title": {
           "sl": "Poligon in gibalne igre",
           "en": "Obstacle course and movement games",
-          "sh": "Poligon i igre kretanja"
+          "hr": "Poligon i igre kretanja",
+          "sr": "Poligon i igre kretanja"
         },
         "text": {
           "sl": "Plazenje, skakanje, ravnotežje",
           "en": "Crawling, jumping, balancing",
-          "sh": "Puzanje, skakanje, ravnoteža"
+          "hr": "Puzanje, skakanje, ravnoteža",
+          "sr": "Puzanje, skakanje, ravnoteža"
         }
       },
       {
@@ -513,12 +585,14 @@
         "title": {
           "sl": "Igre z žogo v ekipah",
           "en": "Team ball games",
-          "sh": "Igre s loptom u timovima"
+          "hr": "Igre s loptom u timovima",
+          "sr": "Igre sa loptom u timovima"
         },
         "text": {
           "sl": "Vsak pride na vrsto",
           "en": "Everyone gets a turn",
-          "sh": "Svi dođu na red"
+          "hr": "Svi dođu na red",
+          "sr": "Svi dođu na red"
         }
       },
       {
@@ -527,12 +601,14 @@
         "title": {
           "sl": "Torta in pesem za slavljenca",
           "en": "Cake and a song for the birthday child",
-          "sh": "Torta i pjesma za slavljenika"
+          "hr": "Torta i pjesma za slavljenika",
+          "sr": "Torta i pesma za slavljenika"
         },
         "text": {
           "sl": "Odmor za torto, sok in čestitke",
           "en": "A break for cake, juice and wishes",
-          "sh": "Pauza za tortu, sok i čestitke"
+          "hr": "Pauza za tortu, sok i čestitke",
+          "sr": "Pauza za tortu, sok i čestitke"
         }
       },
       {
@@ -541,12 +617,14 @@
         "title": {
           "sl": "Zaključna igra in skupinska fotografija",
           "en": "A last game and a group photo",
-          "sh": "Završna igra i zajednička fotografija"
+          "hr": "Završna igra i zajednička fotografija",
+          "sr": "Završna igra i zajednička fotografija"
         },
         "text": {
           "sl": "Za lep spomin na zabavo",
           "en": "Something to remember the party by",
-          "sh": "Za lijepu uspomenu na zabavu"
+          "hr": "Za lijepu uspomenu na zabavu",
+          "sr": "Za lepu uspomenu na zabavu"
         }
       }
     ]
@@ -555,78 +633,92 @@
     "buttonLabel": {
       "sl": "Izberite",
       "en": "Choose",
-      "sh": "Odaberite"
+      "hr": "Odaberite",
+      "sr": "Izaberite"
     },
     "note": {
       "sl": "**Vi pripravite:** prostor, torto in pijačo\n**Jaz prinesem:** vse pripomočke za igre",
       "en": "**You provide:** the space, cake and drinks\n**I bring:** everything for the games",
-      "sh": "**Vi pripremite:** prostor, tortu i piće\n**Ja donosim:** sav pribor za igre"
+      "hr": "**Vi pripremite:** prostor, tortu i piće\n**Ja donosim:** sav pribor za igre",
+      "sr": "**Vi pripremite:** prostor, tortu i piće\n**Ja donosim:** sav pribor za igre"
     },
     "items": [
       {
         "name": {
           "sl": "Mali paket",
           "en": "Small package",
-          "sh": "Mali paket"
+          "hr": "Mali paket",
+          "sr": "Mali paket"
         },
         "price": {
           "sl": "",
           "en": "",
-          "sh": ""
+          "hr": "",
+          "sr": ""
         },
         "duration": {
           "sl": "do 10 otrok · 1,5 ure",
           "en": "up to 10 children · 1.5 hours",
-          "sh": "do 10 djece · 1,5 sat"
+          "hr": "do 10 djece · 1,5 sat",
+          "sr": "do 10 dece · 1,5 sat"
         },
         "features": {
           "sl": "Program, prilagojen starosti\nGibalne igre in poligon\nIgre z žogo\nVodenje celotne zabave",
           "en": "A programme suited to their age\nMovement games and an obstacle course\nBall games\nI run the whole party",
-          "sh": "Program prilagođen dobi djece\nIgre kretanja i poligon\nIgre s loptom\nVodim cijelu zabavu"
+          "hr": "Program prilagođen dobi djece\nIgre kretanja i poligon\nIgre s loptom\nVodim cijelu zabavu",
+          "sr": "Program prilagođen uzrastu dece\nIgre kretanja i poligon\nIgre sa loptom\nVodim celu zabavu"
         },
         "highlight": false,
         "badge": {
           "sl": "",
           "en": "",
-          "sh": ""
+          "hr": "",
+          "sr": ""
         },
         "button": {
           "sl": "Izberite mali paket",
           "en": "Choose the small package",
-          "sh": "Odaberite mali paket"
+          "hr": "Odaberite mali paket",
+          "sr": "Izaberite mali paket"
         }
       },
       {
         "name": {
           "sl": "Veliki paket",
           "en": "Big package",
-          "sh": "Veliki paket"
+          "hr": "Veliki paket",
+          "sr": "Veliki paket"
         },
         "price": {
           "sl": "",
           "en": "",
-          "sh": ""
+          "hr": "",
+          "sr": ""
         },
         "duration": {
           "sl": "do 20 otrok · 2 uri",
           "en": "up to 20 children · 2 hours",
-          "sh": "do 20 djece · 2 sata"
+          "hr": "do 20 djece · 2 sata",
+          "sr": "do 20 dece · 2 sata"
         },
         "features": {
           "sl": "Vse iz malega paketa\nDaljši program z več postajami\nSkupinska fotografija za spomin",
           "en": "Everything in the small package\nA longer programme with more stations\nA group photo to remember the day",
-          "sh": "Sve iz malog paketa\nDulji program s više postaja\nZajednička fotografija za uspomenu"
+          "hr": "Sve iz malog paketa\nDulji program s više postaja\nZajednička fotografija za uspomenu",
+          "sr": "Sve iz malog paketa\nDuži program sa više stanica\nZajednička fotografija za uspomenu"
         },
         "highlight": true,
         "badge": {
           "sl": "",
           "en": "",
-          "sh": ""
+          "hr": "",
+          "sr": ""
         },
         "button": {
           "sl": "Izberite veliki paket",
           "en": "Choose the big package",
-          "sh": "Odaberite veliki paket"
+          "hr": "Odaberite veliki paket",
+          "sr": "Izaberite veliki paket"
         }
       }
     ]
@@ -636,7 +728,8 @@
     "photoAlt": {
       "sl": "Deklice skačejo čez kolebnico v telovadnici",
       "en": "Girls skipping rope in a school gym",
-      "sh": "Djevojčice preskaču konop u dvorani"
+      "hr": "Djevojčice preskaču konop u dvorani",
+      "sr": "Devojčice preskaču konopac u sali"
     },
     "facts": [
       {
@@ -644,7 +737,8 @@
         "text": {
           "sl": "Majhna skupina",
           "en": "Small groups",
-          "sh": "Mala grupa"
+          "hr": "Mala grupa",
+          "sr": "Mala grupa"
         }
       },
       {
@@ -652,7 +746,8 @@
         "text": {
           "sl": "Gibanje skozi igro",
           "en": "Movement through play",
-          "sh": "Kretanje kroz igru"
+          "hr": "Kretanje kroz igru",
+          "sr": "Kretanje kroz igru"
         }
       },
       {
@@ -660,24 +755,28 @@
         "text": {
           "sl": "Enkrat na teden",
           "en": "Once a week",
-          "sh": "Jednom tjedno"
+          "hr": "Jednom tjedno",
+          "sr": "Jednom nedeljno"
         }
       }
     ],
     "note": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     },
     "stubLabel": {
       "sl": "Vsak teden",
       "en": "Every week",
-      "sh": "Svaki tjedan"
+      "hr": "Svaki tjedan",
+      "sr": "Svake nedelje"
     },
     "buttonLabel": {
       "sl": "Prijava",
       "en": "Sign up",
-      "sh": "Prijava"
+      "hr": "Prijava",
+      "sr": "Prijava"
     },
     "items": []
   },
@@ -685,33 +784,38 @@
     "buttonLabel": {
       "sl": "Pišite mi",
       "en": "Get in touch",
-      "sh": "Javite mi se"
+      "hr": "Javite mi se",
+      "sr": "Javite mi se"
     }
   },
   "about": {
     "text": {
       "sl": "Z otroki delam vsak dan v vrtcu. Vem, kako otroke navdušiti in umiriti, kako v igro povabiti tudi bolj sramežljive in kako poskrbeti, da so vsi varni.",
       "en": "I work with children every day at kindergarten. I know how to get them excited and how to calm them down, how to bring shyer children into the game, and how to keep everyone safe.",
-      "sh": "S djecom radim svaki dan u vrtiću. Znam kako djecu oduševiti i smiriti, kako u igru uključiti i one sramežljivije i kako se pobrinuti da svi budu sigurni."
+      "hr": "S djecom radim svaki dan u vrtiću. Znam kako djecu oduševiti i smiriti, kako u igru uključiti i one sramežljivije i kako se pobrinuti da svi budu sigurni.",
+      "sr": "Sa decom radim svaki dan u vrtiću. Znam kako da decu oduševim i smirim, kako da u igru uključim i one stidljivije i kako da se pobrinem da svi budu bezbedni."
     },
     "photo": "",
     "photoAlt": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     },
     "badges": [],
     "signature": {
       "sl": "Se vidimo na zabavi! Ema",
       "en": "See you at the party! Ema",
-      "sh": "Vidimo se na zabavi! Ema"
+      "hr": "Vidimo se na zabavi! Ema",
+      "sr": "Vidimo se na zabavi! Ema"
     }
   },
   "gallery": {
     "note": {
       "sl": "Fotografije otrok objavljam samo s pisnim soglasjem staršev.",
       "en": "I only publish photos of children with their parents' written consent.",
-      "sh": "Fotografije djece objavljujem samo uz pisani pristanak roditelja."
+      "hr": "Fotografije djece objavljujem samo uz pisani pristanak roditelja.",
+      "sr": "Fotografije dece objavljujem samo uz pisani pristanak roditelja."
     },
     "images": [
       {
@@ -719,12 +823,14 @@
         "alt": {
           "sl": "Otroci na kavču pod šopkom balonov",
           "en": "Children on a sofa under a bunch of balloons",
-          "sh": "Djeca na kauču ispod hrpe balona"
+          "hr": "Djeca na kauču ispod hrpe balona",
+          "sr": "Deca na kauču ispod gomile balona"
         },
         "caption": {
           "sl": "Baloni!",
           "en": "Balloons!",
-          "sh": "Baloni!"
+          "hr": "Baloni!",
+          "sr": "Baloni!"
         }
       },
       {
@@ -732,12 +838,14 @@
         "alt": {
           "sl": "Otroci upihujejo svečke na torti",
           "en": "Children blowing out the candles on a cake",
-          "sh": "Djeca pušu svjećice na torti"
+          "hr": "Djeca pušu svjećice na torti",
+          "sr": "Deca pušu svećice na torti"
         },
         "caption": {
           "sl": "Torta!",
           "en": "Cake time!",
-          "sh": "Torta!"
+          "hr": "Torta!",
+          "sr": "Torta!"
         }
       },
       {
@@ -745,12 +853,14 @@
         "alt": {
           "sl": "Otroci se igrajo z žogo v parku",
           "en": "Children playing ball in a park",
-          "sh": "Djeca se igraju loptom u parku"
+          "hr": "Djeca se igraju loptom u parku",
+          "sr": "Deca se igraju loptom u parku"
         },
         "caption": {
           "sl": "Igre z žogo",
           "en": "Ball games",
-          "sh": "Igre s loptom"
+          "hr": "Igre s loptom",
+          "sr": "Igre sa loptom"
         }
       },
       {
@@ -758,12 +868,14 @@
         "alt": {
           "sl": "Otroci s klobučki se objemajo",
           "en": "Children in party hats hugging",
-          "sh": "Djeca sa šeširićima se grle"
+          "hr": "Djeca sa šeširićima se grle",
+          "sr": "Deca sa šeširićima se grle"
         },
         "caption": {
           "sl": "Zabava s klobučki",
           "en": "Party hats on",
-          "sh": "Zabava sa šeširićima"
+          "hr": "Zabava sa šeširićima",
+          "sr": "Zabava sa šeširićima"
         }
       },
       {
@@ -771,12 +883,14 @@
         "alt": {
           "sl": "Poslikani otroci pod mavričnim padalom",
           "en": "Children with painted faces under a rainbow parachute",
-          "sh": "Djeca oslikanih lica ispod šarenog padobrana"
+          "hr": "Djeca oslikanih lica ispod šarenog padobrana",
+          "sr": "Deca oslikanih lica ispod šarenog padobrana"
         },
         "caption": {
           "sl": "Skupaj je lepše",
           "en": "Better together",
-          "sh": "Zajedno je ljepše"
+          "hr": "Zajedno je ljepše",
+          "sr": "Zajedno je lepše"
         }
       }
     ]
@@ -786,7 +900,8 @@
     "ratingNote": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     },
     "ratingUrl": "",
     "items": []
@@ -797,60 +912,70 @@
         "q": {
           "sl": "Kaj moramo pripraviti starši?",
           "en": "What do we need to prepare?",
-          "sh": "Što trebamo pripremiti mi roditelji?"
+          "hr": "Što trebamo pripremiti mi roditelji?",
+          "sr": "Šta treba da pripremimo mi roditelji?"
         },
         "a": {
           "sl": "Prostor, torto in pijačo. Za igre in vse pripomočke poskrbim jaz.",
           "en": "The space, cake and drinks. I take care of the games and bring everything for them.",
-          "sh": "Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja."
+          "hr": "Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja.",
+          "sr": "Prostor, tortu i piće. Za igre i sav pribor pobrinem se ja."
         }
       },
       {
         "q": {
           "sl": "Ali pridete tudi na dom?",
           "en": "Do you come to our home?",
-          "sh": "Dolazite li i kući?"
+          "hr": "Dolazite li i kući?",
+          "sr": "Dolazite li i kući?"
         },
         "a": {
           "sl": "Da. Za igre potrebujemo dovolj prostora, na primer večjo dnevno sobo ali vrt.",
           "en": "Yes. For the games we need enough room, such as a larger living room or a garden.",
-          "sh": "Da. Za igre trebamo dovoljno prostora, na primjer veći dnevni boravak ili vrt."
+          "hr": "Da. Za igre trebamo dovoljno prostora, na primjer veći dnevni boravak ili vrt.",
+          "sr": "Da. Za igre nam treba dovoljno prostora, na primer veća dnevna soba ili dvorište."
         }
       },
       {
         "q": {
           "sl": "Koliko vnaprej rezerviram termin?",
           "en": "How far ahead should I book?",
-          "sh": "Koliko unaprijed trebam rezervirati?"
+          "hr": "Koliko unaprijed trebam rezervirati?",
+          "sr": "Koliko unapred treba da rezervišem?"
         },
         "a": {
           "sl": "Čim prej, saj se sobote hitro zapolnijo. Pišite mi in preverim, ali je vaš datum še prost.",
           "en": "As early as you can, because Saturdays fill up quickly. Write to me and I will check whether your date is free.",
-          "sh": "Što prije, jer se subote brzo popune. Pišite mi i provjerit ću je li vaš datum slobodan."
+          "hr": "Što prije, jer se subote brzo popune. Pišite mi i provjerit ću je li vaš datum slobodan.",
+          "sr": "Što pre, jer se subote brzo popune. Pišite mi i proveriću da li je vaš datum slobodan."
         }
       },
       {
         "q": {
           "sl": "Kaj, če slavljenec zboli?",
           "en": "What if the birthday child gets ill?",
-          "sh": "Što ako se slavljenik razboli?"
+          "hr": "Što ako se slavljenik razboli?",
+          "sr": "Šta ako se slavljenik razboli?"
         },
         "a": {
           "sl": "Sporočite mi čim prej in skupaj poiščeva nov termin.",
           "en": "Let me know as soon as you can and we will find a new date together.",
-          "sh": "Javite mi što prije pa ćemo zajedno pronaći novi termin."
+          "hr": "Javite mi što prije pa ćemo zajedno pronaći novi termin.",
+          "sr": "Javite mi što pre pa ćemo zajedno pronaći novi termin."
         }
       },
       {
         "q": {
           "sl": "Lahko pridejo otroci različnih starosti?",
           "en": "Can children of different ages come?",
-          "sh": "Mogu li doći djeca različite dobi?"
+          "hr": "Mogu li doći djeca različite dobi?",
+          "sr": "Mogu li da dođu deca različitog uzrasta?"
         },
         "a": {
           "sl": "Da. Igre zastavim tako, da se vključijo mlajši in starejši.",
           "en": "Yes. I set up the games so that younger and older children can all join in.",
-          "sh": "Da. Igre postavim tako da se uključe i mlađi i stariji."
+          "hr": "Da. Igre postavim tako da se uključe i mlađi i stariji.",
+          "sr": "Da. Igre postavim tako da se uključe i mlađi i stariji."
         }
       }
     ]
@@ -864,12 +989,14 @@
     "area": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     },
     "hours": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     },
     "mapUrl": ""
   },
@@ -900,34 +1027,40 @@
     "buttonLabel": {
       "sl": "Pošljite povpraševanje",
       "en": "Send your enquiry",
-      "sh": "Pošaljite upit"
+      "hr": "Pošaljite upit",
+      "sr": "Pošaljite upit"
     },
     "privacyNote": {
       "sl": "Podatke uporabim samo za odgovor na vaše povpraševanje. Več v {privacy}.",
       "en": "I only use your details to reply to your enquiry. More in the {privacy}.",
-      "sh": "Vaše podatke koristim samo za odgovor na upit. Više u {privacy}."
+      "hr": "Vaše podatke koristim samo za odgovor na upit. Više u {privacy}.",
+      "sr": "Vaše podatke koristim samo za odgovor na upit. Više u {privacy}."
     },
     "successTitle": {
       "sl": "Hvala! Povpraševanje sem prejela.",
       "en": "Thank you! I've received your enquiry.",
-      "sh": "Hvala! Primila sam vaš upit."
+      "hr": "Hvala! Primila sam vaš upit.",
+      "sr": "Hvala! Primila sam vaš upit."
     },
     "successBody": {
       "sl": "Odgovorim čim prej. Če se vam mudi, me pokličite.",
       "en": "I'll reply as soon as I can. If it's urgent, give me a call.",
-      "sh": "Odgovorit ću što prije. Ako vam se žuri, nazovite me."
+      "hr": "Odgovorit ću što prije. Ako vam se žuri, nazovite me.",
+      "sr": "Odgovoriću što pre. Ako vam se žuri, pozovite me."
     }
   },
   "thanks": {
     "title": {
       "sl": "Hvala za povpraševanje!",
       "en": "Thank you for your enquiry!",
-      "sh": "Hvala na upitu!"
+      "hr": "Hvala na upitu!",
+      "sr": "Hvala na upitu!"
     },
     "body": {
       "sl": "Sporočilo sem prejela in vam odgovorim čim prej.",
       "en": "I've received your message and will reply as soon as I can.",
-      "sh": "Primila sam vašu poruku i odgovorit ću vam što prije."
+      "hr": "Primila sam vašu poruku i odgovorit ću vam što prije.",
+      "sr": "Primila sam vašu poruku i odgovoriću vam što pre."
     }
   },
   "floating": {
@@ -935,14 +1068,16 @@
     "label": {
       "sl": "Preverite prost termin",
       "en": "Check a date",
-      "sh": "Provjerite termin"
+      "hr": "Provjerite termin",
+      "sr": "Proverite termin"
     }
   },
   "footer": {
     "text": {
       "sl": "Rojstnodnevne zabave in športne urice za otroke.",
       "en": "Birthday parties and sports classes for children.",
-      "sh": "Rođendanske zabave i sportske aktivnosti za djecu."
+      "hr": "Rođendanske zabave i sportske aktivnosti za djecu.",
+      "sr": "Rođendanske zabave i sportske aktivnosti za decu."
     },
     "showContact": true,
     "showSocials": true,
@@ -1052,13 +1187,15 @@
     "hosting": {
       "sl": "GitHub Pages (GitHub, Inc., ZDA)",
       "en": "GitHub Pages (GitHub, Inc., United States)",
-      "sh": "GitHub Pages (GitHub, Inc., SAD)"
+      "hr": "GitHub Pages (GitHub, Inc., SAD)",
+      "sr": "GitHub Pages (GitHub, Inc., SAD)"
     },
     "outsideEu": true,
     "extra": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     }
   },
   "terms": {
@@ -1066,30 +1203,35 @@
     "title": {
       "sl": "Pogoji poslovanja",
       "en": "Terms and conditions",
-      "sh": "Uvjeti poslovanja"
+      "hr": "Uvjeti poslovanja",
+      "sr": "Uslovi poslovanja"
     },
     "body": {
       "sl": "",
       "en": "",
-      "sh": ""
+      "hr": "",
+      "sr": ""
     }
   },
   "seo": {
     "title": {
       "sl": "Otroško animiranje Ema | Rojstnodnevne zabave in športne urice za otroke",
       "en": "Otroško animiranje Ema | Children's birthday parties and sports classes",
-      "sh": "Otroško animiranje Ema | Dječje rođendanske zabave i sportske aktivnosti"
+      "hr": "Otroško animiranje Ema | Dječje rođendanske zabave i sportske aktivnosti",
+      "sr": "Otroško animiranje Ema | Dečje rođendanske zabave i sportske aktivnosti"
     },
     "description": {
       "sl": "Rojstnodnevne zabave za otroke, tedenske športne urice in animacija na dogodkih. Vodi jih vzgojiteljica Ema. Preverite prost termin.",
       "en": "Children's birthday parties, weekly sports classes and entertainment at events, led by Ema, a kindergarten teacher. Check if your date is free.",
-      "sh": "Rođendanske zabave za djecu, tjedne sportske aktivnosti i animacija na događajima. Vodi ih odgojiteljica Ema. Provjerite slobodan termin."
+      "hr": "Rođendanske zabave za djecu, tjedne sportske aktivnosti i animacija na događajima. Vodi ih odgojiteljica Ema. Provjerite slobodan termin.",
+      "sr": "Rođendanske zabave za decu, nedeljne sportske aktivnosti i animacija na događajima. Vodi ih vaspitačica Ema. Proverite slobodan termin."
     },
     "ogImage": "/assets/img/sample/share.jpg",
     "ogImageAlt": {
       "sl": "Otroci skačejo na kavču med baloni",
       "en": "Children jumping on a sofa among balloons",
-      "sh": "Djeca skaču na kauču među balonima"
+      "hr": "Djeca skaču na kauču među balonima",
+      "sr": "Deca skaču na kauču među balonima"
     },
     "indexable": false,
     "areaServed": "",

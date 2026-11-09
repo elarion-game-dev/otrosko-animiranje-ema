@@ -8,7 +8,7 @@ import { ANCHORS, LANG_INFO, pagePath } from '../assets/lib/i18n.mjs';
 import { pageForPath, previewPages, renderPage, themeExtras } from '../assets/lib/render.mjs';
 import { DEFAULT_SETTINGS, missingTranslations, normalizeSettings } from '../assets/lib/settings.mjs';
 import { FONTS, PRESETS, PRESET_KEYS, fontFaces, fontStack, themeCss } from '../assets/lib/themes.mjs';
-import { getPath, setPath, slugify } from '../assets/lib/util.mjs';
+import { getPath, LANGS, renditionPath, renditionWidths, setPath, slugify } from '../assets/lib/util.mjs';
 import { decryptToken, encryptToken, loadAccess } from './access.js';
 import { ConflictError, GitHub } from './github.js';
 import { LocalRepo, localAvailable } from './local.js';
@@ -499,11 +499,11 @@ function renderNav() {
   ui.nav.replaceChildren(...items);
 }
 
-/** SL | EN | SH in the top bar, each with the number of texts still to translate. */
+/** SL | EN | HR | SR in the top bar, each with the number of texts still to translate. */
 function renderLangTabs() {
   const s = app.normalized();
   ui.langTabs.replaceChildren(
-    ...['sl', 'en', 'sh'].map((lang) => {
+    ...LANGS.map((lang) => {
       const missing = missingTranslations(s, lang).length;
       const off = lang !== 'sl' && !s.languages[lang].enabled;
       return h(
@@ -757,32 +757,55 @@ function blobToBase64(blob) {
   });
 }
 
+const toBlob = (canvas, type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+
+/** Draws an image (or canvas) onto a new canvas of the given size. */
+function drawn(source, width, height) {
+  const canvas = h('canvas', { width, height });
+  const context = canvas.getContext('2d');
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(source, 0, 0, width, height);
+  return canvas;
+}
+
 /**
  * Re-encodes the image in the browser: resizes it and strips metadata such as GPS location (important for
  * photos taken at children's parties). SVG is not accepted, because an SVG file can contain scripts.
+ * Photos (WebP uploads) also get smaller copies for small frames and phones, saved next to them and committed
+ * with them; the build offers them with srcset (renditionPath in util.mjs).
  */
 async function processUpload(file, { maxWidth = 1600, maxHeight = 1600, format = 'image/webp', quality = 0.84, name = 'slika' } = {}) {
   if (!UPLOAD_TYPES.includes(file.type)) throw new Error('Uporabite sliko PNG, JPEG, WebP ali GIF.');
   if (file.size > 25 * 1024 * 1024) throw new Error('Slika je večja od 25 MB.');
 
   let blob = file;
+  const smaller = [];
   if (file.type === 'image/gif') {
     if (file.size > 3 * 1024 * 1024) throw new Error('GIF mora biti manjši od 3 MB.');
   } else {
     const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
     const scale = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
-    const canvas = h('canvas', { width: Math.round(bitmap.width * scale), height: Math.round(bitmap.height * scale) });
-    const context = canvas.getContext('2d');
-    context.imageSmoothingQuality = 'high';
-    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const canvas = drawn(bitmap, Math.round(bitmap.width * scale), Math.round(bitmap.height * scale));
     bitmap.close();
-    blob = await new Promise((resolve) => canvas.toBlob(resolve, format, quality));
+    blob = await toBlob(canvas, format, quality);
+    // Safari can't encode WebP and quietly returns a PNG, many times larger for a photo, so photos fall back to JPEG.
+    if (blob && format === 'image/webp' && blob.type !== format) blob = await toBlob(canvas, 'image/jpeg', quality);
     if (!blob) throw new Error('Brskalnik slike ni mogel obdelati.');
+    if (format === 'image/webp') {
+      for (const width of renditionWidths(canvas.width)) {
+        const copy = await toBlob(drawn(canvas, width, Math.round((canvas.height * width) / canvas.width)), blob.type, quality);
+        if (copy?.type === blob.type) smaller.push([width, copy]);
+      }
+    }
   }
 
   const ext = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' }[blob.type] ?? 'png';
   const sitePath = `/assets/uploads/${slugify(name, 'slika')}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}.${ext}`;
-  app.uploads.set(sitePath, { repoPath: `public${sitePath}`, base64: await blobToBase64(blob) });
+  app.uploads.set(sitePath, {
+    repoPath: `public${sitePath}`,
+    base64: await blobToBase64(blob),
+    renditions: await Promise.all(smaller.map(async ([width, copy]) => ({ repoPath: `public${renditionPath(sitePath, width)}`, base64: await blobToBase64(copy) }))),
+  });
   app.blobUrls.set(sitePath, URL.createObjectURL(blob));
   return sitePath;
 }
@@ -836,7 +859,10 @@ async function publish({ force = false } = {}) {
   const normalized = app.normalized();
   const json = serialize(normalized);
   const uploads = [...app.uploads].filter(([sitePath]) => json.includes(JSON.stringify(sitePath)));
-  const files = [{ path: SETTINGS_PATH, content: json, encoding: 'utf-8' }, ...uploads.map(([, u]) => ({ path: u.repoPath, content: u.base64, encoding: 'base64' }))];
+  const files = [
+    { path: SETTINGS_PATH, content: json, encoding: 'utf-8' },
+    ...uploads.flatMap(([, u]) => [u, ...(u.renditions ?? [])]).map((f) => ({ path: f.repoPath, content: f.base64, encoding: 'base64' })),
+  ];
 
   let conflict = false;
   app.publishing = true;

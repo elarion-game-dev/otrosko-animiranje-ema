@@ -44,7 +44,8 @@ export function privacyBody(settings, lang, ctx) {
   const providerRegion = prov.ready && prov.region ? ` (${esc(prov.region[lang])})` : '';
   const formUsed = s.form.provider !== 'none' && s.sections.some((x) => x.id === 'contact' && x.enabled);
 
-  const how = !formUsed
+  // How a message travels: only said once the form can actually send (until then the site shows it as closed).
+  const how = !formUsed || !prov.ready
     ? ''
     : prov.responds === 'mailto'
       ? L(
@@ -85,7 +86,7 @@ export function privacyBody(settings, lang, ctx) {
     <p><strong>${L(lang, 'Kaj zbiramo:', 'What we collect:', 'Što prikupljamo:')}</strong> ${esc(fields.join(', '))}.</p>
     <p><strong>${L(lang, 'Zakaj:', 'Why:', 'Zašto:')}</strong> ${L(lang, 'da vam odgovorimo, pripravimo ponudbo in se dogovorimo za dogodek.', 'to reply, prepare an offer and arrange the event with you.', 'kako bismo vam odgovorili, pripremili ponudu i dogovorili događaj.')}</p>
     <p><strong>${L(lang, 'Pravna podlaga:', 'Legal basis:', 'Pravna osnova:')}</strong> ${L(lang, 'ukrepi pred sklenitvijo pogodbe na vašo zahtevo (točka (b) člena 6(1) GDPR).', 'steps taken at your request before entering into a contract (Article 6(1)(b) GDPR).', 'radnje prije sklapanja ugovora na vaš zahtjev (članak 6. stavak 1. točka (b) GDPR-a).')}</p>
-    <p>${how}</p>`
+    ${how ? `<p>${how}</p>` : ''}`
       : '',
 
     `<h2>${L(lang, 'Telefon, e-pošta, WhatsApp in Viber', 'Phone, email, WhatsApp and Viber', 'Telefon, e-pošta, WhatsApp i Viber')}</h2>

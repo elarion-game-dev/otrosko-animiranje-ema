@@ -8,6 +8,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderSite } from '../src/render.mjs';
 import { normalizeSettings } from '../src/settings.mjs';
+import { ICON_SIZES, iconPng } from './icon-png.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
@@ -59,6 +60,11 @@ export async function build({ log = console.log } = {}) {
     const target = path.join(dist, file);
     await mkdir(path.dirname(target), { recursive: true });
     await writeFile(target, contents);
+  }
+
+  // Home-screen icons, unless the owner uploaded an icon of their own.
+  if (!settings.theme.favicon) {
+    for (const size of ICON_SIZES) await writeFile(path.join(dist, 'assets', 'img', `icon-${size}.png`), iconPng(settings.theme.colors, size));
   }
 
   // Cheap guards against template mistakes reaching production. A missing value fills a whole attribute or

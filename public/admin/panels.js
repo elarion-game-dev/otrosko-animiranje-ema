@@ -13,9 +13,11 @@ import {
   LINK_TARGETS,
   SECTION_LABELS,
   SOCIAL_PLATFORMS,
+  TERMS_DRAFT,
   enabledLangs,
   isSample,
   missingTranslations,
+  placeholders,
   setupChecklist,
   t3,
 } from '../assets/lib/settings.mjs';
@@ -34,7 +36,7 @@ import {
 } from '../assets/lib/themes.mjs';
 import { i18nFields, isEmail, isPhone, safeUrl } from '../assets/lib/util.mjs';
 import { MIN_PASSWORD, passwordProblem } from './access.js';
-import { card, code, color, h, icon, iconPicker, image, link, note, range, repeater, sectionList, segmented, select, steps, text, toggle } from './ui.js';
+import { card, code, color, confirmDialog, h, icon, iconPicker, image, link, note, range, repeater, sectionList, segmented, select, steps, text, toggle } from './ui.js';
 
 const httpsOnly = (v) => (safeUrl(v, { allowMailto: false, allowRelative: false }).startsWith('https://') ? '' : 'Vpišite celoten naslov, ki se začne s https://.');
 const linkCheck = (v) => (safeUrl(v) ? '' : 'Vpišite celoten naslov (https://…), povezavo mailto: ali pot, kot je /zasebnost/.');
@@ -919,6 +921,18 @@ function textStyles(app) {
 // --- business, privacy, SEO -------------------------------------------------------------------------
 
 function legal(app) {
+  const body = app.get('terms.body');
+  const blanks = [...new Set(placeholders(body.sl))];
+  const blankLangs = enabledLangs(app.normalized()).filter((l) => l !== 'sl' && placeholders(body[l]).length);
+  const insertDraft = h('button', { type: 'button', class: 'btn btn-ghost' }, icon('plus'), 'Vstavi osnutek pogojev');
+  insertDraft.addEventListener('click', async () => {
+    if (Object.values(body).some((t) => t.trim())) {
+      const choice = await confirmDialog({ title: 'Zamenjam besedilo pogojev?', body: 'Vaše trenutno besedilo pogojev se zamenja z osnutkom v vseh jezikih. S Ctrl+Z ga vrnete.', confirm: 'Zamenjaj', danger: true });
+      if (choice !== 'ok') return;
+    }
+    app.set('terms.body', structuredClone(TERMS_DRAFT));
+    app.rerender();
+  });
   return [
     head('Podjetje in zasebnost', 'Podatki o podjetju, politika zasebnosti in pogoji poslovanja.'),
     card(
@@ -940,7 +954,12 @@ function legal(app) {
     ),
     card(
       'Pogoji poslovanja',
-      'Neobvezna stran, npr. o rezervaciji, aru in odpovedi termina. Povezava je v nogi strani.',
+      'Neobvezna stran, npr. o rezervaciji, ari in odpovedi termina. Povezava je v nogi strani.',
+      note('Osnutek pokriva rezervacijo, aro, odpoved, alergije, fotografije in športne urice. Besedilo v oglatih oklepajih [ ] zamenjajte s svojimi podatki, vrstice, ki za vas ne veljajo, pa izbrišite. Osnutek ni pravni nasvet.', 'info'),
+      h('div', { class: 'button-row' }, insertDraft),
+      blanks.length || blankLangs.length
+        ? note(`Še za dopolnitev: ${blanks.join(', ') || 'samo v prevodih'}${blankLangs.length ? ` (in v prevodih: ${blankLangs.map((l) => app.get(`languages.${l}.label`)).join(', ')})` : ''}.${app.get('terms.enabled') ? ' Stran s pogoji je vklopljena, zato jih dopolnite pred objavo.' : ' Stran vklopite, ko jih dopolnite.'}`, 'warn')
+        : null,
       toggle(app, 'terms.enabled', { label: 'Objavi stran s pogoji', rerender: true }),
       tx(app, 'terms.title', { label: 'Naslov strani', maxlength: 80 }),
       tx(app, 'terms.body', { label: 'Besedilo', multiline: true, rows: 10, maxlength: 12000, help: `${MARKDOWN_HELP} »## « na začetku vrstice za podnaslov.` })

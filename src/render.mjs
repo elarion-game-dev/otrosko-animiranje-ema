@@ -380,7 +380,8 @@ function jsonLd(settings, ctx) {
   const data = {
     '@context': 'https://schema.org',
     '@type': 'EntertainmentBusiness',
-    name: s.business.name || s.site.name,
+    name: s.site.name,
+    ...(s.business.name && s.business.name !== s.site.name ? { legalName: s.business.name } : {}),
     url: s.site.url + pagePath('home', ctx.lang),
     description: tr(s.seo.description, ctx.lang),
     ...(c.phone ? { telephone: `+${phoneDigits(c.phone)}` } : {}),
@@ -388,6 +389,8 @@ function jsonLd(settings, ctx) {
     ...(s.seo.ogImage ? { image: s.site.url + s.seo.ogImage } : s.header.logo ? { image: s.site.url + s.header.logo } : {}),
     ...(s.seo.areaServed ? { areaServed: s.seo.areaServed } : {}),
     ...(s.seo.priceRange ? { priceRange: s.seo.priceRange } : {}),
+    ...(s.business.taxNumber ? { taxID: s.business.taxNumber } : {}),
+    ...(s.business.vatId ? { vatID: s.business.vatId } : {}),
     ...(s.business.address ? { address: { '@type': 'PostalAddress', streetAddress: s.business.address.replace(/\n/g, ', '), addressCountry: 'SI' } } : {}),
     ...(s.socials.some((x) => /^https:/.test(x.url)) ? { sameAs: s.socials.filter((x) => /^https:/.test(x.url)).map((x) => x.url) } : {}),
   };
@@ -407,6 +410,8 @@ function layout(settings, ctx, info, main) {
   const ogImage = s.seo.ogImage ? s.site.url + s.seo.ogImage : '';
   const v = ctx.version ? `?v=${esc(ctx.version)}` : '';
   const favicon = t.favicon ? ctx.img(t.favicon) : ctx.url(`/assets/img/favicon.svg${v}`);
+  // iOS ignores SVG icons for "Add to Home Screen": an uploaded PNG icon, or the PNG the build draws.
+  const touchIcon = t.favicon ? (/\.png$/i.test(t.favicon) ? ctx.img(t.favicon) : '') : ctx.url(`/assets/img/icon-180.png${v}`);
   const font = ctx.preview ? '' : preloadFont(t.headingFont);
   const alternates =
     info.id === 'notfound' || ctx.langs.length < 2
@@ -435,7 +440,7 @@ ${info.id === 'notfound' ? '' : `<link rel="canonical" href="${esc(canonical)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(canonical)}">
 ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">\n<meta property="og:image:alt" content="${esc(tr(s.seo.ogImageAlt, lang))}">\n<meta name="twitter:card" content="summary_large_image">\n` : ''}<link rel="icon" href="${esc(favicon)}">
-<link rel="manifest" href="${esc(ctx.url('/site.webmanifest'))}">
+${touchIcon ? `<link rel="apple-touch-icon" href="${esc(touchIcon)}">\n` : ''}<link rel="manifest" href="${esc(ctx.url('/site.webmanifest'))}">
 ${font ? `<link rel="preload" href="${esc(ctx.url(`/assets/fonts/${font}`))}" as="font" type="font/woff2" crossorigin>\n` : ''}<link rel="stylesheet" href="${esc(ctx.themeHref ?? ctx.url(`/assets/css/theme.css${v}`))}">
 <link rel="stylesheet" href="${esc(ctx.url(`/assets/css/site.css${v}`))}">
 ${ctx.preview ? '' : `<script type="module" src="${esc(ctx.url(`/assets/js/site.js${v}`))}"></script>\n`}${home ? jsonLd(s, ctx) : ''}</head>
@@ -1100,7 +1105,14 @@ ${urls.join('\n')}
       display: 'browser',
       background_color: s.theme.colors.bg,
       theme_color: s.theme.colors.bg,
-      icons: [s.theme.favicon ? { src: base + s.theme.favicon, sizes: 'any' } : { src: `${base}/assets/img/favicon.svg`, sizes: 'any', type: 'image/svg+xml' }],
+      // The PNGs are drawn by the build (scripts/icon-png.mjs); the 512 one keeps the artwork in the maskable safe zone.
+      icons: s.theme.favicon
+        ? [{ src: base + s.theme.favicon, sizes: 'any' }]
+        : [
+            { src: `${base}/assets/img/favicon.svg`, sizes: 'any', type: 'image/svg+xml' },
+            { src: `${base}/assets/img/icon-192.png`, sizes: '192x192', type: 'image/png' },
+            { src: `${base}/assets/img/icon-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          ],
     },
     null,
     2

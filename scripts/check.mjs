@@ -6,8 +6,9 @@ import { access, readFile } from 'node:fs/promises';
 import { markdown } from '../src/markdown.mjs';
 import { resolveProvider } from '../src/providers.mjs';
 import { renderPage, renderSite, typo } from '../src/render.mjs';
-import { DEFAULT_SETTINGS, isSample, missingTranslations, normalizeSettings, samplePhotosInUse, setupChecklist } from '../src/settings.mjs';
+import { DEFAULT_SETTINGS, isSample, missingTranslations, normalizeSettings, placeholders, samplePhotosInUse, setupChecklist, TERMS_DRAFT } from '../src/settings.mjs';
 import { contrast, contrastReport, PRESETS, themeColors } from '../src/themes.mjs';
+import { ICON_SIZES, iconPng } from './icon-png.mjs';
 import { basePath, i18nFields, phoneDigits, safeAssetPath, safeUrl } from '../src/util.mjs';
 
 let passed = 0;
@@ -444,6 +445,69 @@ await test('Click-to-edit markers only in the preview', () => {
   const s = structuredClone(DEFAULT_SETTINGS);
   s.hero.title.en = '';
   assert.match(renderPage(normalizeSettings(s), 'home', 'en', { preview: true }), /data-edit="hero\.title"[^>]*data-missing/);
+});
+
+await test('Privacy policy never names an empty form service', () => {
+  const check = (s, label) => {
+    const files = site(s);
+    for (const file of ['zasebnost/index.html', 'en/privacy/index.html', 'sh/privatnost/index.html']) {
+      assert.doesNotMatch(files[file], /(storitvi|to|servisu) ,|<p>\s*<\/p>/, `${label}: ${file}`);
+    }
+  };
+  check(DEFAULT_SETTINGS, 'no email yet');
+  check(withForm(DEFAULT_SETTINGS, { provider: 'formspree', formspree: { id: '' } }), 'Formspree without an id');
+  const ready = site(withContact(DEFAULT_SETTINGS, { email: 'ema@example.si' }));
+  assert.match(ready['zasebnost/index.html'], /se odpre vaš e-poštni program/);
+});
+
+await test('Search engines get the brand name, with the registered business as its legal name', () => {
+  const ld = (s) => JSON.parse(site(s)['index.html'].match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
+  const plain = ld(DEFAULT_SETTINGS);
+  assert.equal(plain.name, DEFAULT_SETTINGS.site.name);
+  assert.equal(plain.legalName, undefined);
+  const s = structuredClone(DEFAULT_SETTINGS);
+  s.business = { name: 'Ema Novak s.p.', address: 'Glavna 1\n1000 Ljubljana', registration: '1234567000', taxNumber: '12345678', vatId: 'SI12345678' };
+  const full = ld(s);
+  assert.equal(full.name, DEFAULT_SETTINGS.site.name);
+  assert.equal(full.legalName, 'Ema Novak s.p.');
+  assert.equal(full.taxID, '12345678');
+  assert.equal(full.vatID, 'SI12345678');
+  assert.equal(full.address.streetAddress, 'Glavna 1, 1000 Ljubljana');
+});
+
+await test('Phones get PNG home-screen icons; an uploaded icon replaces them', () => {
+  const files = site(DEFAULT_SETTINGS);
+  assert.match(files['index.html'], new RegExp(`<link rel="apple-touch-icon" href="${BASE}/assets/img/icon-180\\.png\\?v=v">`));
+  const icons = JSON.parse(files['site.webmanifest']).icons;
+  assert.deepEqual(icons.filter((i) => i.type === 'image/png').map((i) => i.sizes), ['192x192', '512x512']);
+  for (const size of ICON_SIZES) {
+    const png = iconPng(normalizeSettings(DEFAULT_SETTINGS).theme.colors, size);
+    assert.equal(png.subarray(1, 4).toString(), 'PNG');
+    assert.equal(png.readUInt32BE(16), size);
+    assert.equal(png.readUInt32BE(20), size);
+  }
+  const custom = structuredClone(DEFAULT_SETTINGS);
+  custom.theme.favicon = '/assets/img/uploads/ikona.png';
+  const withIcon = site(custom);
+  assert.match(withIcon['index.html'], /<link rel="apple-touch-icon" href="[^"]*\/uploads\/ikona\.png">/);
+  assert.equal(JSON.parse(withIcon['site.webmanifest']).icons.length, 1);
+});
+
+await test('Terms draft: never published by itself, placeholders flagged until filled in', () => {
+  assert.equal(DEFAULT_SETTINGS.terms.enabled, false);
+  assert.equal(Object.keys(site(DEFAULT_SETTINGS)).some((f) => /pogoji|terms|uvjeti/.test(f)), false);
+  for (const lang of ['sl', 'en', 'sh']) assert.ok(placeholders(TERMS_DRAFT[lang]).length >= 5, lang);
+  assert.deepEqual(placeholders('[povezava](https://ema.si) in [znesek] €'), ['[znesek]']);
+  const s = structuredClone(DEFAULT_SETTINGS);
+  s.terms = { ...s.terms, enabled: true, body: structuredClone(TERMS_DRAFT) };
+  const files = site(s);
+  assert.match(files['pogoji/index.html'], /<h3>Odpoved in sprememba termina<\/h3>/);
+  assert.match(files['en/terms/index.html'], /<li>Food, drinks and the cake are up to you\.<\/li>/);
+  assert.match(files['index.html'], new RegExp(`href="${BASE}/pogoji/"`));
+  const item = (x) => setupChecklist(normalizeSettings(x)).find((i) => i.id === 'terms');
+  assert.equal(item(s).done, false);
+  for (const lang of ['sl', 'en', 'sh']) s.terms.body[lang] = s.terms.body[lang].replace(/\[[^\]\n]+\](?!\()/g, '7');
+  assert.equal(item(s).done, true);
 });
 
 await test('content/site.json renders', async () => {

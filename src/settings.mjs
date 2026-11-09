@@ -881,6 +881,14 @@ export function setupChecklist(settings) {
       panel: 'languages',
     },
     {
+      id: 'terms',
+      done: s.terms.enabled && !Object.values(s.terms.body).some((t) => placeholders(t).length),
+      optional: true,
+      title: s.terms.enabled ? 'Dopolnite pogoje poslovanja' : 'Objavite pogoje poslovanja (neobvezno)',
+      detail: 'Starši pred rezervacijo radi preberejo, kako je z aro, odpovedjo in alergijami. V urejevalniku lahko vstavite osnutek in ga dopolnite.',
+      panel: 'legal',
+    },
+    {
       id: 'portrait',
       done: Boolean(s.about.photo),
       optional: true,
@@ -906,3 +914,118 @@ export function setupChecklist(settings) {
     },
   ];
 }
+
+// A starting point for the optional terms page, inserted from the admin on request and never published by
+// itself. Words in [square brackets] are decisions only the owner can make; the admin warns until they are gone.
+const TERMS_SL = `## Rezervacija
+
+- Termin je rezerviran, ko ga pisno potrdim po e-pošti ali s sporočilom.
+- Ob potrditvi plačate aro v višini [znesek] €, ki se upošteva pri končnem plačilu.
+
+## Plačilo
+
+- Preostanek plačate [na dan zabave, z gotovino ali nakazilom].
+- Za plačilo prejmete račun.
+
+## Odpoved in sprememba termina
+
+- Če termin odpoveste vsaj [število] dni prej, vam aro vrnem ali jo prenesem na nov termin.
+- Ob kasnejši odpovedi ara zapade.
+- Če zbolim ali zabave iz drugega nujnega razloga ne morem izvesti, vam takoj sporočim. Dogovorimo se za nov termin ali vam vrnem vse vplačano.
+
+## Med zabavo
+
+- Vodim program, igre in animacijo. Starši oziroma skrbniki ostanejo dosegljivi in so odgovorni za svoje otroke.
+- O alergijah, zdravstvenih posebnostih in posebnih potrebah otrok me obvestite vnaprej.
+- Za hrano, pijačo in torto poskrbite sami.
+- Za igre v zaprtem prostoru potrebujem vsaj [velikost] m² praznega prostora.
+
+## Fotografije
+
+- Fotografiram samo, če se s tem strinjate. Fotografijo objavim samo s pisnim soglasjem staršev vseh otrok na njej.
+
+## Športne urice
+
+- Vpis velja za [mesec ali sezono], plačilo [mesečno vnaprej].
+- Urice, ki odpadejo zaradi moje odsotnosti, nadomestim.
+
+## Vprašanja in pritožbe
+
+Pišite mi ali me pokličite. Odgovorim čim prej.`;
+
+const TERMS_EN = `## Booking
+
+- Your date is booked once I confirm it in writing, by email or message.
+- When I confirm, you pay a deposit of €[amount], which counts towards the final payment.
+
+## Payment
+
+- You pay the rest [on the day of the party, in cash or by bank transfer].
+- You get an invoice for every payment.
+
+## Cancelling or moving a date
+
+- If you cancel at least [number] days ahead, I refund the deposit or move it to a new date.
+- If you cancel later, the deposit is not refunded.
+- If I fall ill or cannot run the party for another urgent reason, I let you know straight away. We agree on a new date, or I refund everything you paid.
+
+## During the party
+
+- I run the programme, the games and the entertainment. Parents or guardians stay within reach and remain responsible for their children.
+- Please tell me in advance about allergies, health conditions and any special needs.
+- Food, drinks and the cake are up to you.
+- For indoor games I need at least [size] m² of clear space.
+
+## Photos
+
+- I only take photos if you agree. I only publish a photo with written consent from the parents of every child in it.
+
+## Sports classes
+
+- Enrolment is for [a month or a season], paid [monthly in advance].
+- Classes cancelled because I am away are made up.
+
+## Questions and complaints
+
+Write to me or call. I reply as soon as I can.`;
+
+const TERMS_SH = `## Rezervacija
+
+- Termin je rezerviran kada ga pisano potvrdim e-poštom ili porukom.
+- Prilikom potvrde plaćate kaparu u iznosu od [iznos] €, koja se uračunava u konačno plaćanje.
+
+## Plaćanje
+
+- Ostatak plaćate [na dan zabave, gotovinom ili uplatom na račun].
+- Za plaćanje dobivate račun.
+
+## Otkazivanje i promjena termina
+
+- Ako termin otkažete najmanje [broj] dana ranije, kaparu vam vraćam ili je prenosim na novi termin.
+- Kod kasnijeg otkazivanja kapara se ne vraća.
+- Ako se razbolim ili zabavu iz drugog hitnog razloga ne mogu održati, odmah vam javljam. Dogovaramo novi termin ili vam vraćam sve uplaćeno.
+
+## Tijekom zabave
+
+- Vodim program, igre i animaciju. Roditelji odnosno skrbnici ostaju dostupni i odgovorni su za svoju djecu.
+- O alergijama, zdravstvenim posebnostima i posebnim potrebama djece obavijestite me unaprijed.
+- Za hranu, piće i tortu pobrinite se sami.
+- Za igre u zatvorenom prostoru trebam najmanje [veličina] m² praznog prostora.
+
+## Fotografije
+
+- Fotografiram samo ako se s tim slažete. Fotografiju objavljujem samo uz pisanu privolu roditelja sve djece na njoj.
+
+## Sportske aktivnosti
+
+- Upis vrijedi za [mjesec ili sezonu], plaćanje [mjesečno unaprijed].
+- Termine koji otpadnu zbog moje odsutnosti nadoknađujem.
+
+## Pitanja i pritužbe
+
+Pišite mi ili me nazovite. Odgovaram što prije.`;
+
+export const TERMS_DRAFT = { sl: TERMS_SL, en: TERMS_EN, sh: TERMS_SH };
+
+/** Placeholders left in a text: "[like this]", but not markdown links "[text](https://…)". */
+export const placeholders = (text) => String(text ?? '').match(/\[[^\]\n]+\](?!\()/g) ?? [];

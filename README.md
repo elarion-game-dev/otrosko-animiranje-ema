@@ -15,7 +15,7 @@ shrani vsako spremembo kot commit v ta repozitorij, GitHub Actions pa stran zgra
 | ------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `/` · `/en/` · `/sh/`                       | domača stran: vabilo (vrh), program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
 | `/zasebnost/` · `/en/privacy/` · `/sh/privatnost/` | politika zasebnosti, sestavljena iz nastavitev                                  |
-| `/pogoji/` · `/en/terms/` · `/sh/uvjeti/`   | pogoji poslovanja (neobvezno, privzeto izklopljeno)                                    |
+| `/pogoji/` · `/en/terms/` · `/sh/uvjeti/`   | pogoji poslovanja (neobvezno, privzeto izklopljeno; osnutek se vstavi v urejevalniku) |
 | `/hvala/` · `/en/thank-you/` · `/sh/hvala/` | zahvala po povpraševanju (za storitve, ki preusmerijo)                                 |
 | `/404.html`                                 | stran ne obstaja, v vseh jezikih                                                       |
 | `/admin/`                                   | urejevalnik                                                                            |
@@ -175,6 +175,7 @@ public/assets/js/site.js     obrazec, meni, animacije ob pomikanju, galerija
 public/assets/img/sample/    vzorčne fotografije in CREDITS.txt
 public/assets/uploads/   slike, naložene v urejevalniku
 scripts/                 gradnja, razvojni strežnik, preizkusi
+  icon-png.mjs           ikone PNG za domači zaslon telefona (180, 192, 512 px), iz barv strani
 ```
 
 Pisave so z licenco SIL Open Font License (glej `public/assets/fonts/LICENSES.txt`), vse imajo č, š, ž, ć in đ.

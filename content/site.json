@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "site": {
     "name": "Otroško animiranje Ema",
     "url": "https://elarion-game-dev.github.io/otrosko-animiranje-ema"
@@ -10,14 +10,18 @@
       "label": "English",
       "short": "EN"
     },
-    "sh": {
+    "hr": {
       "enabled": true,
-      "label": "Hrvatski / Srpski",
-      "short": "HR/SR",
+      "label": "Hrvatski",
+      "short": "HR",
       "flags": [
-        "hr",
-        "rs"
+        "hr"
       ]
+    },
+    "sr": {
+      "enabled": true,
+      "label": "Српски",
+      "short": "SR"
     }
   },
   "announcement": {
@@ -795,7 +799,7 @@
       "hr": "S djecom radim svaki dan u vrtiću. Znam kako djecu oduševiti i smiriti, kako u igru uključiti i one sramežljivije i kako se pobrinuti da svi budu sigurni.",
       "sr": "Sa decom radim svaki dan u vrtiću. Znam kako da decu oduševim i smirim, kako da u igru uključim i one stidljivije i kako da se pobrinem da svi budu bezbedni."
     },
-    "photo": "",
+    "photo": "/assets/uploads/o-meni-mw9vttlzfdo.webp",
     "photoAlt": {
       "sl": "",
       "en": "",
@@ -981,8 +985,8 @@
     ]
   },
   "contact": {
-    "phone": "",
-    "email": "",
+    "phone": "070188806",
+    "email": "ema.zagar12@gmail.com",
     "whatsapp": true,
     "viber": true,
     "address": "",

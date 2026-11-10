@@ -1,9 +1,9 @@
 // Renders every public page from the settings object. Used by the build (Node) and by the admin's live
 // preview (browser), so what the owner sees in the preview is exactly what gets published.
 //
-// The design is "Vabilo": the page is an invitation suite. The hero is an invitation card, the programme a
-// menu card, packages are place cards, the sports classes a ticket, reviews thank-you notes and the booking
-// form an RSVP card. Cream bands with scalloped edges alternate with white paper; each band draws its own
+// The design is "Vabilo": the page is an invitation suite. The hero says in a few seconds what is offered, by
+// whom and how to book, beside one big photo; below it the programme is a menu card, packages are place cards,
+// the sports classes a ticket, reviews thank-you notes and the booking form an RSVP card. Cream bands with scalloped edges alternate with white paper; each band draws its own
 // edges, so sections can be switched off and reordered freely.
 //
 // Every page exists once per language. Slovenian lives at the site root, the others under /en/, /hr/ and /sr/ (Serbian in Cyrillic).
@@ -128,7 +128,7 @@ function stamps(ctx, items, path, cls = 'stamps') {
 // The width each kind of photo is shown at (site.css: the frame minus its white border), so the browser can pick
 // the smallest rendition that is still sharp. Keep these in step with the CSS when a frame changes size.
 const SIZES = {
-  hero: '(max-width: 32em) calc(40vw - 36px), (max-width: 54em) 170px, (max-width: 72em) 130px, 206px',
+  hero: '(max-width: 54em) calc(100vw - 40px), (max-width: 73.75em) calc(47vw - 72px), 480px',
   print: '(max-width: 40em) 216px, (max-width: 67em) calc(33vw - 38px), 316px',
   wall: '(max-width: 47.5em) calc(58vw - 20px), 200px',
   service: '(max-width: 34em) calc(100vw - 40px), (max-width: 47.5em) calc(50vw - 30px), 370px',
@@ -482,7 +482,7 @@ ${quickBar(s, ctx)}
 `;
 }
 
-// --- hero: the invitation ------------------------------------------------------------------
+// --- hero ------------------------------------------------------------------------------------
 
 // Bunting across the top of the hero: pennants along a curve, coloured in turn, dropping in from the middle out.
 const PENNANTS = [
@@ -496,15 +496,12 @@ const PENNANTS = [
 ];
 const TONES = ['coral', 'gold', 'sage', 'sky', 'lilac'];
 
-// Line boil: the hero's rainbow mark and Ema's signature wobble a little, as if redrawn by hand every few frames.
-// Two filters, medium (#boil, the mark) and subtle (#boil-soft, the signature): SMIL steps the noise through three
-// seeds at 8 frames a second (no script needed), site.css decides what uses them and keeps them off when motion is
-// off, and site.js pauses them while nothing that uses them is on screen. The region is generous so the
-// handwriting's tall loops are not clipped.
+// Line boil: Ema's signature wobbles a little, as if redrawn by hand every few frames. SMIL steps the noise through
+// three seeds at 8 frames a second (no script needed), site.css switches the filter on and keeps it off when motion
+// is off, and site.js pauses it while the signature is off screen. The region is generous so the handwriting's tall
+// loops are not clipped.
 function boilFilter() {
-  const filter = (id, scale) =>
-    `<filter id="${id}" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3"><animate attributeName="seed" values="3;17;41" dur="0.375s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="${scale}" xChannelSelector="R" yChannelSelector="G"/></filter>`;
-  return `<svg class="fx-defs" id="boil-defs" aria-hidden="true" focusable="false">${filter('boil', 4.5)}${filter('boil-soft', 3)}</svg>`;
+  return `<svg class="fx-defs" id="boil-defs" aria-hidden="true" focusable="false"><filter id="boil-soft" x="-10%" y="-25%" width="120%" height="150%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3"><animate attributeName="seed" values="3;17;41" dur="0.375s" calcMode="discrete" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/></filter></svg>`;
 }
 
 function garland() {
@@ -512,52 +509,81 @@ function garland() {
   return `<svg class="garland" viewBox="0 0 1440 124" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false"><path class="string" d="M0,14 Q720,120 1440,14"/>${flags}</svg>`;
 }
 
-/** The title with *emphasis*, each word in a span so the words can rise in one after another. */
+/**
+ * The title with *emphasis*, each word in a span so the words can rise in one after another. Words joined by a
+ * no-break space (typo: "z vzgojiteljico", "10 otrok") share one span, also across the start of the emphasis,
+ * because the browser may wrap between two spans and would then begin the next line with that space.
+ */
 function titleWords(text) {
   let n = 0;
-  const words = (s) =>
-    s
-      .split(/(\s+)/)
-      .map((part) => (/^\s+$/.test(part) || !part ? part : `<span class="w w${Math.min(++n, 12)}">${esc(part)}</span>`))
-      .join('');
-  return text
-    .split(/(\*[^*]+\*)/)
-    .map((seg) => (/^\*[^*]+\*$/.test(seg) ? `<em>${words(seg.slice(1, -1))}</em>` : words(seg)))
-    .join('');
+  let out = '';
+  let word = '';
+  const flush = () => {
+    if (word) out += `<span class="w w${Math.min(++n, 12)}">${word}</span>`;
+    word = '';
+  };
+  for (const seg of text.split(/(\*[^*]+\*)/)) {
+    const em = /^\*[^*]+\*$/.test(seg);
+    for (const part of (em ? seg.slice(1, -1) : seg).split(/([ \t\n]+)/)) {
+      if (!part) continue;
+      if (/^[ \t\n]+$/.test(part)) {
+        flush();
+        out += part;
+        continue;
+      }
+      word += em ? `<em>${esc(part)}</em>` : esc(part);
+      // Ordinary spaces were split off above, so a space left at the end is a no-break one: keep the word going.
+      if (!/\s$/.test(part)) flush();
+    }
+  }
+  flush();
+  return out;
+}
+
+/**
+ * The host on the photo: the "About me" portrait, or the first letter of the name until there is one. The photo
+ * itself may be anybody's party, so the name sits on a label beside it and never captions it.
+ */
+function heroHost(settings, ctx) {
+  const h = settings.hero;
+  const name = T(ctx, h.hostName);
+  if (!name) return '';
+  const role = T(ctx, h.hostRole);
+  const portrait = settings.about.photo;
+  const face = portrait
+    ? `<span class="av">${img(ctx, portrait, '', { sizes: '64px', eager: true })}</span>`
+    : `<span class="av av--mono" aria-hidden="true">${esc(name[0].toLocaleUpperCase())}</span>`;
+  return `<p class="host">${face}<span><b${ed(ctx, 'hero.hostName')}>${esc(name)}</b>${role ? `<small${ed(ctx, 'hero.hostRole', h.hostRole)}>${esc(role)}</small>` : ''}</span></p>`;
 }
 
 function heroSection(settings, ctx) {
   const h = settings.hero;
   const t = settings.theme;
+  const c = settings.contact;
   const badge = T(ctx, h.badge);
   const text = T(ctx, h.text);
-  const details = h.details.map((d, i) => [d, i]).filter(([d]) => T(ctx, d.term) && T(ctx, d.value));
-  const dateRow =
-    h.showDate && canBook(settings) && formTopics(settings).includes('party') && (ctx.provider.ready || ctx.preview)
-      ? `<div class="when"><dt><label for="hero-date">${esc(ui('when', ctx.lang))}</label></dt><dd><input id="hero-date" type="date" aria-describedby="hero-date-hint"><span class="sr-only" id="hero-date-hint">${esc(ui('whenHint', ctx.lang))}</span></dd></div>`
+  const digits = phoneDigits(c.phone);
+  const tel =
+    h.showPhone && digits
+      ? `<a class="hero-tel" href="tel:+${digits}">${uiIcon('phone', 'i')}<span class="sr-only">${esc(ui('call', ctx.lang))}: </span><span>${esc(c.phone)}</span></a>`
       : '';
-  const actions = [btn(settings, ctx, h.primary, 'hero.primary', 'btn-primary', { arrow: true }), btn(settings, ctx, h.secondary, 'hero.secondary', 'btn-line')].filter(Boolean);
-  const photos = h.photos.map((p, i) => [p, i]).filter(([p]) => p.src || ctx.preview);
-  const pics = photos
-    .map(([p, i], n) => {
-      const caption = T(ctx, p.caption);
-      return `<figure class="polaroid ${n === 0 ? 'pl-left' : 'pl-right'}"${editImage(ctx, `hero.photos.${i}.src`)}>${photo(ctx, p.src, T(ctx, p.alt), { ill: n === 0 ? 'balloons' : 'ball', tone: n === 0 ? 'coral' : 'sky', eager: true, sizes: SIZES.hero })}${
-        caption ? `<figcaption${ed(ctx, `hero.photos.${i}.caption`, p.caption)}>${esc(caption)}</figcaption>` : ''
-      }</figure>`;
-    })
-    .join('');
+  const actions = [btn(settings, ctx, h.primary, 'hero.primary', 'btn-primary', { arrow: true }), btn(settings, ctx, h.secondary, 'hero.secondary', 'btn-line'), tel].filter(Boolean);
+  const plan = h.plan.map((x, i) => [x, i]).filter(([x]) => T(ctx, x.text));
 
   return `<section class="hero${t.confetti ? ' confetti' : ''}" aria-labelledby="hero-title">
   ${t.garland ? garland() : ''}
   <div class="wrap hero-stage">
-    <div class="invite">
-      ${rainbowMark('mark')}
-      <h1 class="hero-title" id="hero-title"${ed(ctx, 'hero.title', h.title)}>${badge ? `<span class="kicker"${ed(ctx, 'hero.badge', h.badge)}>${esc(badge)}</span> ` : ''}${titleWords(T(ctx, h.title))}</h1>
+    <div class="hero-copy">
+      ${badge ? `<p class="eyebrow"${ed(ctx, 'hero.badge', h.badge)}>${uiIcon('pin', 'i')}<span>${esc(badge)}</span></p>` : ''}
+      <h1 class="hero-title" id="hero-title"${ed(ctx, 'hero.title', h.title)}>${titleWords(T(ctx, h.title))}</h1>
       ${text ? `<div class="sub"${ed(ctx, 'hero.text', h.text)}>${markdown(text, { base: ctx.base })}</div>` : ''}
-      ${details.length || dateRow ? `<dl class="details">${details.map(([d, i]) => `<div><dt${ed(ctx, `hero.details.${i}.term`, d.term)}>${esc(T(ctx, d.term))}</dt><dd${ed(ctx, `hero.details.${i}.value`, d.value)}>${esc(T(ctx, d.value))}</dd></div>`).join('')}${dateRow}</dl>` : ''}
       ${actions.length ? `<div class="cta-row">${actions.join('')}</div>` : ''}
+      ${plan.length ? `<ol class="plan">${plan.map(([x, i], n) => `<li${ed(ctx, `hero.plan.${i}.text`, x.text)}><span class="plan-n" aria-hidden="true">${n + 1}</span>${esc(T(ctx, x.text))}</li>`).join('')}</ol>` : ''}
     </div>
-    ${pics ? `<div class="hero-pics">${pics}</div>` : ''}
+    <div class="hero-photo"${editImage(ctx, 'hero.photo')}>
+      ${photo(ctx, h.photo, T(ctx, h.photoAlt), { ill: 'balloons', tone: 'coral', eager: true, sizes: SIZES.hero })}
+      ${heroHost(settings, ctx)}
+    </div>
   </div>
 </section>`;
 }
@@ -870,7 +896,6 @@ function bookingForm(settings, ctx) {
     past: f('errPast'),
     kidsmax: f('errKidsMax'),
     kidsmin: f('errKidsMin'),
-    added: f('dateAdded'),
     toomany: ui('errTooMany', L),
     network: ui('errNetwork', L),
     sending: ui('sending', L),

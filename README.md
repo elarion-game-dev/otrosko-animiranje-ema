@@ -13,7 +13,7 @@ shrani vsako spremembo kot commit v ta repozitorij, GitHub Actions pa stran zgra
 
 | Pot (SL / EN / HR / SR)                     | Kaj                                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `/` · `/en/` · `/hr/` · `/sr/`              | domača stran: vabilo (vrh), program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
+| `/` · `/en/` · `/hr/` · `/sr/`              | domača stran: vrh strani, program zabave, paketi, športne urice, animacija na dogodkih, o meni, utrinki, mnenja, vprašanja, rezervacija z obrazcem (in neobvezna ponudba) |
 | `/zasebnost/` · `/en/privacy/` · `/hr/privatnost/` · `/sr/privatnost/` | politika zasebnosti, sestavljena iz nastavitev                                  |
 | `/pogoji/` · `/en/terms/` · `/hr/uvjeti/` · `/sr/uslovi/` | pogoji poslovanja (neobvezno, privzeto izklopljeno; osnutek se vstavi v urejevalniku) |
 | `/hvala/` · `/en/thank-you/` · `/hr/hvala/` · `/sr/hvala/` | zahvala po povpraševanju (za storitve, ki preusmerijo)                                 |
@@ -25,8 +25,10 @@ mnenj) se na spletu ne prikažejo.
 
 ## Oblikovanje »Vabilo«
 
-Stran je oblikovana kot komplet vabil (izbrani osnutek »Vabilo«): vrh je vabilo z zastavicami in dvema
-polaroidkama, program je jedilni list s pikčastimi črtami do ure, paketi so kartice za mizo, športne urice
+Stran je oblikovana kot komplet vabil (izbrani osnutek »Vabilo«). Vrh strani pod zastavicami v nekaj sekundah
+pove, kaj ponujamo, kdo vodi in kako rezervirati: vrstica o tem, kje, naslov, en stavek, gumb s telefonsko
+številko in trije koraki, ob tem velika fotografija z Eminim imenom (zasnova 11 »Pet sekund« iz poročila o
+prenovi vrha). Program je jedilni list s pikčastimi črtami do ure, paketi so kartice za mizo, športne urice
 vstopnica z odtrgljivim delom, mnenja zahvalne kartice, obrazec pa kartica »Prosim za odgovor« v kuverti.
 Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko razdelke poljubno premikate.
 
@@ -41,9 +43,9 @@ Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko r
 - **Zastavice ob jezikih:** okrogle zastavice (circle-flags, licenca MIT) v izbirniku jezika, meniju na telefonu
   in nogi. Za hrvaščino lastnica izbere eno do tri (hrvaška, bosanska,
   črnogorska); srbščina ima srbsko.
-- **Animacije:** zastavice padejo, zanihajo in nato rahlo plapolajo v vetru, vabilo se poravna, mavrica se nariše, besede naslova se dvignejo,
+- **Animacije:** zastavice padejo, zanihajo in nato rahlo plapolajo v vetru, besede naslova se dvignejo, fotografija na vrhu priplava,
   razdelki se ob pomikanju pokažejo (značke se »odtisnejo«, polaroidke se pripnejo, zahvalne kartice pridrsajo),
-  paketi se nagnejo proti miški, polaroidke na vrhu se ob pomikanju premikajo (kjer brskalnik to podpira),
+  paketi se nagnejo proti miški, zastavice se ob pomikanju dvignejo in zbledijo (kjer brskalnik to podpira), podpis v »O meni« rahlo vre kot ročno risan,
   ko gumb obiskovalca pripelje do rezervacije, z dna razdelka izstrelijo rojstnodnevni konfeti (ob ročnem pomikanju ne), po pošiljanju obrazca poletijo še enkrat. Prehod med jeziki je mehak (View Transitions). Vse se ustavi, če ima
   obiskovalec v sistemu vklopljeno zmanjšano gibanje ali če lastnica animacije izklopi; v predogledu urejevalnika
   so izklopljene, da ne motijo med tipkanjem.
@@ -116,8 +118,7 @@ Stran je statična, zato obrazec pošilja na enega od teh načinov (nastavi se v
 | Brez obrazca                  | Samo telefon, WhatsApp, Viber in e-pošta.                                                     |
 
 Starši najprej izberejo temo (rojstni dan, športne urice ali drug dogodek) in vidijo samo vprašanja zanjo.
-Gumbi drugod na strani temo izberejo sami (»Izberite veliki paket« izbere tudi paket), datum z vabila se prenese
-v obrazec. Lastnica v urejevalniku izklopi teme ali neobvezna vprašanja (ura, prostor, kraj, način odgovora).
+Gumbi drugod na strani temo izberejo sami (»Izberite veliki paket« izbere tudi paket). Lastnica v urejevalniku izklopi teme ali neobvezna vprašanja (ura, prostor, kraj, način odgovora).
 
 Povpraševanja se nikoli ne shranjujejo na tej strani ali v repozitoriju. Obrazec sprašuje samo za število in
 starost otrok, nikoli za imena. Zaščita pred roboti: skrito polje, najkrajši čas izpolnjevanja, največ trije

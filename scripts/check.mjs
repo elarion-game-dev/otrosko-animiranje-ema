@@ -52,15 +52,14 @@ function hostileSettings() {
     badge: X3,
     title: X3,
     text: X3,
-    details: [{ term: X3, value: X3 }],
-    showDate: 'yes',
     primary: { label: X3, target: 'url', url: EVIL_URL },
     secondary: { label: X3, target: '"><x', url: EVIL_URL },
-    photos: [
-      { src: "/x.png') ; background:url(javascript:alert(1)", alt: X3, caption: X3 },
-      { src: 'https://evil.example/a.jpg', alt: X3, caption: X3 },
-      { src: '/assets/uploads/third.webp', alt: X3, caption: X3 },
-    ],
+    showPhone: 'yes',
+    plan: Array.from({ length: 6 }, () => ({ text: X3 })),
+    photo: "/x.png') ; background:url(javascript:alert(1)",
+    photoAlt: X3,
+    hostName: XSS,
+    hostRole: X3,
   };
   s.sections = s.sections.map((x) => ({ ...x, kicker: X3, heading: X3, menuLabel: X3, intro: X3, enabled: true }));
   s.sections.push({ id: '"><script>', enabled: true, heading: X3 });
@@ -169,8 +168,9 @@ await test('Hostile settings normalise to safe values', () => {
   assert.equal(s.theme.colors.bg, DEFAULT_SETTINGS.theme.colors.bg);
   assert.equal(s.theme.colors.coral, DEFAULT_SETTINGS.theme.colors.coral);
   assert.equal(s.theme.garland, DEFAULT_SETTINGS.theme.garland);
-  assert.deepEqual(s.hero.photos.map((p) => p.src), ['', ''], 'only uploaded files, and at most two photos');
-  assert.equal(s.hero.showDate, DEFAULT_SETTINGS.hero.showDate);
+  assert.equal(s.hero.photo, '', 'only uploaded files');
+  assert.equal(s.hero.plan.length, 4, 'at most four steps');
+  assert.equal(s.hero.showPhone, DEFAULT_SETTINGS.hero.showPhone);
   assert.equal(s.hero.secondary.target, DEFAULT_SETTINGS.hero.secondary.target);
   assert.equal(s.header.logo, '', 'images must be uploaded files, not remote URLs');
   assert.equal(s.header.logoHeight, DEFAULT_SETTINGS.header.logoHeight);
@@ -215,7 +215,7 @@ await test('Nothing made up goes live: no reviews, prices, credentials or schedu
   assert.equal(d.schedule.items.length, 0);
   const n = normalizeSettings(d);
   const samples = samplePhotosInUse(n);
-  assert.ok(samples.length >= 9 && samples.every(isSample));
+  assert.ok(samples.length >= 8 && samples.every(isSample));
   assert.equal(setupChecklist(n).find((c) => c.id === 'samples').done, false, 'the overview asks to replace the sample photos');
   const credits = await readFile(new URL('../public/assets/img/sample/CREDITS.txt', import.meta.url), 'utf8');
   for (const path of new Set(samples)) {
@@ -241,9 +241,9 @@ await test('Every language gets its pages, with the right lang, alternates and s
   assert.match(files['index.html'], /hreflang="sr" href="[^"]+\/sr\/"/);
   assert.match(files['index.html'], /hreflang="x-default" href="https:\/\/elarion-game-dev\.github\.io\/otrosko-animiranje-ema\/"/);
   assert.match(files['en/privacy/index.html'], new RegExp(`<a href="${BASE}/zasebnost/" hreflang="sl"`));
-  assert.ok(files['en/index.html'].includes('Birthday parties for children, full of games'));
-  assert.ok(files['hr/index.html'].includes('Rođendanske zabave za djecu, pune igara'));
-  assert.ok(files['sr/index.html'].includes('Рођенданске забаве за децу, пуне игара'), 'Serbian is shown in Cyrillic');
+  assert.ok(files['en/index.html'].includes('You provide the space and the cake.'));
+  assert.ok(files['hr/index.html'].includes('program za svu djecu pobrinem se ja'));
+  assert.ok(files['sr/index.html'].includes('програм за сву децу побринем се ја'), 'Serbian is shown in Cyrillic');
   assert.ok(files['en/index.html'].includes('id="booking"') && files['index.html'].includes('id="rezervacija"'), 'section anchors are in the page language');
 });
 
@@ -277,7 +277,7 @@ await test('Untranslated texts fall back to Slovenian and are counted', () => {
   s.hero.title.en = '';
   s.faq.items[0].a.hr = '';
   const n = normalizeSettings(s);
-  assert.ok(site(s)['en/index.html'].includes('najlepšo'));
+  assert.ok(site(s)['en/index.html'].includes('vzgojiteljico'));
   assert.deepEqual(missingTranslations(n, 'en').map((m) => m.path), ['hero.title']);
   assert.deepEqual(missingTranslations(n, 'hr').map((m) => m.path), ['faq.items.0.a']);
   assert.deepEqual(missingTranslations(normalizeSettings(DEFAULT_SETTINGS), 'en'), [], 'defaults are fully translated');
@@ -317,14 +317,41 @@ await test('Content Security Policy is strict and names only the form service', 
 await test('Email-app form needs an address, and then only allows mailto:', () => {
   const closed = site(DEFAULT_SETTINGS)['index.html'];
   assert.ok(!closed.includes('data-inquiry') && closed.includes('form-closed'), 'without an email the form shows a notice');
-  assert.ok(!closed.includes('id="hero-date"'), 'no date picker on the invitation while the form is closed');
   const s = withContact(DEFAULT_SETTINGS, { email: 'ema@example.com' });
   const html = site(s)['index.html'];
   const csp = decode(html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1]);
   assert.match(csp, /connect-src 'none'/);
   assert.match(csp, /form-action 'self' mailto:/);
   assert.match(html, /action="mailto:ema@example\.com" enctype="text\/plain"/);
-  assert.ok(html.includes('id="hero-date"'), 'the invitation offers a date once the form works');
+});
+
+await test('Hero: phone number beside the button, steps, and the host label', () => {
+  const hero = (s, lang = 'sl') => renderPage(normalizeSettings(s), 'home', lang).match(/<section class="hero[\s\S]*?<\/section>/)[0];
+  const none = hero(DEFAULT_SETTINGS);
+  assert.ok(!none.includes('href="tel:'), 'no call link without a number');
+  assert.equal((none.match(/<li><span class="plan-n" aria-hidden="true">\d<\/span>/g) ?? []).length, 3, 'three steps');
+  assert.match(none, /<p class="host"><span class="av av--mono" aria-hidden="true">E<\/span><span><b>Ema<\/b><small>vzgojiteljica v\svrtcu<\/small>/);
+  const s = withContact(DEFAULT_SETTINGS, { phone: '041 123 456' });
+  assert.match(hero(s), /<a class="hero-tel" href="tel:\+38641123456">.*?<span>041 123 456<\/span><\/a>/);
+  assert.ok(!hero({ ...s, hero: { ...s.hero, showPhone: false } }).includes('class="hero-tel"'), 'the number can be switched off');
+  const withPortrait = { ...s, about: { ...s.about, photo: '/assets/uploads/ema.webp' } };
+  assert.match(hero(withPortrait), /<span class="av"><img src="[^"]*\/assets\/uploads\/ema\.webp" alt=""/, 'the About portrait is the face on the label');
+  assert.ok(!hero({ ...s, hero: { ...s.hero, hostName: '' } }).includes('class="host"'), 'no label without a name');
+  assert.match(hero(DEFAULT_SETTINGS, 'sr'), /<b>Ема<\/b>/, 'the name follows the Serbian script');
+});
+
+await test('Hero from before November 2026 keeps its first photo', () => {
+  const old = structuredClone(DEFAULT_SETTINGS);
+  delete old.hero.photo;
+  delete old.hero.photoAlt;
+  old.hero.photos = [{ src: '/assets/uploads/a.webp', alt: { sl: 'Torta' }, caption: { sl: 'Rojstni dan!' } }, { src: '/assets/uploads/b.webp' }];
+  old.hero.details = [{ term: { sl: 'Kje' }, value: { sl: 'Doma' } }];
+  const n = normalizeSettings(old);
+  assert.equal(n.hero.photo, '/assets/uploads/a.webp');
+  assert.equal(n.hero.photoAlt.sl, 'Torta');
+  assert.ok(!('photos' in n.hero) && !('details' in n.hero) && !('showDate' in n.hero), 'the old fields are dropped');
+  const cleared = normalizeSettings({ ...DEFAULT_SETTINGS, hero: { ...DEFAULT_SETTINGS.hero, photo: '' } });
+  assert.equal(cleared.hero.photo, '', 'a removed photo stays removed');
 });
 
 await test('Booking form: topics, optional questions, required fields and a honeypot', () => {
@@ -442,7 +469,7 @@ await test('Theme CSS carries the fonts from the base path and the derived colou
 await test('Decorations can be switched off', () => {
   const on = site(DEFAULT_SETTINGS)['index.html'];
   assert.ok(on.includes('class="garland"') && on.includes('class="hero confetti"') && on.includes('data-edges="scallop"') && on.includes('data-motion="on"'));
-  assert.ok(on.includes('<filter id="boil"'), 'the line boil filter is on the home page');
+  assert.ok(on.includes('<filter id="boil-soft"'), 'the line boil filter is on the home page');
   assert.ok(!site(DEFAULT_SETTINGS)['zasebnost/index.html'].includes('id="boil"'), 'and only there');
   const s = structuredClone(DEFAULT_SETTINGS);
   s.theme = { ...s.theme, garland: false, confetti: false, scallops: false, animations: false };
@@ -456,7 +483,7 @@ await test('Click-to-edit markers only in the preview', () => {
   assert.ok(!site(DEFAULT_SETTINGS)['index.html'].includes('data-edit'));
   const preview = renderPage(n, 'home', 'en', { preview: true });
   assert.ok(preview.includes('data-edit="hero.title"') && preview.includes('data-preview'));
-  assert.ok(preview.includes('data-edit="hero.photos.0.src"') && preview.includes('data-edit="steps.items.0.title"'));
+  assert.ok(preview.includes('data-edit="hero.photo"') && preview.includes('data-edit="hero.plan.0.text"') && preview.includes('data-edit="steps.items.0.title"'));
   const s = structuredClone(DEFAULT_SETTINGS);
   s.hero.title.en = '';
   assert.match(renderPage(normalizeSettings(s), 'home', 'en', { preview: true }), /data-edit="hero\.title"[^>]*data-missing/);
@@ -525,7 +552,7 @@ await test('Serbian: Cyrillic on the page, Latin where it belongs', () => {
   // An untranslated Serbian text shows the Croatian one, in Cyrillic.
   const s = structuredClone(DEFAULT_SETTINGS);
   s.hero.text.sr = '';
-  assert.ok(site(s)['sr/index.html'].includes('Рођенданске забаве за дјецу'));
+  assert.ok(site(s)['sr/index.html'].includes('програм за сву дјецу'));
   // Cyrillic font files only for Cyrillic letters, so other pages never download them.
   const css = themeCss(normalizeSettings(DEFAULT_SETTINGS).theme);
   assert.match(css, /src: url\('\/assets\/fonts\/prata-cyrillic-400-normal\.woff2'\) format\('woff2'\);\n  unicode-range: U\+0301,U\+0400-045F/);
@@ -579,11 +606,9 @@ await test('Terms draft: never published by itself, placeholders flagged until f
   assert.equal(item(empty).done, false);
 });
 
-await test('Form messages keep the number and date for the browser to fill in', () => {
+await test('Form messages keep the number for the browser to fill in', () => {
   const files = site(withContact(DEFAULT_SETTINGS, { email: 'ema@example.si' }));
   assert.match(files['index.html'], /data-msg-kidsmax="Za več kot \{n\} otrok/);
-  assert.match(files['index.html'], /data-msg-added="Datum \{d\} je dodan/);
-  assert.match(files['en/index.html'], /data-msg-added="The date \{d\} has been added/);
   assert.doesNotMatch(files['index.html'], /\{(name|phone|privacy)\}/);
 });
 
@@ -613,7 +638,7 @@ await test('Photos come in sizes that fit their frames; the lightbox still opens
 
   // The sample photos ship with their copies, so the default site gets them too.
   const photos = [...new Set(samplePhotosInUse(normalizeSettings(DEFAULT_SETTINGS)))].filter((p) => p.endsWith('.webp'));
-  assert.ok(photos.length >= 8);
+  assert.ok(photos.length >= 7);
   for (const p of photos) {
     const width = imageWidth(await readFile(new URL(`../public${p}`, import.meta.url)));
     for (const w of renditionWidths(width)) await access(new URL(`../public${renditionPath(p, w)}`, import.meta.url));

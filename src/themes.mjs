@@ -194,7 +194,7 @@ export const PRESETS = {
 /** Switches for the design's decorations. */
 export const DECOR_TOGGLES = {
   garland: 'Zastavice na vrhu strani',
-  confetti: 'Konfeti pikice za vabilom in obrazcem',
+  confetti: 'Konfeti pikice ob fotografiji na vrhu in za obrazcem',
   scallops: 'Valoviti robovi kremnih pasov',
 };
 

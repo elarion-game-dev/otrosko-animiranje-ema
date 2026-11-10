@@ -68,7 +68,7 @@ export const SOCIAL_PLATFORMS = {
   ...Object.fromEntries(['facebook', 'instagram', 'tiktok', 'youtube', 'whatsapp', 'viber', 'messenger', 'threads', 'telegram', 'x'].map((id) => [id, BRAND_ICONS[id]?.title ?? id])),
   ...EXTRA_PLATFORMS,
 };
-export const LIMITS = { services: 12, steps: 8, packages: 4, schedule: 8, facts: 6, badges: 6, details: 6, heroPhotos: 2, gallery: 60, testimonials: 30, faq: 30, socials: 12 };
+export const LIMITS = { services: 12, steps: 8, packages: 4, schedule: 8, facts: 6, badges: 6, plan: 4, gallery: 60, testimonials: 30, faq: 30, socials: 12 };
 
 /** Free stock photos that come with the site. Each one should be replaced with the owner's own photo. */
 export const SAMPLE_PREFIX = '/assets/img/sample/';
@@ -104,37 +104,30 @@ export const DEFAULT_SETTINGS = {
     sticky: true,
     cta: { enabled: true, label: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin'), target: 'contact', url: '' },
   },
+  // The first screen answers in a few seconds what is offered, by whom and how to book: a line on where, the
+  // headline, one sentence on why it is easy, a button and the phone number, three steps, and one big photo
+  // with the host's name on it.
   hero: {
-    badge: tx('Vabilo', 'An invitation', 'Pozivnica', 'Pozivnica'),
-    title: tx('na najlepšo zabavo *leta*', 'to the best party of *the year*', 'na najbolju zabavu *godine*', 'na najbolju zabavu *godine*'),
+    badge: tx('Pridem k vam domov ali v najeti prostor', 'I come to your home or a rented venue', 'Dolazim k vama kući ili u iznajmljeni prostor', 'Dolazim kod vas kući ili u iznajmljeni prostor'),
+    title: tx('Rojstnodnevne zabave z *vzgojiteljico Emo*', 'Birthday parties with *Ema, a kindergarten teacher*', 'Rođendanske zabave s *odgojiteljicom Emom*', 'Rođendanske zabave sa *vaspitačicom Emom*'),
     text: tx(
-      'Rojstnodnevne zabave za otroke, polne iger, gibanja in smeha. Vodi jih vzgojiteljica Ema.',
-      'Birthday parties for children, full of games, movement and laughter. Led by Ema, a kindergarten teacher.',
-      'Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema.',
-      'Rođendanske zabave za decu, pune igara, kretanja i smeha. Vodi ih vaspitačica Ema.'
+      'Vi pripravite prostor in torto. Za igre, poligon in program za vse otroke poskrbim jaz.',
+      'You provide the space and the cake. I take care of the games, an obstacle course and a programme for all the children.',
+      'Vi pripremite prostor i tortu. Za igre, poligon i program za svu djecu pobrinem se ja.',
+      'Vi pripremite prostor i tortu. Za igre, poligon i program za svu decu pobrinem se ja.'
     ),
-    details: [
-      { term: tx('Za koga', 'Who for', 'Za koga', 'Za koga'), value: tx('Slavljenec in prijatelji', 'The birthday child and friends', 'Slavljenik i prijatelji', 'Slavljenik i prijatelji') },
-      { term: tx('Kje', 'Where', 'Gdje', 'Gde'), value: tx('Doma ali v najetem prostoru', 'At home or in a rented venue', 'Kod kuće ili u iznajmljenom prostoru', 'Kod kuće ili u iznajmljenom prostoru') },
-      { term: tx('Kaj', 'What', 'Što', 'Šta'), value: tx('Igre, gibanje in smeh', 'Games, movement and laughter', 'Igre, kretanje i smijeh', 'Igre, kretanje i smeh') },
-      { term: tx('Cena', 'Price', 'Cijena', 'Cena'), value: tx('Znana vnaprej', 'Agreed in advance', 'Poznata unaprijed', 'Poznata unapred') },
-      { term: tx('Kdo vodi', 'Led by', 'Tko vodi', 'Ko vodi'), value: tx('Ema, vzgojiteljica', 'Ema, a kindergarten teacher', 'Ema, odgojiteljica', 'Ema, vaspitačica') },
-    ],
-    showDate: true,
     primary: { label: tx('Preverite prost termin', 'Check a date', 'Provjerite termin', 'Proverite termin'), target: 'contact', url: '' },
-    secondary: { label: tx('Poglejte program', 'See the programme', 'Pogledajte program', 'Pogledajte program'), target: 'steps', url: '' },
-    photos: [
-      {
-        src: sample('hero-party.webp'),
-        alt: tx('Otroci ležijo na odeji in lovijo konfete', 'Children lying on a blanket, catching confetti', 'Djeca leže na dekici i hvataju konfete', 'Deca leže na dekici i hvataju konfete'),
-        caption: tx('Rojstni dan!', 'Birthday time!', 'Rođendan!', 'Rođendan!'),
-      },
-      {
-        src: sample('hero-play.webp'),
-        alt: tx('Otroci s klobučki plešejo v krogu', 'Children in party hats dancing in a circle', 'Djeca sa šeširićima plešu u krugu', 'Deca sa šeširićima plešu u krugu'),
-        caption: tx('Igre in smeh', 'Games and giggles', 'Igre i smijeh', 'Igre i smeh'),
-      },
+    secondary: { label: EMPTY(), target: 'steps', url: '' },
+    showPhone: true,
+    plan: [
+      { text: tx('Pišete mi datum', 'Send me the date', 'Javite mi datum', 'Javite mi datum') },
+      { text: tx('Dogovoriva program', 'We agree on the programme', 'Dogovorimo program', 'Dogovorimo program') },
+      { text: tx('Praznujete', 'You celebrate', 'Slavite', 'Slavite') },
     ],
+    photo: sample('hero-play.webp'),
+    photoAlt: tx('Otroci s klobučki plešejo v krogu', 'Children in party hats dancing in a circle', 'Djeca sa šeširićima plešu u krugu', 'Deca sa šeširićima plešu u krugu'),
+    hostName: 'Ema',
+    hostRole: tx('vzgojiteljica v vrtcu', 'kindergarten teacher', 'odgojiteljica u vrtiću', 'vaspitačica u vrtiću'),
   },
   sections: [
     section(
@@ -567,6 +560,8 @@ export function normalizeSettings(input) {
   const bar = obj(raw.announcement);
   const header = obj(raw.header);
   const hero = obj(raw.hero);
+  // Until November 2026 the hero was an invitation card with up to two photos; the first one carries over.
+  const heroPhoto = hero.photo === undefined && Array.isArray(hero.photos) ? obj(hero.photos[0]) : null;
   const services = obj(raw.services);
   const steps = obj(raw.steps);
   const packages = obj(raw.packages);
@@ -636,11 +631,14 @@ export function normalizeSettings(input) {
       badge: i18nLine(hero.badge, 60, d.hero.badge),
       title: i18nRequired(hero.title, 140, d.hero.title),
       text: i18nText(hero.text, 500, d.hero.text),
-      details: list(hero.details, LIMITS.details, d.hero.details).map((r) => ({ term: i18nLine(obj(r).term, 30, EMPTY()), value: i18nLine(obj(r).value, 80, EMPTY()) })),
-      showDate: bool(hero.showDate, d.hero.showDate),
       primary: button(hero.primary, d.hero.primary),
       secondary: button(hero.secondary, d.hero.secondary),
-      photos: list(hero.photos, LIMITS.heroPhotos, d.hero.photos).map((r) => ({ src: image(obj(r).src), alt: i18nLine(obj(r).alt, 200, EMPTY()), caption: i18nLine(obj(r).caption, 40, EMPTY()) })),
+      showPhone: bool(hero.showPhone, d.hero.showPhone),
+      plan: list(hero.plan, LIMITS.plan, d.hero.plan).map((r) => ({ text: i18nLine(obj(r).text, 40, EMPTY()) })),
+      photo: image(heroPhoto ? heroPhoto.src : hero.photo === undefined ? d.hero.photo : hero.photo),
+      photoAlt: i18nLine(heroPhoto ? (heroPhoto.alt ?? '') : hero.photoAlt, 200, d.hero.photoAlt),
+      hostName: line(hero.hostName, 40, d.hero.hostName).trim(),
+      hostRole: i18nLine(hero.hostRole, 60, d.hero.hostRole),
     },
     sections: sections(raw.sections),
     services: {
@@ -870,7 +868,7 @@ export function formQuestions(settings) {
 export function samplePhotosInUse(settings) {
   const s = settings;
   return [
-    ...s.hero.photos.map((p) => p.src),
+    s.hero.photo,
     s.schedule.photo,
     s.about.photo,
     ...s.gallery.images.map((i) => i.src),

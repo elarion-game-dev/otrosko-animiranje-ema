@@ -170,9 +170,9 @@ html.menu-open, html:has(.mnav:target) { overflow: hidden; }
 .hero + .section { padding-top: calc(var(--section) + 8px); }
 main > .band:last-child::after { display: none; }
 [data-edges="plain"] .band::before, [data-edges="plain"] .band::after, [data-edges="plain"] .hero::after, [data-edges="plain"] .site-footer::before { display: none; }
-.confetti { background-image: radial-gradient(circle at 34px 46px, var(--coral) 0 4px, transparent 4.5px), radial-gradient(circle at 212px 30px, var(--sky) 0 3px, transparent 3.5px), radial-gradient(circle at 400px 120px, var(--gold) 0 4px, transparent 4.5px), radial-gradient(circle at 560px 60px, var(--sage) 0 3px, transparent 3.5px), radial-gradient(circle at 120px 260px, var(--lilac) 0 3.5px, transparent 4px), radial-gradient(circle at 300px 330px, var(--coral) 0 3px, transparent 3.5px), radial-gradient(circle at 520px 300px, var(--sky) 0 4px, transparent 4.5px), radial-gradient(circle at 60px 500px, var(--gold) 0 3px, transparent 3.5px), radial-gradient(circle at 260px 560px, var(--sage) 0 4px, transparent 4.5px), radial-gradient(circle at 460px 480px, var(--lilac) 0 3px, transparent 3.5px), radial-gradient(circle at 600px 590px, var(--coral) 0 3.5px, transparent 4px); background-size: 640px 640px; }
+.confetti:not(.hero), .hero.confetti .hero-photo::before { background-image: radial-gradient(circle at 34px 46px, var(--coral) 0 4px, transparent 4.5px), radial-gradient(circle at 212px 30px, var(--sky) 0 3px, transparent 3.5px), radial-gradient(circle at 400px 120px, var(--gold) 0 4px, transparent 4.5px), radial-gradient(circle at 560px 60px, var(--sage) 0 3px, transparent 3.5px), radial-gradient(circle at 120px 260px, var(--lilac) 0 3.5px, transparent 4px), radial-gradient(circle at 300px 330px, var(--coral) 0 3px, transparent 3.5px), radial-gradient(circle at 520px 300px, var(--sky) 0 4px, transparent 4.5px), radial-gradient(circle at 60px 500px, var(--gold) 0 3px, transparent 3.5px), radial-gradient(circle at 260px 560px, var(--sage) 0 4px, transparent 4.5px), radial-gradient(circle at 460px 480px, var(--lilac) 0 3px, transparent 3.5px), radial-gradient(circle at 600px 590px, var(--coral) 0 3.5px, transparent 4px); background-size: 640px 640px; }
 
-/* Hero: the invitation */
+/* Hero */
 .hero { position: relative; background-color: var(--cream); padding-bottom: clamp(56px, 7vw, 92px); overflow-x: clip; }
 .hero:not(:has(.garland)) { padding-top: clamp(28px, 4vw, 56px); }
 .hero::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 1px); height: var(--scallop); background: radial-gradient(circle at 50% 0, var(--cream) calc(var(--scallop) / 2), transparent calc(var(--scallop) / 2 + .5px)) 0 0 / var(--scallop) var(--scallop) repeat-x; z-index: 1; }
@@ -190,51 +190,49 @@ main > .band:last-child::after { display: none; }
 .o7 { --o: 7; } .o8 { --o: 8; } .o9 { --o: 9; } .o10 { --o: 10; } .o11 { --o: 11; } .o12 { --o: 12; } .o13 { --o: 13; }
 @keyframes drop { from { transform: translateY(-16px); opacity: 0; } }
 @keyframes sway { 0% { transform: rotate(0); } 30% { transform: rotate(4deg); } 65% { transform: rotate(-2.5deg); } 100% { transform: rotate(0); } }
-.hero-stage { position: relative; display: grid; justify-items: center; margin-top: clamp(10px, 1.4vw, 20px); }
-.invite { position: relative; z-index: 2; width: min(100%, 730px); background: var(--card); border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: -12px; border-radius: var(--radius-sm); padding: clamp(34px, 3.6vw, 46px) clamp(22px, 4.4vw, 54px) clamp(34px, 3.6vw, 44px); text-align: center; box-shadow: var(--shadow-card); display: grid; justify-items: center; gap: 14px; animation: settle .9s var(--ease) .1s both; }
-@keyframes settle { from { transform: translateY(24px) rotate(-2.5deg); opacity: 0; } 40% { opacity: 1; } }
-.invite .mark { width: 96px; height: 56px; }
-.invite .mark path { animation: draw 1s var(--ease) both; }
-.invite .mark .c1 { animation-delay: .3s; } .invite .mark .c2 { animation-delay: .4s; } .invite .mark .c3 { animation-delay: .5s; } .invite .mark .c4 { animation-delay: .6s; }
 @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 /* Line boil (the filter is in the page, see boilFilter in render.mjs). An animation switches it on, so it stays
-   off wherever animations are off (the owner's switch, reduced motion). The mark starts once it has drawn itself. */
-.invite .mark { animation: boil-on 0s 1.7s both; }
-@keyframes boil-on { to { filter: url(#boil); } }
+   off wherever animations are off (the owner's switch, reduced motion). */
 @keyframes boil-soft { to { filter: url(#boil-soft); } }
+/* Text on the left, one big photo with the host's name on the right. Phones: the photo first, as a wide strip. */
+.hero-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 64px); align-items: center; margin-top: clamp(10px, 1.4vw, 20px); }
+.hero-copy { display: grid; justify-items: start; gap: 20px; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px 7px 12px; border-radius: 999px; background: var(--card); font-weight: 800; font-size: .9rem; line-height: 1.3; animation: fade .6s var(--ease) .2s both; }
+.eyebrow .i { color: var(--accent); }
 .hero-title { font-size: calc(var(--fs-h1) * var(--heading-scale, 1) * var(--k, 1)); }
-.hero-title .kicker { margin-bottom: 12px; animation: fade .6s var(--ease) .3s both; }
 .hero-title em { color: var(--accent); }
-.hero-title .w { display: inline-block; animation: word .75s var(--ease) both; animation-delay: calc(.38s + var(--i, 1) * 60ms); }
+.hero-title .w { display: inline-block; animation: word .75s var(--ease) both; animation-delay: calc(.3s + var(--i, 1) * 60ms); }
 .w1 { --i: 1; } .w2 { --i: 2; } .w3 { --i: 3; } .w4 { --i: 4; } .w5 { --i: 5; } .w6 { --i: 6; } .w7 { --i: 7; } .w8 { --i: 8; } .w9 { --i: 9; } .w10 { --i: 10; } .w11 { --i: 11; } .w12 { --i: 12; }
 @keyframes word { from { opacity: 0; transform: translateY(.42em) rotate(2deg); filter: blur(4px); } }
 @keyframes fade { from { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
-.invite .sub { color: var(--ink-2); max-width: 42ch; font-size: var(--fs-lead); animation: rise .7s var(--ease) .75s both; }
-.invite .sub > * + * { margin-top: .6em; }
-.invite .details { margin: 2px 0 0; width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; text-align: left; }
-.invite .details > div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--rule-2); align-items: baseline; animation: rise .6s var(--ease) both; }
-.invite .details > div:nth-child(1) { animation-delay: .85s; } .invite .details > div:nth-child(2) { animation-delay: .9s; } .invite .details > div:nth-child(3) { animation-delay: .95s; }
-.invite .details > div:nth-child(4) { animation-delay: 1s; } .invite .details > div:nth-child(5) { animation-delay: 1.05s; } .invite .details > div:nth-child(n+6) { animation-delay: 1.1s; }
-.invite dt { font-weight: 800; }
-.invite dd { margin: 0; color: var(--ink-2); }
-.invite .when { align-items: center; }
-.invite .when input { width: 100%; min-height: 44px; padding: 6px 10px; border: 0; border-bottom: 2px solid var(--field); border-radius: 0; background: transparent; font: 700 1rem/1.2 var(--font-body); color: var(--ink); color-scheme: inherit; }
-.invite .when input:focus { outline: 2px solid var(--accent); outline-offset: 2px; border-bottom-color: var(--accent); background: var(--sky-50); }
-.cta-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 6px; animation: rise .7s var(--ease) 1.05s both; }
-.hero-pics { display: contents; }
+.hero-copy .sub { color: var(--ink-2); max-width: 36ch; font-size: var(--fs-lead); animation: rise .7s var(--ease) .7s both; }
+.hero-copy .sub > * + * { margin-top: .6em; }
+.cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 4px; animation: rise .7s var(--ease) .85s both; }
+.hero-tel { display: inline-flex; align-items: center; gap: 9px; min-height: 48px; font-weight: 800; font-size: 1.12rem; text-decoration: none; }
+.hero-tel .i { color: var(--accent); }
+.hero-tel:hover span:last-child { text-decoration: underline; text-underline-offset: 3px; }
+.plan { list-style: none; margin: 6px 0 0; padding: 18px 0 0; justify-self: stretch; display: flex; flex-wrap: wrap; gap: 10px 26px; border-top: 1px dashed var(--rule-2); animation: rise .7s var(--ease) 1s both; }
+.plan li { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: .95rem; line-height: 1.3; }
+.plan-n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--card); color: var(--accent); font: 400 1.05rem/1 var(--font-display); }
+.hero-photo { position: relative; isolation: isolate; padding-left: 34px; animation: rise .9s var(--ease) .25s both; }
+/* The confetti dots scatter around the photo only, so none lands on the headline. */
+.hero.confetti .hero-photo::before { content: ""; position: absolute; inset: -48px -48px -48px -14px; z-index: -1; background-position: -20px -14px; pointer-events: none; }
+.hero-photo .ph { aspect-ratio: 6 / 7; border-radius: 30px; box-shadow: var(--shadow-card); }
+/* Pinned to the frame: in the .ph grid the photo would otherwise keep its own height and the crop would ignore
+   object-position. */
+.hero-photo .ph img { position: absolute; inset: 0; object-position: 50% 30%; }
+.host { position: absolute; left: 0; bottom: 36px; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 8px 24px 8px 8px; border-radius: 999px; background: var(--card); line-height: 1.2; box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--ink) 45%, transparent); animation: rise .7s var(--ease) .9s both; }
+.host .av { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; flex: none; display: grid; place-items: center; background: var(--lilac-50); color: var(--lilac-ink, var(--ink)); font: 400 1.9rem/1 var(--font-display); }
+.host .av img { width: 100%; height: 100%; object-fit: cover; }
+.host b { display: block; font-family: var(--font-display); font-weight: var(--heading-weight); font-size: 1.4rem; line-height: 1.1; }
+.host small { font-size: .82rem; font-weight: 700; color: var(--ink-2); }
 
 /* Polaroids */
 .polaroid { margin: 0; display: block; background: var(--card); padding: 10px 10px 46px; color: inherit; text-decoration: none; box-shadow: 0 14px 30px -16px color-mix(in srgb, var(--ink) 45%, transparent), 0 1px 2px color-mix(in srgb, var(--ink) 10%, transparent); position: relative; transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
 .polaroid::before { content: ""; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; margin-left: -42px; background: var(--tape); transform: rotate(var(--tape-r, -4deg)); z-index: 1; }
 .polaroid .ph { aspect-ratio: 4 / 5; }
 .polaroid figcaption, .polaroid .cap { position: absolute; left: 0; right: 0; bottom: 9px; padding-inline: 8px; text-align: center; font: 700 1.4rem/1 var(--font-hand); color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hero .polaroid { position: absolute; z-index: 1; width: clamp(170px, 16vw, 226px); }
-.hero .pl-left { left: max(0px, calc(50% - 650px)); top: 60px; transform: rotate(-7deg); animation: slide-l 1s var(--ease) .35s both; }
-.hero .pl-right { right: max(0px, calc(50% - 650px)); top: 170px; transform: rotate(6deg); --tape-r: 5deg; animation: slide-r 1s var(--ease) .5s both; }
-@keyframes slide-l { from { transform: translateX(-40px) rotate(-14deg); opacity: 0; } }
-@keyframes slide-r { from { transform: translateX(40px) rotate(12deg); opacity: 0; } }
-.hero .polaroid:hover { transform: rotate(0) scale(1.04); z-index: 3; }
 
 /* Photos and their stand-ins */
 .ph { position: relative; margin: 0; display: grid; place-items: center; overflow: hidden; container-type: size; background: var(--bg, var(--sky-50)); color: var(--fg, var(--sky)); }
@@ -435,8 +433,6 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 .form-status { text-align: center; font-weight: 800; color: var(--ink-2); }
 .form-status[data-tone="error"] { display: flex; gap: 10px; align-items: flex-start; justify-content: center; background: color-mix(in srgb, var(--danger) 10%, var(--card)); color: var(--ink); border-radius: 12px; padding: 16px 18px; }
 .form:focus { outline: none; }
-.pulse { animation: pulse .9s var(--ease) 2; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); } 100% { box-shadow: 0 0 0 14px color-mix(in srgb, var(--accent) 0%, transparent); } }
 .done { display: grid; gap: 10px; justify-items: center; text-align: center; background: var(--sage-50); border-radius: var(--radius-sm); padding: 32px 28px; }
 .done:focus { outline: none; }
 .done h3 { font-size: calc(1.8rem * var(--heading-scale, 1)); }
@@ -548,16 +544,12 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 .js .envelope.pre .rsvp { translate: 0 44px; }
 .js .envelope.pre::before { scale: 1 .15; }
 
-/* Hero polaroids drift with the scroll where the browser supports scroll-driven animations */
+/* The bunting lifts and fades with the scroll where the browser supports scroll-driven animations */
 @supports (animation-timeline: scroll()) {
   @media (min-width: 54.01em) and (prefers-reduced-motion: no-preference) {
-    :root:not([data-motion="off"]):not([data-preview]) .hero .pl-left { animation: slide-l 1s var(--ease) .35s both, drift-a linear both; animation-timeline: auto, scroll(root); animation-range: normal, 0 90vh; }
-    :root:not([data-motion="off"]):not([data-preview]) .hero .pl-right { animation: slide-r 1s var(--ease) .5s both, drift-b linear both; animation-timeline: auto, scroll(root); animation-range: normal, 0 90vh; }
     :root:not([data-motion="off"]):not([data-preview]) .garland { animation: lift linear both; animation-timeline: scroll(root); animation-range: 0 60vh; }
   }
 }
-@keyframes drift-a { to { translate: 0 -70px; } }
-@keyframes drift-b { to { translate: 0 -120px; } }
 @keyframes lift { to { translate: 0 -24px; opacity: .55; } }
 
 /* Gentle cross-fade when moving between pages and languages */
@@ -569,9 +561,6 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
 @media (max-width: 72em) {
   .nav { display: none; }
   .menu-toggle { display: block; }
-  .hero .polaroid { width: 150px; }
-  .hero .pl-left { left: -6px; top: 40px; }
-  .hero .pl-right { right: -6px; top: 250px; }
   .packs.n3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 72.01em) {
@@ -585,10 +574,11 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
   .swipe-hint .i { animation: nudge 1.6s var(--ease) 3; }
 }
 @media (max-width: 54em) {
-  .hero-pics { display: flex; justify-content: center; gap: 5%; margin-top: -28px; position: relative; z-index: 1; width: 100%; }
-  .hero .polaroid { position: relative; left: auto; right: auto; top: auto; width: 40%; max-width: 190px; }
-  .hero .pl-left { transform: rotate(-6deg); animation: rise .8s var(--ease) .9s both; }
-  .hero .pl-right { transform: rotate(5deg) translateY(14px); animation: rise .8s var(--ease) 1s both; }
+  .hero-stage { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .hero-photo { order: -1; padding-left: 0; }
+  .hero-photo .ph { aspect-ratio: auto; height: clamp(190px, 50vw, 360px); border-radius: 22px; }
+  .hero-photo .ph img { object-position: 50% 42%; }
+  .host { left: 16px; bottom: -16px; }
   .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 47.5em) {
@@ -599,13 +589,17 @@ fieldset.field { border: 0; margin: 0; padding: 0; }
   .hdr-cta { display: none; }
   .lang summary { padding: 0 6px; }
   .lang summary .lang-short { display: none; }
-  .invite { padding: 36px 20px 30px; outline-offset: -9px; gap: 12px; }
-  .invite .mark { width: 76px; height: 44px; }
-  .invite .cta-row { width: 100%; }
-  .invite .cta-row .btn { flex: 1 1 100%; }
-  .invite .details { grid-template-columns: minmax(0, 1fr); }
-  .invite .details > div { grid-template-columns: 96px minmax(0, 1fr); }
-  .invite .when { display: none; }
+  .hero-stage { gap: 38px; }
+  .hero-copy { gap: 14px; }
+  .eyebrow { font-size: .8rem; padding: 5px 12px 5px 9px; }
+  .hero-copy .sub { font-size: 1.03rem; }
+  .host { gap: 9px; padding: 5px 16px 5px 5px; }
+  .host .av { width: 42px; height: 42px; font-size: 1.35rem; }
+  .host b { font-size: 1.05rem; }
+  .host small { font-size: .72rem; }
+  .cta-row { justify-self: stretch; flex-direction: column; align-items: stretch; gap: 6px; }
+  .hero-tel { align-self: center; }
+  .plan { display: none; }
   .menu li { grid-template-columns: 44px minmax(0, 1fr) auto; grid-template-areas: "ic what time" ". desc desc"; row-gap: 2px; }
   .menu .ic { width: 44px; height: 44px; }
   .menu .what { display: contents; }

@@ -707,7 +707,7 @@ function editField(path) {
   const panel = panelForPath(path, app.settings);
   if (!panel) return;
   // Open the list item the field belongs to (a service, a question …).
-  const item = path.match(/^(.*?\.(?:items|images|photos|details|facts|badges)\.\d+|socials\.\d+)(\.|$)/);
+  const item = path.match(/^(.*?\.(?:items|images|plan|facts|badges)\.\d+|socials\.\d+)(\.|$)/);
   if (item) app.setOpen(item[1], true);
   app.goto(panel, { follow: false });
   const field = ui.editor.querySelector(`[data-path="${CSS.escape(path)}"]`) ?? (item && ui.editor.querySelector(`[data-path^="${CSS.escape(item[1])}."]`));

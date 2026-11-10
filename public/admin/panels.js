@@ -282,47 +282,56 @@ function languages(app) {
 // --- hero --------------------------------------------------------------------------------
 
 function hero(app) {
-  const photos = app.get('hero.photos') ?? [];
+  const photo = app.get('hero.photo');
   return [
-    head('Vabilo na vrhu strani', 'Prvo, kar obiskovalec vidi: vabilo z naslovom, opisom, podrobnostmi in gumboma, ob njem dve fotografiji. Namig: klik na besedilo v predogledu odpre njegovo polje.'),
+    head('Vrh strani', 'Prvo, kar obiskovalec vidi. V nekaj sekundah naj izve, kaj ponujate, kdo ste in kako vas dobi. Namig: klik na besedilo v predogledu odpre njegovo polje.'),
     card(
-      'Besedilo vabila',
+      'Besedilo',
       null,
-      tx(app, 'hero.badge', { label: 'Napis nad naslovom', maxlength: 60, placeholder: 'npr. Vabilo', help: 'Bere se skupaj z naslovom: »Vabilo na najlepšo zabavo leta«.' }),
-      tx(app, 'hero.title', { label: 'Glavni naslov', maxlength: 140, counter: 60, help: 'Besedo med zvezdicama, npr. *leta*, izpišemo poševno v glavni barvi.' }),
-      tx(app, 'hero.text', { label: 'Opis pod naslovom', multiline: true, rows: 3, maxlength: 500, help: MARKDOWN_HELP })
+      tx(app, 'hero.badge', { label: 'Vrstica nad naslovom', maxlength: 60, placeholder: 'npr. Pridem k vam domov ali v najeti prostor', help: 'Kratko, npr. kje delate. Prazno = brez vrstice.' }),
+      tx(app, 'hero.title', { label: 'Glavni naslov', maxlength: 140, counter: 60, help: 'Povejte, kaj ponujate in kdo ste. Besedo med zvezdicama, npr. *vzgojiteljico Emo*, izpišemo poševno v glavni barvi.' }),
+      tx(app, 'hero.text', { label: 'Stavek pod naslovom', multiline: true, rows: 3, maxlength: 500, help: `Zakaj je z vami staršem lažje. ${MARKDOWN_HELP}` })
     ),
     card(
-      'Podrobnosti na vabilu',
-      'Kratke vrstice kot na pravem vabilu: za koga, kje, kaj … Na telefonu so ena pod drugo.',
-      repeater(app, 'hero.details', {
-        max: LIMITS.details,
-        addLabel: 'Dodaj vrstico',
-        empty: 'Ni podrobnosti.',
-        itemTitle: (x) => `${name(app, x.term, '…')}: ${name(app, x.value)}`,
-        newItem: () => ({ term: t4(''), value: t4('') }),
-        fields: (p) => [h('div', { class: 'grid-2' }, tx(app, `${p}.term`, { label: 'Kaj', maxlength: 30, placeholder: 'npr. Kje' }), tx(app, `${p}.value`, { label: 'Besedilo', maxlength: 80, placeholder: 'npr. Doma ali v najetem prostoru' }))],
-      }),
-      toggle(app, 'hero.showDate', { label: 'Vrstica »Kdaj« z izbiro datuma', help: 'Izbrani datum se prenese v obrazec. Prikaže se, ko obrazec deluje; na telefonu je skrita.' })
-    ),
-    card('Gumba', 'Prvi gumb je poudarjen, drugi obrobljen. Gumb brez besedila se ne prikaže.', buttonFields(app, 'hero.primary', { title: 'Glavni gumb', allowNone: true }), buttonFields(app, 'hero.secondary', { title: 'Drugi gumb', allowNone: true })),
-    card(
-      'Fotografiji ob vabilu',
-      'Dve fotografiji kot polaroidki, s pripisom v ročni pisavi. Brez fotografije je prikazana ilustracija.',
-      photos.some((x) => isSample(x.src)) ? note('Vzorčni fotografiji iz zbirk Pexels in Unsplash. Zamenjajte ju s svojima, za kateri imate soglasje staršev.', 'warn') : null,
-      repeater(app, 'hero.photos', {
-        max: LIMITS.heroPhotos,
-        addLabel: 'Dodaj fotografijo',
-        empty: 'Ni fotografij. Vabilo je na sredini, brez polaroidk.',
-        itemTitle: (x, i) => `${i === 0 ? 'Leva' : 'Desna'}: ${name(app, x.caption, 'brez pripisa')}${isSample(x.src) ? ' · vzorčna' : ''}`,
-        onOpen: () => app.previewAnchor('hero'),
-        newItem: () => ({ src: '', alt: t4(''), caption: t4('') }),
-        fields: (p) => [
-          image(app, `${p}.src`, { label: 'Fotografija', help: 'Pokončna je najboljša (4 : 5). Objavite le fotografije otrok, za katere imate soglasje staršev.', upload: { maxWidth: 900, maxHeight: 1200, name: 'vabilo' } }),
-          tx(app, `${p}.caption`, { label: 'Pripis v ročni pisavi', maxlength: 40, placeholder: 'npr. Rojstni dan!' }),
-          tx(app, `${p}.alt`, { label: 'Opis slike (za slabovidne in iskalnike)', maxlength: 200, placeholder: 'npr. Otroci plešejo v krogu' }),
-        ],
+      'Gumbi',
+      'Glavni gumb je poudarjen, drugi obrobljen. Gumb brez besedila se ne prikaže.',
+      buttonFields(app, 'hero.primary', { title: 'Glavni gumb', allowNone: true }),
+      buttonFields(app, 'hero.secondary', { title: 'Drugi gumb (neobvezno)', allowNone: true }),
+      toggle(app, 'hero.showPhone', {
+        label: 'Telefonska številka ob gumbu',
+        help: app.get('contact.phone') ? 'Na telefonu se ob dotiku začne klic.' : 'Prikaže se, ko pod Kontakt vpišete telefonsko številko.',
       })
+    ),
+    card(
+      'Koraki',
+      'Kratko, kako pride do zabave, npr. »Pišete mi datum«. Na telefonu so skriti, da je vrh strani krajši.',
+      repeater(app, 'hero.plan', {
+        max: LIMITS.plan,
+        addLabel: 'Dodaj korak',
+        empty: 'Ni korakov.',
+        itemTitle: (x, i) => `${i + 1}. ${name(app, x.text, 'Nov korak')}`,
+        onOpen: () => app.previewAnchor('hero'),
+        newItem: () => ({ text: t4('') }),
+        fields: (p) => [tx(app, `${p}.text`, { label: 'Besedilo', maxlength: 40, placeholder: 'npr. Praznujete' })],
+      })
+    ),
+    card(
+      'Fotografija in vaše ime',
+      'Velika fotografija ob besedilu. Na njej je oznaka z vašim imenom in fotografijo iz razdelka O meni (dokler je ni, začetnica imena).',
+      image(app, 'hero.photo', {
+        label: 'Fotografija',
+        help: isSample(photo)
+          ? 'To je vzorčna fotografija iz zbirke Pexels. Zamenjajte jo s svojo, najbolje z vami med otroki, za katero imate soglasje staršev.'
+          : 'Pokončna je najboljša. Na telefonu je prikazan le vodoraven pas fotografije. Objavite le fotografije otrok, za katere imate soglasje staršev.',
+        upload: { maxWidth: 1200, maxHeight: 1400, name: 'vrh-strani' },
+      }),
+      photo ? tx(app, 'hero.photoAlt', { label: 'Opis slike (za slabovidne in iskalnike)', maxlength: 200, placeholder: 'npr. Otroci plešejo v krogu' }) : null,
+      h(
+        'div',
+        { class: 'grid-2' },
+        text(app, 'hero.hostName', { label: 'Ime na oznaki', maxlength: 40, placeholder: 'npr. Ema', help: 'Prazno = brez oznake.' }),
+        tx(app, 'hero.hostRole', { label: 'Pod imenom', maxlength: 60, placeholder: 'npr. vzgojiteljica v vrtcu' })
+      )
     ),
   ];
 }
@@ -1156,7 +1165,7 @@ function access(app) {
 
 export const PANELS = [
   { id: 'overview', label: 'Pregled', icon: 'overview', render: overview, page: 'home' },
-  { id: 'hero', label: 'Vabilo (vrh strani)', icon: 'hero', render: hero, group: 'Vsebina', page: 'home' },
+  { id: 'hero', label: 'Vrh strani', icon: 'hero', render: hero, group: 'Vsebina', page: 'home' },
   { id: 'sections', label: 'Razdelki in meni', icon: 'sections', render: sections, group: 'Vsebina', page: 'home' },
   { id: 'program', label: 'Program zabave', icon: 'program', render: program, group: 'Vsebina', page: 'home', anchor: 'steps' },
   { id: 'packages', label: 'Paketi', icon: 'packages', render: packages, group: 'Vsebina', page: 'home', anchor: 'packages' },

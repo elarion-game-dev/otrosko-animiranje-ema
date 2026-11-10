@@ -64,7 +64,7 @@ if (header) {
   onScroll();
 }
 
-// --- quick bar on phones: shows once the invitation's buttons scroll away, hides at the contact tiles,
+// --- quick bar on phones: shows once the hero's buttons scroll away, hides at the contact tiles,
 // the form and the footer, so it never covers what it points to ---------------------------------------
 
 const bar = $('[data-quickbar]');
@@ -84,7 +84,7 @@ if (bar) {
         seen[key] = entry.isIntersecting;
         syncBar();
       }).observe(el);
-    const heroTarget = $('.invite .cta-row') ?? $('.hero');
+    const heroTarget = $('.hero .cta-row') ?? $('.hero');
     if (heroTarget) watch(heroTarget, 'hero');
     else seen.hero = false;
     watch($('.quick'), 'tiles');
@@ -232,10 +232,10 @@ if (programme) {
   }
 }
 
-/** The line boil (rainbow mark, signature) only runs while one of them is on screen, and never when motion is off. */
+/** The line boil on the signature only runs while it is on screen, and never when motion is off. */
 const boilDefs = $('#boil-defs');
 if (boilDefs && typeof boilDefs.pauseAnimations === 'function') {
-  const targets = $$('.invite .mark, .sign');
+  const targets = $$('.sign');
   if (reduce || !targets.length) boilDefs.pauseAnimations();
   else if (hasIO) {
     const visible = new Set();
@@ -405,14 +405,6 @@ const today = () => {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
-const locale = { sl: 'sl-SI', en: 'en-GB', hr: 'hr-HR', sr: 'sr-Cyrl-RS' }[root.lang] ?? 'sl-SI';
-const longDate = (iso) => {
-  try {
-    return new Date(`${iso}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
-  } catch {
-    return iso;
-  }
-};
 /** A label's text without its "(optional)" hints. */
 const labelText = (el) => {
   const copy = el.cloneNode(true);
@@ -429,14 +421,13 @@ function enhanceForm(form) {
   const honeypot = $('[data-honeypot]', form);
   const responds = form.dataset.responds;
   const contact = $('#f-contact', form);
-  const heroDate = $('#hero-date');
   const topicInputs = $$('[data-topic]', form);
   const groups = $$('.group', form);
   let busy = false;
   let replyTouched = false;
 
   form.noValidate = true;
-  for (const input of [...$$('input[type="date"]', form), heroDate].filter(Boolean)) input.min = today();
+  for (const input of $$('input[type="date"]', form)) input.min = today();
 
   const say = (text, tone = 'info') => {
     status.textContent = text;
@@ -636,30 +627,12 @@ function enhanceForm(form) {
     }
   });
 
-  /** Jump to a field and make it glow, e.g. the date after choosing one on the invitation. */
-  const showField = (el) => {
-    if (!el) return;
-    quiet();
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-    el.classList.remove('pulse');
-    void el.offsetWidth;
-    el.classList.add('pulse');
-    (fine.matches ? el : form).focus({ preventScroll: true });
-  };
   const toForm = () => {
     quiet();
     form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     form.focus({ preventScroll: true });
   };
   if (!form.hasAttribute('tabindex')) form.tabIndex = -1;
-
-  // The date picked on the invitation goes into the form.
-  heroDate?.addEventListener('change', () => {
-    const target = $('#f-p-date', form);
-    if (!target || !heroDate.value) return;
-    target.value = heroDate.value;
-    say(msg('added').replace('{d}', longDate(heroDate.value)));
-  });
 
   return {
     /** A button elsewhere on the page chose a topic (and maybe a package). Returns true when it handled the scroll. */
@@ -669,10 +642,6 @@ function enhanceForm(form) {
       if (link.dataset.paket) {
         const pack = $('#f-p-pack', form);
         if (pack) pack.value = [...pack.options].some((o) => o.value === link.dataset.paket) ? link.dataset.paket : '';
-      }
-      if (link.closest('.invite') && heroDate?.value && !phone.matches) {
-        showField($('#f-p-date', form));
-        return true;
       }
       // On phones a button lands on the form itself, not on the heading a screen above it.
       if (phone.matches) {

@@ -61,96 +61,23 @@
   },
   "hero": {
     "badge": {
-      "sl": "Vabilo",
-      "en": "An invitation",
-      "hr": "Pozivnica",
-      "sr": "Pozivnica"
+      "sl": "Pridem k vam domov ali v najeti prostor",
+      "en": "I come to your home or a rented venue",
+      "hr": "Dolazim k vama kući ili u iznajmljeni prostor",
+      "sr": "Dolazim kod vas kući ili u iznajmljeni prostor"
     },
     "title": {
-      "sl": "na najlepšo zabavo *leta*",
-      "en": "to the best party of *the year*",
-      "hr": "na najbolju zabavu *godine*",
-      "sr": "na najbolju zabavu *godine*"
+      "sl": "Rojstnodnevne zabave z *vzgojiteljico Emo*",
+      "en": "Birthday parties with *Ema, a kindergarten teacher*",
+      "hr": "Rođendanske zabave s *odgojiteljicom Emom*",
+      "sr": "Rođendanske zabave sa *vaspitačicom Emom*"
     },
     "text": {
-      "sl": "Rojstnodnevne zabave za otroke, polne iger, gibanja in smeha. Vodi jih vzgojiteljica Ema.",
-      "en": "Birthday parties for children, full of games, movement and laughter. Led by Ema, a kindergarten teacher.",
-      "hr": "Rođendanske zabave za djecu, pune igara, kretanja i smijeha. Vodi ih odgojiteljica Ema.",
-      "sr": "Rođendanske zabave za decu, pune igara, kretanja i smeha. Vodi ih vaspitačica Ema."
+      "sl": "Vi pripravite prostor in torto. Za igre, poligon in program za vse otroke poskrbim jaz.",
+      "en": "You provide the space and the cake. I take care of the games, an obstacle course and a programme for all the children.",
+      "hr": "Vi pripremite prostor i tortu. Za igre, poligon i program za svu djecu pobrinem se ja.",
+      "sr": "Vi pripremite prostor i tortu. Za igre, poligon i program za svu decu pobrinem se ja."
     },
-    "details": [
-      {
-        "term": {
-          "sl": "Za koga",
-          "en": "Who for",
-          "hr": "Za koga",
-          "sr": "Za koga"
-        },
-        "value": {
-          "sl": "Slavljenec in prijatelji",
-          "en": "The birthday child and friends",
-          "hr": "Slavljenik i prijatelji",
-          "sr": "Slavljenik i prijatelji"
-        }
-      },
-      {
-        "term": {
-          "sl": "Kje",
-          "en": "Where",
-          "hr": "Gdje",
-          "sr": "Gde"
-        },
-        "value": {
-          "sl": "Doma ali v najetem prostoru",
-          "en": "At home or in a rented venue",
-          "hr": "Kod kuće ili u iznajmljenom prostoru",
-          "sr": "Kod kuće ili u iznajmljenom prostoru"
-        }
-      },
-      {
-        "term": {
-          "sl": "Kaj",
-          "en": "What",
-          "hr": "Što",
-          "sr": "Šta"
-        },
-        "value": {
-          "sl": "Igre, gibanje in smeh",
-          "en": "Games, movement and laughter",
-          "hr": "Igre, kretanje i smijeh",
-          "sr": "Igre, kretanje i smeh"
-        }
-      },
-      {
-        "term": {
-          "sl": "Cena",
-          "en": "Price",
-          "hr": "Cijena",
-          "sr": "Cena"
-        },
-        "value": {
-          "sl": "Znana vnaprej",
-          "en": "Agreed in advance",
-          "hr": "Poznata unaprijed",
-          "sr": "Poznata unapred"
-        }
-      },
-      {
-        "term": {
-          "sl": "Kdo vodi",
-          "en": "Led by",
-          "hr": "Tko vodi",
-          "sr": "Ko vodi"
-        },
-        "value": {
-          "sl": "Ema, vzgojiteljica",
-          "en": "Ema, a kindergarten teacher",
-          "hr": "Ema, odgojiteljica",
-          "sr": "Ema, vaspitačica"
-        }
-      }
-    ],
-    "showDate": true,
     "primary": {
       "label": {
         "sl": "Preverite prost termin",
@@ -163,46 +90,55 @@
     },
     "secondary": {
       "label": {
-        "sl": "Poglejte program",
-        "en": "See the programme",
-        "hr": "Pogledajte program",
-        "sr": "Pogledajte program"
+        "sl": "",
+        "en": "",
+        "hr": "",
+        "sr": ""
       },
       "target": "steps",
       "url": ""
     },
-    "photos": [
+    "showPhone": true,
+    "plan": [
       {
-        "src": "/assets/img/sample/hero-party.webp",
-        "alt": {
-          "sl": "Otroci ležijo na odeji in lovijo konfete",
-          "en": "Children lying on a blanket, catching confetti",
-          "hr": "Djeca leže na dekici i hvataju konfete",
-          "sr": "Deca leže na dekici i hvataju konfete"
-        },
-        "caption": {
-          "sl": "Rojstni dan!",
-          "en": "Birthday time!",
-          "hr": "Rođendan!",
-          "sr": "Rođendan!"
+        "text": {
+          "sl": "Pišete mi datum",
+          "en": "Send me the date",
+          "hr": "Javite mi datum",
+          "sr": "Javite mi datum"
         }
       },
       {
-        "src": "/assets/img/sample/hero-play.webp",
-        "alt": {
-          "sl": "Otroci s klobučki plešejo v krogu",
-          "en": "Children in party hats dancing in a circle",
-          "hr": "Djeca sa šeširićima plešu u krugu",
-          "sr": "Deca sa šeširićima plešu u krugu"
-        },
-        "caption": {
-          "sl": "Igre in smeh",
-          "en": "Games and giggles",
-          "hr": "Igre i smijeh",
-          "sr": "Igre i smeh"
+        "text": {
+          "sl": "Dogovoriva program",
+          "en": "We agree on the programme",
+          "hr": "Dogovorimo program",
+          "sr": "Dogovorimo program"
+        }
+      },
+      {
+        "text": {
+          "sl": "Praznujete",
+          "en": "You celebrate",
+          "hr": "Slavite",
+          "sr": "Slavite"
         }
       }
-    ]
+    ],
+    "photo": "/assets/img/sample/hero-play.webp",
+    "photoAlt": {
+      "sl": "Otroci s klobučki plešejo v krogu",
+      "en": "Children in party hats dancing in a circle",
+      "hr": "Djeca sa šeširićima plešu u krugu",
+      "sr": "Deca sa šeširićima plešu u krugu"
+    },
+    "hostName": "Ema",
+    "hostRole": {
+      "sl": "vzgojiteljica v vrtcu",
+      "en": "kindergarten teacher",
+      "hr": "odgojiteljica u vrtiću",
+      "sr": "vaspitačica u vrtiću"
+    }
   },
   "sections": [
     {

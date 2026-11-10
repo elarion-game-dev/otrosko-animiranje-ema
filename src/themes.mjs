@@ -152,39 +152,103 @@ export const PRESET_KEYS = ['headingFont', 'bodyFont'];
 
 const RAINBOW_DEFAULT = { coral: '#e39a86', gold: '#ebc66f', sage: '#9cc29a', sky: '#8fb0d6', lilac: '#b9a3d6' };
 
+/**
+ * How the admin groups the colour schemes. Parents book, so every scheme keeps a calm page with strong text contrast;
+ * the playful ones turn up the colour a little, which young children tend to like, without going neon.
+ */
+export const PRESET_GROUPS = {
+  calm: 'Umirjene',
+  playful: 'Igrive',
+  special: 'Za posebne priložnosti',
+};
+
+// No two schemes share both the band colour and the button colour, so each one looks clearly different. `note` names
+// those two colours for the admin.
 export const PRESETS = {
   vabilo: {
     label: 'Vabilo',
+    group: 'calm',
+    note: 'Krem in temno modra. Privzeta.',
     colors: { bg: '#fffcf7', alt: '#f8f0e3', surface: '#ffffff', border: '#e4d8c4', text: '#2c2a3a', muted: '#625c70', accent: '#3f5a8a', onAccent: '#ffffff', ...RAINBOW_DEFAULT },
     headingFont: 'dm-serif',
     bodyFont: 'nunito-sans',
   },
   malina: {
     label: 'Malinovo vabilo',
+    group: 'calm',
+    note: 'Nežno rožnata in malinova.',
     colors: { bg: '#fffaf8', alt: '#fbefea', surface: '#ffffff', border: '#eed9d1', text: '#33242c', muted: '#6b5560', accent: '#a3365e', onAccent: '#ffffff', coral: '#ec9a8f', gold: '#efc86f', sage: '#a7c79a', sky: '#9ab8db', lilac: '#c7a3d3' },
     headingFont: 'fraunces',
     bodyFont: 'nunito-sans',
   },
   gozd: {
     label: 'Gozdno vabilo',
+    group: 'calm',
+    note: 'Svetlo zelena in gozdno zelena.',
     colors: { bg: '#fbfcf6', alt: '#eef2e1', surface: '#ffffff', border: '#d8dfc6', text: '#25302a', muted: '#56604f', accent: '#2f6b4f', onAccent: '#ffffff', coral: '#e3a083', gold: '#e6c66a', sage: '#94c08e', sky: '#8fb6cf', lilac: '#b4a6d4' },
     headingFont: 'dm-serif',
     bodyFont: 'nunito-sans',
   },
   morje: {
     label: 'Morsko vabilo',
+    group: 'calm',
+    note: 'Svetlo turkizna in morsko modra.',
     colors: { bg: '#f8fbfc', alt: '#e7f1f3', surface: '#ffffff', border: '#cfe0e4', text: '#1f2f38', muted: '#4f616b', accent: '#1f6a7a', onAccent: '#ffffff', coral: '#ea9b85', gold: '#ecc66e', sage: '#93c4a2', sky: '#86b7d8', lilac: '#b2a3d8' },
     headingFont: 'dm-serif',
     bodyFont: 'nunito-sans',
   },
+  glina: {
+    label: 'Naravno vabilo',
+    group: 'calm',
+    note: 'Žajbelj in terakota v slogu Montessori.',
+    colors: { bg: '#fbfaf5', alt: '#e9ecdf', surface: '#ffffff', border: '#d5d9c6', text: '#2b2a22', muted: '#5c5c4e', accent: '#a4472c', onAccent: '#ffffff', coral: '#d98d6e', gold: '#dbb35e', sage: '#a5b98e', sky: '#9db7c6', lilac: '#c6a8b7' },
+    headingFont: 'fraunces',
+    bodyFont: 'nunito-sans',
+  },
   igriva: {
     label: 'Igrivo vabilo',
+    group: 'playful',
+    note: 'Svetlo rumena in oranžna, okrogle črke.',
     colors: { bg: '#fffdf5', alt: '#fff3d6', surface: '#ffffff', border: '#efdcb0', text: '#2b2340', muted: '#5f5672', accent: '#c2410c', onAccent: '#ffffff', coral: '#f29a8a', gold: '#f5c84c', sage: '#8fcb8c', sky: '#7fb3e6', lilac: '#bf9ee6' },
     headingFont: 'baloo',
     bodyFont: 'nunito',
   },
+  soncek: {
+    label: 'Sončno vabilo',
+    group: 'playful',
+    note: 'Rumena in kraljevsko modra. Najbolj vesela.',
+    colors: { bg: '#fffef6', alt: '#fff2bf', surface: '#ffffff', border: '#ecdc9c', text: '#272a3a', muted: '#5a5748', accent: '#2453a6', onAccent: '#ffffff', coral: '#f4917c', gold: '#f6c33d', sage: '#82cf90', sky: '#6fb2ea', lilac: '#b79af0' },
+    headingFont: 'grandstander',
+    bodyFont: 'nunito',
+  },
+  balon: {
+    label: 'Vabilo z baloni',
+    group: 'playful',
+    note: 'Nebesno modra in rdeča, živahne zastavice.',
+    colors: { bg: '#fbfdff', alt: '#e6f2fd', surface: '#ffffff', border: '#cbdff2', text: '#1f2540', muted: '#4d5670', accent: '#c8323c', onAccent: '#ffffff', coral: '#f47d76', gold: '#f8c43e', sage: '#6fcb8b', sky: '#5aa9ec', lilac: '#a98bef' },
+    headingFont: 'baloo',
+    bodyFont: 'nunito',
+  },
+  sivka: {
+    label: 'Pravljično vabilo',
+    group: 'playful',
+    note: 'Barva sivke in vijolična, mehke črke.',
+    colors: { bg: '#fcfaff', alt: '#f1ecfa', surface: '#ffffff', border: '#ddd3ee', text: '#2a2540', muted: '#5d5672', accent: '#5b3fa0', onAccent: '#ffffff', coral: '#f0a3a0', gold: '#f1cd76', sage: '#9fd3b7', sky: '#97bfe9', lilac: '#bea3ea' },
+    headingFont: 'comfortaa',
+    bodyFont: 'nunito',
+  },
+  zima: {
+    label: 'Zimsko vabilo',
+    group: 'special',
+    note: 'Ledeno modra in smrekovo zelena. Za december in obiske Dedka Mraza.',
+    colors: { bg: '#f8fbfd', alt: '#e7eff6', surface: '#ffffff', border: '#cddbe7', text: '#1c2a38', muted: '#4a5a6a', accent: '#1e5e4a', onAccent: '#ffffff', coral: '#e07b80', gold: '#e2bd62', sage: '#7fb89a', sky: '#9cc7e6', lilac: '#bfb6dc' },
+    headingFont: 'dm-serif',
+    bodyFont: 'nunito-sans',
+  },
   noc: {
     label: 'Večerno vabilo (temno)',
+    group: 'special',
+    note: 'Temno modra in zlata.',
     colors: { bg: '#1e2032', alt: '#262941', surface: '#2d3050', border: '#474b70', text: '#f4efe6', muted: '#c6c0d4', accent: '#ebc66f', onAccent: '#2c2a3a', ...RAINBOW_DEFAULT },
     headingFont: 'dm-serif',
     bodyFont: 'nunito-sans',

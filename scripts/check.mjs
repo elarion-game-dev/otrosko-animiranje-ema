@@ -10,7 +10,7 @@ import { markdown } from '../src/markdown.mjs';
 import { resolveProvider } from '../src/providers.mjs';
 import { renderPage, renderSite, typo } from '../src/render.mjs';
 import { DEFAULT_SETTINGS, isSample, missingTranslations, normalizeSettings, placeholders, samplePhotosInUse, setupChecklist, TERMS_DRAFT } from '../src/settings.mjs';
-import { contrast, contrastReport, PRESETS, themeColors, themeCss } from '../src/themes.mjs';
+import { contrast, contrastReport, PRESET_GROUPS, PRESETS, themeColors, themeCss } from '../src/themes.mjs';
 import { ICON_SIZES, iconPng } from './icon-png.mjs';
 import { findRenditions, imageWidth } from './images.mjs';
 import { basePath, i18nFields, LANGS, phoneDigits, renditionPath, renditionWidths, safeAssetPath, safeUrl, toCyrillic } from '../src/util.mjs';
@@ -452,6 +452,23 @@ await test('Every preset passes WCAG AA for text and buttons, and derived colour
     for (const key of ['coral', 'gold', 'sage', 'sky', 'lilac']) assert.ok(contrast(vars[`--${key}-ink`], c.surface) >= 4.5, `${id}: ${key} text on cards`);
     assert.ok(contrast(vars['--field'], c.surface) >= 3 && contrast(vars['--field'], c.bg) >= 3, `${id}: form field borders`);
     assert.ok(contrast(vars['--on-footer-2'], vars['--footer']) >= 4.5, `${id}: footer text`);
+  }
+});
+
+await test('Colour schemes are grouped and described, and none repeats another', () => {
+  const ids = Object.keys(PRESETS);
+  for (const [id, preset] of Object.entries(PRESETS)) {
+    assert.ok(PRESET_GROUPS[preset.group], `${id} has a group`);
+    assert.ok(preset.note && preset.note.length <= 80, `${id} has a short description`);
+  }
+  for (const group of Object.keys(PRESET_GROUPS)) assert.ok(ids.some((id) => PRESETS[id].group === group), `${group} is not empty`);
+  // No two schemes share the same band and button colours.
+  const looks = ids.map((id) => `${PRESETS[id].colors.alt} ${PRESETS[id].colors.accent}`);
+  assert.equal(new Set(looks).size, ids.length);
+  for (const id of ['glina', 'soncek', 'balon', 'sivka', 'zima']) {
+    const s = structuredClone(DEFAULT_SETTINGS);
+    s.theme = { ...s.theme, preset: id, colors: { ...PRESETS[id].colors } };
+    assert.equal(normalizeSettings(s).theme.preset, id, `${id} survives a save`);
   }
 });
 

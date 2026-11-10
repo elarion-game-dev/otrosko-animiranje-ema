@@ -1085,6 +1085,10 @@ body:has(.shell) {
   gap: 0.6rem;
 }
 
+.presets + .subhead {
+  margin-top: 1rem;
+}
+
 .preset {
   display: grid;
   gap: 0.25rem;
@@ -1107,16 +1111,42 @@ body:has(.shell) {
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
-.preset-swatches {
-  display: flex;
-  height: 30px;
+/* A tiny top of the page in the scheme's colours: band, bunting, heading and button. Colours come from --pm-*. */
+.preset-mini {
+  display: grid;
+  grid-template-rows: 12px 1fr auto;
+  gap: 4px;
+  height: 74px;
   margin-bottom: 0.3rem;
+  padding: 0 10px 10px;
   overflow: hidden;
+  border: 1px solid var(--pm-rule);
   border-radius: 6px;
+  background: var(--pm-band);
 }
 
-.preset-swatch {
+.pm-flags {
+  display: flex;
+  gap: 3px;
+}
+
+.pm-flag {
   flex: 1;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.pm-title {
+  align-self: end;
+  color: var(--pm-text);
+  font-size: 1.15rem;
+  line-height: 1.1;
+}
+
+.pm-btn {
+  width: 52px;
+  height: 12px;
+  border-radius: 99px;
+  background: var(--pm-accent);
 }
 
 .preset-name {
@@ -1124,9 +1154,10 @@ body:has(.shell) {
   font-size: 0.9rem;
 }
 
-.preset-fonts {
+.preset-note {
   color: var(--muted);
   font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 .icon-picker {

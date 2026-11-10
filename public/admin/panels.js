@@ -27,6 +27,7 @@ import {
   DECOR_TOGGLES,
   DEFAULT_TEXT_STYLE,
   FONTS,
+  PRESET_GROUPS,
   PRESETS,
   RAINBOW,
   TEXT_CASES,
@@ -799,23 +800,38 @@ function socials(app) {
 
 function appearance(app) {
   const theme = app.get('theme');
-  const presetCards = Object.entries(PRESETS).map(([id, preset]) =>
-    h(
+  // Each card is a tiny top of the page in that scheme: band, bunting, heading font and button.
+  const presetCard = (id, preset) => {
+    const c = preset.colors;
+    const mini = h(
+      'span',
+      { class: 'preset-mini', 'aria-hidden': 'true' },
+      h('span', { class: 'pm-flags' }, RAINBOW.map((k) => h('span', { class: 'pm-flag' }))),
+      h('span', { class: 'pm-title', 'data-font': preset.headingFont }, 'Zabava'),
+      h('span', { class: 'pm-btn' })
+    );
+    for (const [name, value] of Object.entries({ '--pm-band': c.alt, '--pm-text': c.text, '--pm-accent': c.accent, '--pm-rule': c.border })) mini.style.setProperty(name, value);
+    mini.querySelectorAll('.pm-flag').forEach((flag, i) => (flag.style.background = c[RAINBOW[i]]));
+    mini.querySelector('.pm-title').style.fontWeight = FONTS[preset.headingFont].heading.weight;
+    const active = theme.preset === id;
+    return h(
       'button',
-      { type: 'button', class: `preset${theme.preset === id ? ' active' : ''}`, 'aria-pressed': theme.preset === id ? 'true' : 'false', onclick: () => app.applyPreset(id) },
-      h(
-        'span',
-        { class: 'preset-swatches' },
-        ['bg', 'accent', 'coral', 'gold', 'sage', 'sky', 'text'].map((k) => {
-          const swatch = h('span', { class: 'preset-swatch' });
-          swatch.style.background = preset.colors[k];
-          return swatch;
-        })
-      ),
+      { type: 'button', class: `preset${active ? ' active' : ''}`, 'aria-pressed': active ? 'true' : 'false', onclick: () => app.applyPreset(id) },
+      mini,
       h('span', { class: 'preset-name' }, preset.label),
-      h('span', { class: 'preset-fonts' }, `${FONTS[preset.headingFont].label.split(' (')[0]} + ${FONTS[preset.bodyFont].label.split(' (')[0]}`)
-    )
-  );
+      h('span', { class: 'preset-note' }, preset.note)
+    );
+  };
+  const presetGroups = Object.entries(PRESET_GROUPS).map(([group, label]) => [
+    h('h4', { class: 'subhead' }, label),
+    h(
+      'div',
+      { class: 'presets' },
+      Object.entries(PRESETS)
+        .filter(([, preset]) => preset.group === group)
+        .map(([id, preset]) => presetCard(id, preset))
+    ),
+  ]);
 
   const report = h('ul', { class: 'contrast' });
   const updateReport = () => {
@@ -849,7 +865,11 @@ function appearance(app) {
 
   return [
     head('Barve in oblika', 'Stran je oblikovana kot vabilo. Izberite barvno različico, nato po želji prilagodite barve in pisave.'),
-    card('Barvne različice', 'Različica zamenja barve in pisave; postavitev ostane enaka.', h('div', { class: 'presets' }, presetCards)),
+    card(
+      'Barvne različice',
+      'Različica zamenja barve in pisave, postavitev ostane enaka. Kliknite in poglejte predogled: obiskovalci jo vidijo šele, ko kliknete Objavi. Barve, ki ste jih spremenili sami, se pri tem zamenjajo; vrnete jih z Razveljavi.',
+      ...presetGroups.flat()
+    ),
     card(
       'Barve',
       'Iz teh barv se samodejno izračunajo svetlejši odtenki (ozadja kartic) in temnejši (besedilo v barvi), da ostane vse berljivo.',

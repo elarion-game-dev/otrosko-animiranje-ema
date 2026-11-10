@@ -1077,7 +1077,7 @@ async function resetDefaults() {
 function loadFonts() {
   const css = [
     ...Object.keys(FONTS).map((id) => fontFaces(id, FONT_BASE)),
-    ...Object.keys(FONTS).map((id) => `.font-sample[data-font="${id}"] { font-family: ${fontStack(id)}; }`),
+    ...Object.keys(FONTS).map((id) => `.font-sample[data-font="${id}"], .pm-title[data-font="${id}"] { font-family: ${fontStack(id)}; }`),
   ].join('\n');
   fontCss = URL.createObjectURL(new Blob([css], { type: 'text/css' }));
   document.head.append(h('link', { rel: 'stylesheet', href: fontCss }));

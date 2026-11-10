@@ -36,7 +36,9 @@ Kremni pasovi imajo valovite robove; vsak pas nariše svoje robove, zato lahko r
   Vse so na tej strani, z vsemi šumniki, in imajo cirilične datoteke za srbske strani (kjer pisava cirilice nima,
   podobna: Prata za DM Serif Display, Lora za Fraunces, Nunito za zaobljene). Te se prenesejo samo za cirilico. Naslovno in besedilno pisavo lahko zamenjate v urejevalniku.
 - **Barve:** osem barv strani in pet barv mavrice; svetlejši odtenki (ozadja kartic), temnejši (besedilo v barvi)
-  in obrobe polj se izračunajo sami, tako da ostanejo berljivi (WCAG AA). Šest barvnih različic, ena temna.
+  in obrobe polj se izračunajo sami, tako da ostanejo berljivi (WCAG AA). Enajst barvnih različic v treh skupinah:
+  umirjene, igrive in za posebne priložnosti (zimska za december in ena temna). Vsaka ima v urejevalniku majhen
+  predogled vrha strani.
 - **Srbščina v cirilici:** srbska besedila lahko lastnica piše v latinici, stran jih pokaže v cirilici (imena
   znamk, povezave in ime strani ostanejo v latinici). Neprevedeno srbsko besedilo pokaže hrvaško v cirilici.
   Starejše nastavitve z jezikom `sh` se ob branju samodejno preselijo v hrvaščino.
